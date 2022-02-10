@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="L2ksy0d">
+    
+    <title>
+        
+            毕设项目:基于PHP-Parser进行反混淆与检测的规划 |
+        
+        L2ksy0d&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"en","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.jpg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"纵使桑田成沧海，依然热爱。"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":true},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                L2ksy0d&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                HOME
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                ARCHIVES
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/links"
+                            >
+                                LINKS
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">HOME</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">ARCHIVES</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/links">LINKS</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">毕设项目:基于PHP-Parser进行反混淆与检测的规划</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.jpg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">L2ksy0d</span>
+                        
+                            <span class="author-label">Lv1</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-02-10 20:00:00</span>
+        <span class="mobile">2022-02-10 20:00</span>
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/PHP-Parser/">PHP-Parser</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>#摘要<br>对于自己的毕设的一些功能的想法和未来该怎么做的一些规划</p>
+<span id="more"></span>
+
+<h1 id="毕设项目-基于PHP-Parser的反混淆"><a href="#毕设项目-基于PHP-Parser的反混淆" class="headerlink" title="毕设项目-基于PHP-Parser的反混淆"></a>毕设项目-基于PHP-Parser的反混淆</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>大致设想是使用PHP-Parser完成反混淆，然后结合Yara进行检测。</p>
+<p>目前是没考虑过机器学习，后续可能会使用吧(<del>maybe</del></p>
+<h2 id="反混淆"><a href="#反混淆" class="headerlink" title="反混淆"></a>反混淆</h2><p>PHP-Parser基础来源于FeatureExtract中积累的操作</p>
+<p>根据Github上的反混淆项目和Deof项目进行改造，尽量理解两个项目的运行方式以及对待不同混淆时的操作</p>
+<h3 id="Deobf"><a href="#Deobf" class="headerlink" title="Deobf"></a>Deobf</h3><p>编写比较有逻辑，整体框架一目了然，对应文件的功能比较清晰</p>
+<p>但是现在功能不够全，对于一些情况目前无法处理，比如</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="variable">$z0</span>=<span class="variable">$_REQUEST</span>[<span class="string">&#x27;sort&#x27;</span>];</span><br><span class="line"><span class="variable">$q1</span>=<span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="variable">$c2</span>=<span class="string">&quot;wt8m4;6eb39fxl*s5/.yj7(pod_h1kgzu0cqr)aniv2&quot;</span>;</span><br><span class="line"><span class="variable">$y3</span>=<span class="keyword">array</span>(<span class="number">8</span>,<span class="number">38</span>,<span class="number">15</span>,<span class="number">7</span>,<span class="number">6</span>,<span class="number">4</span>,<span class="number">26</span>,<span class="number">25</span>,<span class="number">7</span>,<span class="number">34</span>,<span class="number">24</span>,<span class="number">25</span>,<span class="number">7</span>);</span><br><span class="line"><span class="keyword">foreach</span>(<span class="variable">$y3</span> <span class="keyword">as</span> <span class="variable">$h4</span>) &#123;</span><br><span class="line">	<span class="variable">$q1</span>.=<span class="variable">$c2</span>[<span class="variable">$h4</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$v5</span>=strrev(<span class="string">&quot;noi&quot;</span>.<span class="string">&quot;tcnuf&quot;</span>.<span class="string">&quot;_eta&quot;</span>.<span class="string">&quot;erc&quot;</span>);</span><br><span class="line"><span class="variable">$j6</span>=<span class="variable">$v5</span>(<span class="string">&quot;&quot;</span>,<span class="variable">$q1</span>(<span class="variable">$z0</span>));</span><br><span class="line"><span class="variable">$j6</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>$j6=$v5(&quot;&quot;,$q1($z0));</code>这里不能直接反混淆出v5的值</p>
+<p>还有一些其他的功能没有实现，只实现了基础的反混淆，不过因为骨架已经搭好，未来应该在该项目基础上进行编写</p>
+<h3 id="一些常用的反混淆操作"><a href="#一些常用的反混淆操作" class="headerlink" title="一些常用的反混淆操作"></a>一些常用的反混淆操作</h3><h4 id="字符串函数直接返回值"><a href="#字符串函数直接返回值" class="headerlink" title="字符串函数直接返回值"></a>字符串函数直接返回值</h4><p>这里以base64_decode为例，后续可以把字符串操作函数放在数组里然后进行判断</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">leavenode</span>(<span class="params"><span class="variable">$node</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$node</span> <span class="keyword">instanceof</span> PhpParser\Node\Expr\FuncCall &amp;&amp; <span class="variable">$node</span>-&gt;name-&gt;parts[<span class="number">0</span>] == <span class="string">&quot;base64_decode&quot;</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> PhpParser\Node\Scalar\String_(<span class="variable">$node</span>-&gt;name-&gt;parts[<span class="number">0</span>](<span class="variable">$node</span>-&gt;args[<span class="number">0</span>]-&gt;value-&gt;value));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//例子如下</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">base64_decode(<span class="string">&quot;UEhQLVBhcnNlcg&quot;</span>);</span><br><span class="line">--After parser:--</span><br><span class="line">    </span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="string">&#x27;PHP-Parser&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><del>这里挖个坑，每天补一点</del></p>
+<h2 id="Yara"><a href="#Yara" class="headerlink" title="Yara"></a>Yara</h2><p>Yara规则依靠于积累的规则和开源项目例如</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://github.com/ruppde/yara_rules/blob/f375dbafa7b6aabd4e8fe8506a9e3ab9b8a57cbd/webshell/gen_webshells.yar" >yara_rules/gen_webshells.yar<i class="fas fa-external-link-alt"></i></a></p>
+<p>目前的想法是将工作的重点放在反混淆上，因为如果能将反混淆做的尽量彻底，那么规则就会很好写。</p>
+<h2 id="两者结合"><a href="#两者结合" class="headerlink" title="两者结合"></a>两者结合</h2><p>做一个后端或者直接在反混淆结束之后添加</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">system(<span class="string">&quot;yara -r webshell/rule webshell/sample&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如果有时间还是想做一个好看的后端</p>
+<h2 id="短期要做的事"><a href="#短期要做的事" class="headerlink" title="短期要做的事"></a>短期要做的事</h2><ul>
+<li>看一下**<a class="link"   target="_blank" rel="noopener" href="https://github.com/L2ksy0d/PHPDeobfuscator" >PHPDeobfuscator<i class="fas fa-external-link-alt"></i></a>**是怎么解决变量值的存储和后续替换的(目前的想法是如果遍历到遍历声明或者变量赋值，就把变量名和值传给一个数组，当后续遇到变量被调用时从数组调值进行替换，明天试试)</li>
+<li>将Deobf当前的功能理清楚然后将目前已经可以做的补充进去</li>
+<li>调研一下后端的建设情况</li>
+</ul>
+
+        </div>
+
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/PHP-Parser/">#PHP-Parser</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/01/28/PHP-Parser/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">PHP-Parser的基本使用</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">L2ksy0d</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            Powered by <a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;|&nbsp;Theme&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AF%95%E8%AE%BE%E9%A1%B9%E7%9B%AE-%E5%9F%BA%E4%BA%8EPHP-Parser%E7%9A%84%E5%8F%8D%E6%B7%B7%E6%B7%86"><span class="nav-text">毕设项目-基于PHP-Parser的反混淆</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E6%B7%B7%E6%B7%86"><span class="nav-text">反混淆</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Deobf"><span class="nav-text">Deobf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%8F%8D%E6%B7%B7%E6%B7%86%E6%93%8D%E4%BD%9C"><span class="nav-text">一些常用的反混淆操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%87%BD%E6%95%B0%E7%9B%B4%E6%8E%A5%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-text">字符串函数直接返回值</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Yara"><span class="nav-text">Yara</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E8%80%85%E7%BB%93%E5%90%88"><span class="nav-text">两者结合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%AD%E6%9C%9F%E8%A6%81%E5%81%9A%E7%9A%84%E4%BA%8B"><span class="nav-text">短期要做的事</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="Search..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
