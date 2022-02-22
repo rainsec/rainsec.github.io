@@ -9,7 +9,7 @@
     
     <title>
         
-            Archive: 2022/2 |
+            PHP_Deobf源码分析 |
         
         L2ksy0d&#39;s Blog
     </title>
@@ -69,7 +69,7 @@
                         </li>
                     
                         <li class="menu-item">
-                            <a class="active"
+                            <a class=""
                                href="/archives"
                             >
                                 ARCHIVES
@@ -111,7 +111,7 @@
                 </li>
             
                 <li class="drawer-menu-item flex-center">
-                    <a class="active"
+                    <a class=""
                        href="/archives">ARCHIVES</a>
                 </li>
             
@@ -136,52 +136,119 @@
 
                 
                     <div class="fade-in-down-animation">
-    <div class="archive-container ">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">PHP_Deobf源码分析</span>
+        </div>
+
         
-<div class="archive-list-container">
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.jpg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">L2ksy0d</span>
+                        
+                            <span class="author-label">PHPer</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-02-22 11:47:47</span>
+        <span class="mobile">2022-02-22 11:47</span>
+    </span>
     
-        <section class="archive-item">
-            <div class="archive-item-header">
-                <span class="archive-year">2022</span>
-                <span class="archive-year-post-count">[4]</span>
-            </div>
-            <ul class="article-list">
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
                 
-                    <li class="article-item">
-                        <a class="article-title"
-                           href="/2022/02/22/PHP_deobf%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"
-                        >PHP_Deobf源码分析</a>
-                        <span class="article-date">02-22</span>
+                    <li>
+                        <a href="/tags/%E5%AE%89%E5%85%A8%E5%BC%80%E5%8F%91/">安全开发</a>&nbsp;
                     </li>
                 
-                    <li class="article-item">
-                        <a class="article-title"
-                           href="/2022/02/22/W9scan%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"
-                        >W9scan源码分析</a>
-                        <span class="article-date">02-22</span>
+                    <li>
+                        | <a href="/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">源码分析</a>&nbsp;
                     </li>
                 
-                    <li class="article-item">
-                        <a class="article-title"
-                           href="/2022/02/10/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%E3%81%AE%E6%83%B3%E6%B3%95/"
-                        >毕设项目:基于PHP-Parser进行反混淆与检测的规划</a>
-                        <span class="article-date">02-10</span>
-                    </li>
-                
-                    <li class="article-item">
-                        <a class="article-title"
-                           href="/2022/01/28/PHP-Parser/"
-                        >PHP-Parser的基本使用</a>
-                        <span class="article-date">01-28</span>
+                    <li>
+                        | <a href="/tags/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1/">毕业设计</a>&nbsp;
                     </li>
                 
             </ul>
-        </section>
+        </span>
+    
+
+    
+    
+    
     
 </div>
 
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>分析一下毕设的参考项目于源码</p>
+<span id="more"></span>
+
+<h1 id="PHP-deobf源码分析"><a href="#PHP-deobf源码分析" class="headerlink" title="PHP_deobf源码分析"></a>PHP_deobf源码分析</h1><p>因为毕设主要依托于这个(<del>不是直接down了交嗷</del>)</p>
+<p>所以近期要分析一下这个项目对于各种混淆的处理方式</p>
+
+        </div>
+
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/%E5%AE%89%E5%85%A8%E5%BC%80%E5%8F%91/">#安全开发</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">#源码分析</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1/">#毕业设计</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/02/22/W9scan%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">W9scan源码分析</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
     </div>
 </div>
+
 
                 
             </div>
@@ -211,6 +278,23 @@
         </div>
     </div>
 
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
     
 
     <div class="right-bottom-side-tools">
@@ -256,6 +340,14 @@
 
     </div>
 
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#PHP-deobf%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-text">PHP_deobf源码分析</span></a></li></ol>
+    </div>
+</div>
+        </aside>
     
 
     <div class="image-viewer-container">
@@ -329,6 +421,14 @@
 
 
 <div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
     
 </div>
 
