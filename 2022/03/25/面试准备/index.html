@@ -1,179 +1,165 @@
+
 <!DOCTYPE html>
-<html lang="en">
-
-<!-- Head tag -->
+<html lang="en" class="loading">
 <head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!--Description-->
-    
-        <meta name="description" content="收集一些常见的信息安全面试问题">
-    
-
-    <!--Author-->
-    
-        <meta name="author" content="John Doe">
-    
-
-    <!--Open Graph Title-->
-    
-        <meta property="og:title" content="信安面试问题准备"/>
-    
-
-    <!--Open Graph Description-->
-    
-
-    <!--Open Graph Site Name-->
-    <meta property="og:site_name" content="Hexo"/>
-
-    <!--Type page-->
-    
-        <meta property="og:type" content="article" />
-    
-
-    <!--Page Cover-->
-    
-
-    
-        <meta name="twitter:card" content="summary" />
-    
-    
-    
-
-    <!-- Title -->
-    
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>信安面试问题准备 - Hexo</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="TriDiamond Obsidian,"> 
+    <meta name="description" content="收集一些常见的信息安全面试问题
 
-    <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Custom Fonts -->
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-    <!-- Gallery -->
-    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
-
-    <!-- Custom CSS -->
+信息收集假如给你一个网站你怎么去渗透1234567891011121314151617信息收集首先看是什么类型的网站，针对不同类型的网站有不同的信息搜集方案，如大型,"> 
+    <meta name="author" content="John Doe"> 
+    <link rel="alternative" href="atom.xml" title="Hexo" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
     
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1429596_nzgqgvnmkjb.css">
 
-
-    <!-- Google Analytics -->
     
+<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.7.2/animate.min.css">
 
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
 
+    
+<link rel="stylesheet" href="//cdn.bootcss.com/codemirror/5.48.4/codemirror.min.css">
+
+    
+<link rel="stylesheet" href="//cdn.bootcss.com/codemirror/5.48.4/theme/dracula.css">
+
+    
+<link rel="stylesheet" href="/css/obsidian.css">
+
+    
+<link rel="stylesheet" href="/css/ball-atom.min.css">
+
+    
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+
+    
+    <script>var musiclist = ""</script>
+    
+<script src="/js/loadaplayer.js"></script>
+
+    <!-- 引用依赖 -->
+    
+<link rel="stylesheet" href="/aplayer/dist/APlayer.min.css">
+
+    
+<script src="/aplayer/dist/APlayer.min.js"></script>
+<script src="/js/Meting.min.js"></script>
+
+    
 <meta name="generator" content="Hexo 6.0.0">
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
 </head>
 
 
-<body>
-
-<div class="bg-gradient"></div>
-<div class="bg-pattern"></div>
-
-<!-- Menu -->
-<!--Menu Links and Overlay-->
-<div class="menu-bg">
-    <div class="menu-container">
-        <ul>
-            
-            <li class="menu-item">
-                <a href="/">
-                    Home
-                </a>
-            </li>
-            
-            <li class="menu-item">
-                <a href="/archives">
-                    Archives
-                </a>
-            </li>
-            
-            <li class="menu-item">
-                <a href="/about.html">
-                    About
-                </a>
-            </li>
-            
-            <li class="menu-item">
-                <a href="/tags">
-                    Tags
-                </a>
-            </li>
-            
-            <li class="menu-item">
-                <a href="/categories">
-                    Categories
-                </a>
-            </li>
-            
-            <li class="menu-item">
-                <a href="/contact.html">
-                    Contact
-                </a>
-            </li>
-            
-        </ul>
+<body class="loading">
+    <div class="loader">
+        <div class="la-ball-atom la-2x">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <span id="config-title" style="display:none">Hexo</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div class="scrollbar gradient-bg-rev"></div>
+<div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <div class="navigation animated fadeIn fast delay-1s">
+        <img id="home-icon" class="icon-home" src="/img/favicon.png" alt="" data-url="http://example.com">
+        <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
+        <h3 class="subtitle">信安面试问题准备</h3>
+        <div class="social">
+            <!--        <div class="like-icon">-->
+            <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+            <!--        </div>-->
+            <div>
+                <div class="share">
+                    
+                        <a href="javascript:;" class="iconfont icon-share1"></a>
+                        <div class="share-component-cc" data-disabled="facebook,douban,linkedin,diandian,tencent,google"></div>
+                    
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<!--Hamburger Icon-->
-<nav>
-    <a href="#menu"></a>
-</nav>
-
-<div class="container">
-
-    <!-- Main Content -->
-    <div class="row">
-    <div class="col-sm-12">
-
-        <!--Title and Logo-->
-        <header>
-    <div class="logo">
-        <a href="/"><i class="logo-icon fa fa-cube" aria-hidden="true"></i></a>
-        
-    </div>
-</header>
-
-        <section class="main">
+    <div class="section">
+        <div class=article-header-wrapper>
+    <div class="article-header">
+        <div class="article-cover animated fadeIn" style="
+            animation-delay: 600ms;
+            animation-duration: 1.2s;
+            background-image: 
+                radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+                url('/img/cover.jpg') ">
+        </div>
+        <div class="else">
+            <p class="animated fadeInDown">
+                
+                <a href="javascript:;"><b>「 </b>Article<b> 」</b></a>
+                
+                March 25, 2022
+            </p>
+            <h3 class="post-title animated fadeInDown"><a href="/2022/03/25/%E9%9D%A2%E8%AF%95%E5%87%86%E5%A4%87/" title="信安面试问题准备" class="">信安面试问题准备</a>
+            </h3>
             
-<div class="post">
-
-    <div class="post-header">
-        <h1 class="title">
-            <a href="/2022/03/25/%E9%9D%A2%E8%AF%95%E5%87%86%E5%A4%87/">
-                信安面试问题准备
-            </a>
-        </h1>
-        <div class="post-info">
+            <p class="post-count animated fadeInDown">
+                
+                <span>
+                    <b class="iconfont icon-text2"></b> <i>Words count</i>
+                    63k
+                </span>
+                
+                
+                <span>
+                    <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                    57 mins.
+                </span>
+                
+                
+                
+                <span id="busuanzi_container_page_pv">
+                    <b class="iconfont icon-read"></b> <i>Read count</i>
+                    <span id="busuanzi_value_page_pv">0</span>
+                </span>
+                
+            </p>
             
-                <span class="date">2022-03-25</span>
             
-            
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E9%9D%A2%E7%BB%8F/" rel="tag">面经</a></li></ul>
             
         </div>
     </div>
+</div>
 
-    <div class="content">
+<div class="screen-gradient-after">
+    <div class="screen-gradient-content">
+        <div class="screen-gradient-content-inside">
+            <div class="bold-underline-links screen-gradient-sponsor">
+                <p>
+                    <span class="animated fadeIn delay-1s"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <!-- Gallery -->
-        
-
-        <!-- Post Content -->
-        <p>收集一些常见的信息安全面试问题</p>
+<div class="article">
+    <div class='main'>
+        <div class="content markdown animated fadeIn">
+            <p>收集一些常见的信息安全面试问题</p>
 <span id="more"></span>
 <h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="假如给你一个网站你怎么去渗透"><a href="#假如给你一个网站你怎么去渗透" class="headerlink" title="假如给你一个网站你怎么去渗透"></a>假如给你一个网站你怎么去渗透</h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">信息收集</span><br><span class="line"></span><br><span class="line">首先看是什么类型的网站，针对不同类型的网站有不同的信息搜集方案，如大型企业网站可以用天眼查，启信宝等查询法人股份等信息，小型网站可以查询使用了哪类建站系统</span><br><span class="line"></span><br><span class="line">1.whois查詢,获取注册者邮箱姓名电话等。</span><br><span class="line"></span><br><span class="line">2.查询服务器旁站以及子域名站点，因为主站一般比较难，所以先看看旁站有没有通用性的cms或者其他漏洞。</span><br><span class="line"></span><br><span class="line">3.查看服务器操作系统版本，web中间件，看看是否存在已知的漏洞，比如IIS，APACHE,NGINX的解析漏洞</span><br><span class="line"></span><br><span class="line">4.查看IP，进行IP地址端口扫描，对响应的端口进行漏洞探测，比如 rsync,訫脏滴血，mysql,ftp,ssh弱口令等。</span><br><span class="line"></span><br><span class="line">5.扫描网站目录结构，看看是否可以遍历目录，或者敏感文件泄漏，比如php探针</span><br><span class="line"></span><br><span class="line">6.google hack进一步探测网站的信息，后台，敏感文件</span><br><span class="line"></span><br><span class="line">7.查看这个网站都有哪些功能，针对不同的功能可以实现不同的漏洞利用</span><br></pre></td></tr></tbody></table></figure>
 
@@ -319,195 +305,300 @@
 <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">1.IIS</span><br><span class="line">  6.x 解析漏洞</span><br><span class="line">	.asp文件夹下的文件会解析为asp</span><br><span class="line">	.asp;.jpg文件会被解析为asp</span><br><span class="line">  7.x 解析漏洞</span><br><span class="line">  	.jpg后加上/.php会将jpg文件解析为php</span><br><span class="line">  PUT任意文件写入</span><br><span class="line">  	开启WevDav之后如果有写入权限会造成任意文件写入</span><br><span class="line">  短文件名猜解</span><br><span class="line">2.Apache</span><br><span class="line">  未知后缀解析漏洞</span><br><span class="line">  	.php.xxx1.xxx2，从右往左解析</span><br><span class="line">  后缀换行漏洞</span><br><span class="line">  	1.php/%0A会被解析为php</span><br><span class="line">  ADDhandle配置错误 配置处理器</span><br><span class="line">3.Nginx</span><br><span class="line">  配置错误导致解析漏洞/.php</span><br><span class="line">  空字符任意命令执行</span><br><span class="line">  文件名逻辑漏洞</span><br><span class="line">  	文件名后加空格</span><br><span class="line">  配置错误</span><br><span class="line">  	目录穿越:配置alias的时候没有/</span><br><span class="line">  	目录遍历：autoindex=o</span><br><span class="line">  	LR注入漏洞：url解析换行</span><br><span class="line">4.tomcat</span><br><span class="line">  弱口令</span><br><span class="line">  远程代码执行：函数在windows上和linux的实现不同</span><br></pre></td></tr></tbody></table></figure>
 
 
-    </div>
-
-    
-
-    
-        <div class="post-tags">
-            <i class="fa fa-tags" aria-hidden="true"></i>
-            <a href="/tags/面经/">#面经</a>
-        </div>
-    
-
-    <!-- Comments -->
-    
-
-</div>
-        </section>
-
-    </div>
-</div>
-
-
-</div>
-
-<!-- Footer -->
-<div class="push"></div>
-
-<footer class="footer-content">
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 footer-about">
-                <h2>About</h2>
-                <p>
-                    This theme was developed by <a target="_blank" rel="noopener" href="https://github.com/klugjo">Jonathan Klughertz</a>. The source code is available on Github. Create Websites. Make Magic.
-                </p>
-            </div>
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls"
+                data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
             
-    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3 recent-posts">
-        <h2>Recent Posts</h2>
-        <ul>
+            <ul id="audio-list" style="display:none">
+                
+                
+                <li title='0' data-url='/statics/chengdu.mp3'></li>
+                
+                    
+            </ul>
             
-            <li>
-                <a class="footer-post" href="/2022/03/28/Ubuntu20.04%20%E5%8D%87%E7%BA%A7%E9%99%8D%E7%BA%A7%E5%86%85%E6%A0%B8%E5%88%B0%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC/">Ubuntu 20.04更新内核到指定版本</a>
-            </li>
+                        
             
-            <li>
-                <a class="footer-post" href="/2022/03/25/%E9%9D%A2%E8%AF%95%E5%87%86%E5%A4%87/">信安面试问题准备</a>
-            </li>
             
-            <li>
-                <a class="footer-post" href="/2022/02/22/PHP_deobf%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">PHP_Deobf源码分析</a>
-            </li>
-            
-            <li>
-                <a class="footer-post" href="/2022/02/22/W9scan%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">W9scan源码分析</a>
-            </li>
-            
-        </ul>
-    </div>
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d=''
+        data-p='https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token'
+    >Comments</div>
 
 
-
+            
             
         </div>
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <ul class="list-inline footer-social-icons">
-                    
-                    <li class="list-inline-item">
-                        <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-alpha-dust">
-                            <span class="footer-icon-container">
-                                <i class="fa fa-github"></i>
-                            </span>
-                        </a>
-                    </li>
-                    
-                    
-                    <li class="list-inline-item">
-                        <a target="_blank" rel="noopener" href="https://twitter.com/?lang=en">
-                            <span class="footer-icon-container">
-                                <i class="fa fa-twitter"></i>
-                            </span>
-                        </a>
-                    </li>
-                    
-                    
-                    <li class="list-inline-item">
-                        <a target="_blank" rel="noopener" href="https://www.facebook.com/">
-                            <span class="footer-icon-container">
-                                <i class="fa fa-facebook"></i>
-                            </span>
-                        </a>
-                    </li>
-                    
-                    
-                    <li class="list-inline-item">
-                        <a target="_blank" rel="noopener" href="https://www.instagram.com/">
-                            <span class="footer-icon-container">
-                                <i class="fa fa-instagram"></i>
-                            </span>
-                        </a>
-                    </li>
-                    
-                    
-                    <li class="list-inline-item">
-                        <a target="_blank" rel="noopener" href="https://dribbble.com/">
-                            <span class="footer-icon-container">
-                                <i class="fa fa-dribbble"></i>
-                            </span>
-                        </a>
-                    </li>
-                    
-                    
-                    <li class="list-inline-item">
-                        <a target="_blank" rel="noopener" href="https://telegram.org/">
-                            <span class="footer-icon-container">
-                                <i class="fa fa-telegram"></i>
-                            </span>
-                        </a>
-                    </li>
-                    
-                    
-                    <li class="list-inline-item">
-                        <a target="_blank" rel="noopener" href="https://www.behance.net/">
-                            <span class="footer-icon-container">
-                                <i class="fa fa-behance"></i>
-                            </span>
-                        </a>
-                    </li>
-                    
-                    
-                    <li class="list-inline-item">
-                        <a target="_blank" rel="noopener" href="https://500px.com/">
-                            <span class="footer-icon-container">
-                                <i class="fa fa-500px"></i>
-                            </span>
-                        </a>
-                    </li>
-                    
-                    
-                    <li class="list-inline-item">
-                        <a href="mailto:test@example.com">
-                            <span class="footer-icon-container">
-                                <i class="fa fa-envelope-o"></i>
-                            </span>
-                        </a>
-                    </li>
-                    
-                    
-                    <li class="list-inline-item">
-                        <a href="\#">
-                            <span class="footer-icon-container">
-                                <i class="fa fa-rss"></i>
-                            </span>
-                        </a>
-                    </li>
-                    
+        <div class="sidebar">
+            <div class="box animated fadeInRight">
+                <div class="subbox">
+                    <img src="https://s2.ax1x.com/2019/09/19/nLtSiD.png" height=300 width=300></img>
+                    <p>John Doe</p>
+                    <span>Think like an artist, develop like an artisan</span>
+                    <dl>
+                        
+                            
+                            
+                            
+                        
+                        
+                    </dl>
+                </div>
+                <ul>
+                    <li><a href="/">6 <p>Articles</p></a></li>
+                    <li><a href="/categories">0 <p>Categories</p></a></li>
+                    <li><a href="/tags">7 <p>Tags</p></a></li>
                 </ul>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="footer-copyright">
-                    @Untitled. All right reserved | Design & Hexo <a target="_blank" rel="noopener" href="http://www.codeblocq.com/">Jonathan Klughertz</a>
+            
+            
+            
+            <div class="box sticky animated fadeInRight faster">
+                <div id="toc" class="subbox">
+                    <h4>Contents</h4>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">1.</span> <span class="toc-text">信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%81%87%E5%A6%82%E7%BB%99%E4%BD%A0%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E4%BD%A0%E6%80%8E%E4%B9%88%E5%8E%BB%E6%B8%97%E9%80%8F"><span class="toc-number">1.1.</span> <span class="toc-text">假如给你一个网站你怎么去渗透</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#whois%E6%9F%A5%E8%A9%A2%E4%B8%BB%E8%A6%81%E6%9F%A5%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.2.</span> <span class="toc-text">whois查詢主要查的是什么?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nmap%E5%91%BD%E4%BB%A4"><span class="toc-number">1.3.</span> <span class="toc-text">nmap命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84web%E5%AE%B9%E5%99%A8"><span class="toc-number">1.4.</span> <span class="toc-text">常见的web容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.5.</span> <span class="toc-text">常见中间件漏洞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%AB%AF%E5%8F%A3%E5%8F%8A%E5%AF%B9%E5%BA%94%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.6.</span> <span class="toc-text">常见端口及对应服务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5"><span class="toc-number">2.</span> <span class="toc-text">SQL注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E5%92%8CNoSQL%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">2.1.</span> <span class="toc-text">SQL和NoSQL的优缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AB%AF%E5%8F%A3"><span class="toc-number">2.2.</span> <span class="toc-text">常见数据库端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-number">2.3.</span> <span class="toc-text">SQL注入的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#load-file%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E6%9C%89%E8%AF%BB%E5%86%99%E6%9D%83%E9%99%90"><span class="toc-number">2.4.</span> <span class="toc-text">load_file判断是否有读写权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql5-0%E4%B8%8A%E4%B8%8B%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="toc-number">2.5.</span> <span class="toc-text">mysql5.0上下有什么区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL%E4%B8%AD-%E5%92%8C-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">2.6.</span> <span class="toc-text">MySQL中@和@@的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL%E7%BB%95%E8%BF%87%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-number">2.7.</span> <span class="toc-text">MySQL绕过常用函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E7%9A%84%E5%8D%B1%E5%AE%B3%E5%92%8C%E4%BF%AE%E5%A4%8D"><span class="toc-number">2.8.</span> <span class="toc-text">SQL注入的危害和修复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E5%86%99%E5%85%A5webshell%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%92%8C%E6%96%B9%E5%BC%8F"><span class="toc-number">2.9.</span> <span class="toc-text">SQL注入写入webshell的条件和方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sql%E6%B3%A8%E5%85%A5%E8%BF%87%E6%BB%A4%E4%BA%86%E9%80%97%E5%8F%B7"><span class="toc-number">2.10.</span> <span class="toc-text">sql注入过滤了逗号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sleep%E8%A2%AB%E7%A6%81%E7%94%A8%E5%90%8E%E8%BF%98%E8%83%BD%E6%80%8E%E4%B9%88%E8%BF%9B%E8%A1%8Csql%E6%B3%A8%E5%85%A5%EF%BC%88%E5%BB%B6%E6%97%B6%E5%87%BD%E6%95%B0%E9%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F%EF%BC%89"><span class="toc-number">2.11.</span> <span class="toc-text">sleep被禁用后还能怎么进行sql注入（延时函数都有哪些？）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Select%E8%A2%AB%E8%BF%87%E6%BB%A4%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-number">2.12.</span> <span class="toc-text">Select被过滤怎么办</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B2%E6%B3%A8%E5%85%B3%E9%94%AE%E7%9A%84%E8%A1%A8%E8%A2%AB%E8%BF%87%E6%BB%A4%E4%BA%86%EF%BC%8C%E8%AF%A5%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-number">2.13.</span> <span class="toc-text">盲注关键的表被过滤了，该怎么办</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sql%E6%B3%A8%E5%85%A5%E5%B8%B8%E8%A7%81%E7%9A%84%E8%BF%87WAF%E6%96%B9%E6%B3%95"><span class="toc-number">2.14.</span> <span class="toc-text">sql注入常见的过WAF方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mysql-UDF%E6%8F%90%E6%9D%83"><span class="toc-number">2.15.</span> <span class="toc-text">Mysql UDF提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E4%B8%8D%E5%90%8C%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">2.16.</span> <span class="toc-text">SQL注入如何判断不同数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%84%E7%BC%96%E8%AF%91%E6%98%AF%E5%90%A6100-%E8%83%BD%E9%98%B2%E5%BE%A1SQL%E6%B3%A8%E5%85%A5"><span class="toc-number">2.17.</span> <span class="toc-text">预编译是否100%能防御SQL注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E7%8E%B0-demo-jsp-uid-110-%E6%B3%A8%E5%85%A5%E7%82%B9%EF%BC%8C%E4%BD%A0%E6%9C%89%E5%93%AA%E5%87%A0%E7%A7%8D%E6%80%9D%E8%B7%AF%E8%8E%B7%E5%8F%96-webshell"><span class="toc-number">2.18.</span> <span class="toc-text">发现 demo.jsp?uid&#x3D;110 注入点，你有哪几种思路获取 webshell</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XSS"><span class="toc-number">3.</span> <span class="toc-text">XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#XSS%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-number">3.1.</span> <span class="toc-text">XSS的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%A2%84%E9%98%B2XSS"><span class="toc-number">3.2.</span> <span class="toc-text">如何预防XSS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XSS%E5%92%8CCSRF%E3%80%81SSRF%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">3.3.</span> <span class="toc-text">XSS和CSRF、SSRF的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%A4%E4%BA%86alert%E5%87%BD%E6%95%B0%EF%BC%8C%E8%BF%98%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8%E5%93%AA%E4%BA%9B%E5%87%BD%E6%95%B0%E5%BC%B9%E7%AA%97"><span class="toc-number">3.4.</span> <span class="toc-text">除了alert函数，还可以使用哪些函数弹窗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="toc-number">3.5.</span> <span class="toc-text">绕过方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSRF"><span class="toc-number">4.</span> <span class="toc-text">CSRF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFCSRF"><span class="toc-number">4.1.</span> <span class="toc-text">什么是CSRF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSRF%E7%9A%84%E9%A2%84%E9%98%B2"><span class="toc-number">4.2.</span> <span class="toc-text">CSRF的预防</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF"><span class="toc-number">5.</span> <span class="toc-text">SSRF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SSRF%E5%BD%A2%E6%88%90%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-number">5.1.</span> <span class="toc-text">SSRF形成的原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSRF%E7%BB%95%E8%BF%87"><span class="toc-number">5.2.</span> <span class="toc-text">SSRF绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSRF%E7%9A%84%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">5.3.</span> <span class="toc-text">SSRF的利用方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSRF%E9%A2%84%E9%98%B2"><span class="toc-number">5.4.</span> <span class="toc-text">SSRF预防</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XXE"><span class="toc-number">6.</span> <span class="toc-text">XXE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B6%8A%E6%9D%83%E6%BC%8F%E6%B4%9E"><span class="toc-number">7.</span> <span class="toc-text">越权漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B0%B4%E5%B9%B3%E8%B6%8A%E6%9D%83%E5%92%8C%E5%9E%82%E7%9B%B4%E8%B6%8A%E6%9D%83"><span class="toc-number">7.1.</span> <span class="toc-text">水平越权和垂直越权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B6%8A%E6%9D%83%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%B8%B8%E5%87%BA%E7%8E%B0%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-number">7.2.</span> <span class="toc-text">越权漏洞通常出现的位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B6%8A%E6%9D%83%E6%BC%8F%E6%B4%9E%E9%A2%84%E9%98%B2%E6%8E%AA%E6%96%BD"><span class="toc-number">7.3.</span> <span class="toc-text">越权漏洞预防措施</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-number">8.</span> <span class="toc-text">文件上传</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%BB%95%E8%BF%87%E6%89%8B%E6%B3%95"><span class="toc-number">8.1.</span> <span class="toc-text">常用绕过手法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP%E7%88%86%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">8.2.</span> <span class="toc-text">PHP爆绝对路径的方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-number">9.</span> <span class="toc-text">文件包含</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP%E4%B8%AD%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E5%87%BD%E6%95%B0%E5%8F%8A%E5%85%B6%E7%89%B9%E7%82%B9"><span class="toc-number">9.1.</span> <span class="toc-text">PHP中文件包含函数及其特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E6%95%8F%E6%84%9F%E4%BF%A1%E6%81%AF%E8%B7%AF%E5%BE%84"><span class="toc-number">9.2.</span> <span class="toc-text">常见的敏感信息路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#session%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E"><span class="toc-number">9.3.</span> <span class="toc-text">session文件包含漏洞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E5%B8%B8%E7%94%A8%E7%BB%95%E8%BF%87"><span class="toc-number">9.4.</span> <span class="toc-text">文件包含常用绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="toc-number">9.5.</span> <span class="toc-text">PHP伪协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C"><span class="toc-number">10.</span> <span class="toc-text">命令执行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="toc-number">10.1.</span> <span class="toc-text">常见危险函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D%E6%96%B9%E6%A1%88"><span class="toc-number">10.2.</span> <span class="toc-text">修复方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81web%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86%E3%80%81%E9%98%B2%E5%BE%A1%E5%8A%9E%E6%B3%95"><span class="toc-number">11.</span> <span class="toc-text">常见web漏洞原理、防御办法</span></a></li></ol>
                 </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+    <div id="back-to-top" class="animated fadeIn faster">
+        <div class="flow"></div>
+        <span class="percentage animated fadeIn faster">0%</span>
+        <span class="iconfont icon-top02 animated fadeIn faster"></span>
+    </div>
+</body>
+<footer>
+    <p class="copyright" id="copyright">
+        &copy; 2022
+        <span class="gradient-text">
+            John Doe
+        </span>.
+        Powered by <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a>
+        Theme
+        <span class="gradient-text">
+            <a href="https://github.com/TriDiamond/hexo-theme-obsidian" title="Obsidian" target="_blank" rel="noopener">Obsidian</a>
+        </span>
+        <small><a href="https://github.com/TriDiamond/hexo-theme-obsidian/blob/master/CHANGELOG.md" title="v1.4.9.3" target="_blank" rel="noopener">v1.4.9.3</a></small>
+        
+        </br>
+        
+        <span class="gradient-text">
+            <a href="https://beian.miit.gov.cn/" title="beian.miit.gov.cn" target="_blank" rel="noopener">beian.miit.gov.cn</a>
+        </span>
+        
+        
+        </br>
+        <span style="display: inline-block;"> <img src=/null></span>
+        
+        <span class="gradient-text">
+            <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44010602009049" title="www.beian.gov.cn&#x2F;portal&#x2F;registerSystemInfo?recordcode&#x3D;44010602009049" target="_blank" rel="noopener">www.beian.gov.cn&#x2F;portal&#x2F;registerSystemInfo?recordcode&#x3D;44010602009049</a>
+        </span>
+        
+    </p>
+</footer>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<script>
+  MathJax.Hub.Config({
+    "HTML-CSS": {
+      preferredFont: "TeX",
+      availableFonts: ["STIX", "TeX"],
+      linebreaks: {
+        automatic: true
+      },
+      EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+      inlineMath: [
+        ["$", "$"],
+        ["\\(", "\\)"]
+      ],
+      processEscapes: true,
+      ignoreClass: "tex2jax_ignore|dno",
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      noUndefined: {
+        attributes: {
+          mathcolor: "red",
+          mathbackground: "#FFEEEE",
+          mathsize: "90%"
+        }
+      },
+      Macros: {
+        href: "{}"
+      }
+    },
+    messageStyle: "none"
+  });
+</script>
+<script>
+  function initialMathJax() {
+    MathJax.Hub.Queue(function () {
+      var all = MathJax.Hub.getAllJax(),
+        i;
+      // console.log(all);
+      for (i = 0; i < all.length; i += 1) {
+        console.log(all[i].SourceElement().parentNode)
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  }
+
+  function reprocessMathJax() {
+    if (typeof MathJax !== 'undefined') {
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    }
+  }
+</script>
+
+
+ 
+<link rel="stylesheet" href="//cdn.bootcss.com/gitalk/1.5.0/gitalk.min.css">
+ 
+<script src="//cdn.bootcss.com/gitalk/1.5.0/gitalk.min.js"></script>
+  
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/obsidian.js"></script>
+<script src="/js/jquery.truncate.js"></script>
+<script src="/js/search.js"></script>
+ 
+<script src="//cdn.bootcss.com/typed.js/2.0.10/typed.min.js"></script>
+ 
+<script src="//cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script>
+ 
+<script src="//cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/codemirror/5.48.4/codemirror.min.js"></script>
+ 
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/javascript/javascript.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/css/css.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/xml/xml.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/htmlmixed/htmlmixed.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/clike/clike.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/php/php.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/shell/shell.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/python/python.min.js"></script>
+   
+<script src="/js/busuanzi.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    if ($('span[id^="busuanzi_"]').length) {
+      initialBusuanzi();
+    }
+  });
+</script>
+ 
+<link rel="stylesheet" href="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="//cdn.bootcss.com/photoswipe/4.1.3/default-skin/default-skin.min.css">
+
+
+<script src="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
             </div>
         </div>
     </div>
-</footer>
+</div>
+  
 
-<!-- After footer scripts -->
+<script>
+  function initialTyped() {
+    var typedTextEl = $('.typed-text');
+    if (typedTextEl && typedTextEl.length > 0) {
+      var typed = new Typed('.typed-text', {
+        strings: ['Think like an artist, develop like an artisan', '艺术家思维去思考问题，工匠创造精神去开发'],
+        typeSpeed: 90,
+        loop: true,
+        loopCount: Infinity,
+        backSpeed: 20,
+      });
+    }
+  }
 
-<!-- jQuery -->
-<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
-
-<!-- Tween Max -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
-
-<!-- Gallery -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
-
-<!-- Custom JavaScript -->
-
-<script src="/js/main.js"></script>
-
-
-<!-- Disqus Comments -->
+  if ($('.article-header') && $('.article-header').length) {
+    $(document).ready(function () {
+      initialTyped();
+    });
+  }
+</script>
 
 
 
-</body>
+
+<!-- 引用依赖 -->
+<script>document.write(aplayerconf)</script>
+
+
+
 
 </html>
