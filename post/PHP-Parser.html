@@ -120,13 +120,13 @@ What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,">
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>Words count</i>
-                    15k
+                    9.7k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                    14 mins.
+                    9 mins.
                 </span>
                 
                 
@@ -168,33 +168,33 @@ What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,">
 <p><a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/tree/master/doc">PHP-Parser/doc at master · nikic/PHP-Parser (github.com)</a></p>
 <p>最基本的是要理解其中<a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/blob/master/doc/component/Walking_the_AST.markdown">Walking the AST</a>的部分</p>
 <h2 id="初始化解析器"><a href="#初始化解析器" class="headerlink" title="初始化解析器"></a>初始化解析器</h2><p>首先创建实例</p>
-<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token keyword">use</span> <span class="token package">PhpParser<span class="token punctuation">\</span>ParserFactory</span><span class="token punctuation">;</span>
-<span class="token variable">$parser</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ParserFactory</span><span class="token punctuation">)</span><span class="token operator">-&gt;</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token class-name static-context">ParserFactory</span><span class="token operator">::</span><span class="token constant">PREFER_PHP7</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
+<pre><code class="php">use PhpParser\ParserFactory;
+$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);
+</code></pre>
 <p>这其中有以下参数</p>
 <p>KindBehaviorParserFactory::PREFER_PHP7Try to parse code as PHP 7. If this fails, try to parse it as PHP 5.ParserFactory::PREFER_PHP5Try to parse code as PHP 5. If this fails, try to parse it as PHP 7.ParserFactory::ONLY_PHP7Parse code as PHP 7.ParserFactory::ONLY_PHP5Parse code as PHP 5.</p>
 <p>create还有一个参数Lexer，这里先不做讨论</p>
 <p>在实例化之后我们就可以通过</p>
-<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token variable">$stmts</span> <span class="token operator">=</span> <span class="token variable">$parser</span><span class="token operator">-&gt;</span><span class="token function">parse</span><span class="token punctuation">(</span><span class="token variable">$code</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+<pre><code class="php">$stmts = $parser-&gt;parse($code);
+</code></pre>
 <p>来将代码转换成AST</p>
 <p>为了防止抛出异常，最好在try….catch中执行</p>
 <h3 id="生成更加直观的AST"><a href="#生成更加直观的AST" class="headerlink" title="生成更加直观的AST"></a>生成更加直观的AST</h3><p>当我们var_dump上面的$stmt时，会得到一个比较乱的AST，可以使用NodeDump将其转化为更加直观的AST</p>
 <p>这里需要使用NodeDump</p>
 <p>对于代码</p>
-<pre class="line-numbers language-PHP" data-language="PHP"><code class="language-PHP">&lt;?php
+<pre><code class="PHP">&lt;?php
 function printLine($msg) {
     echo $msg, "\n";
 }
-printLine('Hello World!!!');<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+printLine('Hello World!!!');
+</code></pre>
 <p>将其转换为AST</p>
-<pre class="line-numbers language-PHP" data-language="PHP"><code class="language-PHP">&lt;?php
+<pre><code class="PHP">&lt;?php
 use PhpParser\NodeDumper;
-$nodeDumper = new NodeDumper;echo $nodeDumper-&gt;dump($stmts), "\n";<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-
+$nodeDumper = new NodeDumper;echo $nodeDumper-&gt;dump($stmts), "\n";
+</code></pre>
 <p>得到以下输出</p>
-<pre class="line-numbers language-YAML" data-language="YAML"><code class="language-YAML">array(
+<pre><code class="YAML">array(
     0: Stmt_Function(
         byRef: false
         name: Identifier(
@@ -244,8 +244,8 @@ $nodeDumper = new NodeDumper;echo $nodeDumper-&gt;dump($stmts), "\n";<span aria-
             )
         )
     )
-)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+)
+</code></pre>
 <h3 id="Node-tree-structure"><a href="#Node-tree-structure" class="headerlink" title="Node tree structure"></a>Node tree structure</h3><p>上面我们可以看到生成了很多的Node类型</p>
 <p>PHP是一个成熟的脚本语言，它大约有140个不同的节点。但是为了方便使用，将他们分为三类：</p>
 <ul>
@@ -259,11 +259,11 @@ $nodeDumper = new NodeDumper;echo $nodeDumper-&gt;dump($stmts), "\n";<span aria-
 </li>
 </ul>
 <h3 id="Pretty-printer"><a href="#Pretty-printer" class="headerlink" title="Pretty printer"></a>Pretty printer</h3><p>Prettyprinter用来将我们修改后的AST转换回PHP代码，使用如下</p>
-<pre class="line-numbers language-php" data-language="php"><code class="language-php">use PhpParser\Error;
+<pre><code class="php">use PhpParser\Error;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter;
-$code = "<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>?php</span> <span class="token attr-name">echo</span> <span class="token attr-name">'Hi</span> <span class="token attr-name">',</span> <span class="token attr-name">hi\\getTarget();";</span>
-<span class="token attr-name">$parser</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span> (new</span> <span class="token attr-name">ParserFactory)-</span><span class="token punctuation">&gt;</span></span>create(ParserFactory::PREFER_PHP7);$prettyPrinter = new PrettyPrinter\Standard;
+$code = "&lt;?php echo 'Hi ', hi\\getTarget();";
+$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);$prettyPrinter = new PrettyPrinter\Standard;
 try {
     //生成AST
     $stmts = $parser-&gt;parse($code);
@@ -279,16 +279,16 @@ try {
     echo $code;
 } catch (Error $e) {
     echo 'Parse Error: ', $e-&gt;getMessage();
-}<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+}
+</code></pre>
 <p>在反混淆中我们一般很少使用$stmts[0]这种方式，因为我们要考虑节点的各种类型</p>
 <p>此外还有prettyPrintExpr()，它可以用来输出一个表达式类型的节点</p>
 <p>例如当你需要提取全局变量时</p>
-<pre class="line-numbers language-PHP" data-language="PHP"><code class="language-PHP">&lt;?php
-    $a = $_POST['a'];<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
+<pre><code class="PHP">&lt;?php
+    $a = $_POST['a'];
+</code></pre>
 <p>他的语法树如下</p>
-<pre class="line-numbers language-YAML" data-language="YAML"><code class="language-YAML">0: Stmt_Expression(
+<pre><code class="YAML">0: Stmt_Expression(
         expr: Expr_Assign(
             var: Expr_Variable(
                 name: a
@@ -302,14 +302,14 @@ try {
                 )
             )
         )
-    )<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+    )
+</code></pre>
 <p>如果我想获取$_POST[‘a’],我就需要先判断节点类型是不是<code>Expr_ArrayDimFetch</code></p>
 <p>然后判断<code>$node-&gt;var-&gt;name</code>是不是全局变量</p>
 <p>最后提取<code>$node-&gt;var-&gt;name</code>和<code>$node-&gt;dim-&gt;value</code>然后将它们拼接</p>
 <p>当我的全局变量为<code>$_POST[a]</code>时，dim部分的AST也会变化，我们还需要考虑这种情况。</p>
 <p>但是我们可以使用</p>
-<pre class="line-numbers language-PHP" data-language="PHP"><code class="language-PHP">/*
+<pre><code class="PHP">/*
     用来识别全局变量;
     如果要获取全局变量格式无需考虑value的节点类型
     expr: Expr_ArrayDimFetch(
@@ -321,16 +321,16 @@ try {
         if ($node instanceof Node\Expr\ArrayDimFetch &amp;&amp; $node-&gt;var instanceof Node\Expr\Variable &amp;&amp; (in_array($node-&gt;var-&gt;name ,GLOBAL_VAR)))
         {
             self::$globalname = $this-&gt;prettyPrinter-&gt;prettyPrintExpr($node);
-        }<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+        }
+</code></pre>
 <p>其中</p>
-<pre class="line-numbers language-PHP" data-language="PHP"><code class="language-PHP">$this-&gt;prettyPrinter-&gt;prettyPrintExpr($node);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+<pre><code class="PHP">$this-&gt;prettyPrinter-&gt;prettyPrintExpr($node);
+</code></pre>
 <p>就会返回该Expr节点的表达式，无论是<code>$_POST['a']</code>还是<code>$_POST[a]</code>都可以正常返回</p>
 <p><a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/blob/master/doc/component/Pretty_printing.markdown">PHP-Parser/Pretty_printing.markdown at master · nikic/PHP-Parser (github.com)</a></p>
 <h2 id="Node-traversation"><a href="#Node-traversation" class="headerlink" title="Node traversation"></a>Node traversation</h2><p>我们使用PHP-Parser对文件的节点进行修改，最关键的就是编写节点遍历操作</p>
 <p>使用<code>PhpParser\NodeTraverser</code>我们可以遍历每一个节点，举几个简单的例子：解析php中的所有字符串，并输出</p>
-<pre class="line-numbers language-PHP" data-language="PHP"><code class="language-PHP">&lt;?php
+<pre><code class="PHP">&lt;?php
 use PhpParser\Error;
 use PhpParser\ParserFactory;
 use PhpParser\NodeTraverser;
@@ -369,10 +369,10 @@ try {
     return;
 }
 
-?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+?&gt;
+</code></pre>
 <p>替换php脚本中函数以及类的成员方法函数名为小写</p>
-<pre class="line-numbers language-PHP" data-language="PHP"><code class="language-PHP">class MyVisitor extends NodeVisitorAbstract{
+<pre><code class="PHP">class MyVisitor extends NodeVisitorAbstract{
     public function leaveNode(Node $node)
     {
         if( $node instanceof Node\Expr\FuncCall) {
@@ -385,14 +385,14 @@ try {
             $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
         }
     }
-}<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+}
+</code></pre>
 <p>需要注意的是所有的<code>visitors</code>都必须实现<code>PhpParser\NodeVisitor</code>接口，该接口定义了如下4个方法：</p>
-<pre class="line-numbers language-PHP" data-language="PHP"><code class="language-PHP">public function beforeTraverse(array $nodes);
+<pre><code class="PHP">public function beforeTraverse(array $nodes);
 public function enterNode(\PhpParser\Node $node);
 public function leaveNode(\PhpParser\Node $node);
-public function afterTraverse(array $nodes);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
+public function afterTraverse(array $nodes);
+</code></pre>
 <ul>
 <li><p><code>beforeTraverse</code>方法在遍历开始之前调用一次，并将其传递给调用遍历器的节点。此方法可用于在遍历之前重置值或准备遍历树。</p>
 </li>

@@ -121,13 +121,13 @@
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>Words count</i>
-                    24k
+                    5k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                    22 mins.
+                    5 mins.
                 </span>
                 
                 
@@ -170,122 +170,122 @@
 <p>根据Github上的反混淆项目和Deof项目进行改造，尽量理解两个项目的运行方式以及对待不同混淆时的操作</p>
 <h3 id="Deobf"><a href="#Deobf" class="headerlink" title="Deobf"></a>Deobf</h3><p>编写比较有逻辑，整体框架一目了然，对应文件的功能比较清晰</p>
 <p>但是现在功能不够全，对于一些情况目前无法处理，比如</p>
-<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span> 
-<span class="token variable">$z0</span><span class="token operator">=</span><span class="token variable">$_REQUEST</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'sort'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token variable">$q1</span><span class="token operator">=</span><span class="token string single-quoted-string">''</span><span class="token punctuation">;</span>
-<span class="token variable">$c2</span><span class="token operator">=</span><span class="token string double-quoted-string">"wt8m4;6eb39fxl*s5/.yj7(pod_h1kgzu0cqr)aniv2"</span><span class="token punctuation">;</span>
-<span class="token variable">$y3</span><span class="token operator">=</span><span class="token keyword">array</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">,</span><span class="token number">38</span><span class="token punctuation">,</span><span class="token number">15</span><span class="token punctuation">,</span><span class="token number">7</span><span class="token punctuation">,</span><span class="token number">6</span><span class="token punctuation">,</span><span class="token number">4</span><span class="token punctuation">,</span><span class="token number">26</span><span class="token punctuation">,</span><span class="token number">25</span><span class="token punctuation">,</span><span class="token number">7</span><span class="token punctuation">,</span><span class="token number">34</span><span class="token punctuation">,</span><span class="token number">24</span><span class="token punctuation">,</span><span class="token number">25</span><span class="token punctuation">,</span><span class="token number">7</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">foreach</span><span class="token punctuation">(</span><span class="token variable">$y3</span> <span class="token keyword">as</span> <span class="token variable">$h4</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-	<span class="token variable">$q1</span><span class="token operator">.=</span><span class="token variable">$c2</span><span class="token punctuation">[</span><span class="token variable">$h4</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-<span class="token variable">$v5</span><span class="token operator">=</span><span class="token function">strrev</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"noi"</span><span class="token operator">.</span><span class="token string double-quoted-string">"tcnuf"</span><span class="token operator">.</span><span class="token string double-quoted-string">"_eta"</span><span class="token operator">.</span><span class="token string double-quoted-string">"erc"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token variable">$j6</span><span class="token operator">=</span><span class="token variable">$v5</span><span class="token punctuation">(</span><span class="token string double-quoted-string">""</span><span class="token punctuation">,</span><span class="token variable">$q1</span><span class="token punctuation">(</span><span class="token variable">$z0</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token variable">$j6</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token delimiter important">?&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+<pre><code class="php">&lt;?php 
+$z0=$_REQUEST['sort'];
+$q1='';
+$c2="wt8m4;6eb39fxl*s5/.yj7(pod_h1kgzu0cqr)aniv2";
+$y3=array(8,38,15,7,6,4,26,25,7,34,24,25,7);
+foreach($y3 as $h4) {
+    $q1.=$c2[$h4];
+}
+$v5=strrev("noi"."tcnuf"."_eta"."erc");
+$j6=$v5("",$q1($z0));
+$j6();
+?&gt;
+</code></pre>
 <p>在<code>$j6=$v5("",$q1($z0));</code>这里不能直接反混淆出v5的值</p>
 <p>还有一些其他的功能没有实现，只实现了基础的反混淆，不过因为骨架已经搭好，未来应该在该项目基础上进行编写</p>
 <h3 id="一些常用的反混淆操作"><a href="#一些常用的反混淆操作" class="headerlink" title="一些常用的反混淆操作"></a>一些常用的反混淆操作</h3><h4 id="字符串函数直接返回值"><a href="#字符串函数直接返回值" class="headerlink" title="字符串函数直接返回值"></a>字符串函数直接返回值</h4><p>这里以base64_decode为例，后续可以把字符串操作函数放在数组里然后进行判断</p>
-<pre class="line-numbers language-php" data-language="php"><code class="language-php">function leavenode($node){
+<pre><code class="php">function leavenode($node){
     if($node instanceof PhpParser\Node\Expr\FuncCall &amp;&amp; $node-&gt;name-&gt;parts[0] == "base64_decode"){
         return new PhpParser\Node\Scalar\String_($node-&gt;name-&gt;parts[0]($node-&gt;args[0]-&gt;value-&gt;value));
     }
 }
 
 //例子如下
-<span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
-<span class="token function">base64_decode</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"UEhQLVBhcnNlcg"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token operator">--</span>After parser<span class="token punctuation">:</span><span class="token operator">--</span>
+&lt;?php
+base64_decode("UEhQLVBhcnNlcg");
+--After parser:--
     
-<span class="token operator">&lt;</span><span class="token operator">?</span>php
-<span class="token string single-quoted-string">'PHP-Parser'</span><span class="token punctuation">;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
+&lt;?php
+'PHP-Parser';
+</code></pre>
 <h4 id="字符操作函数传递给变量然后动态调用"><a href="#字符操作函数传递给变量然后动态调用" class="headerlink" title="字符操作函数传递给变量然后动态调用"></a>字符操作函数传递给变量然后动态调用</h4><p>这个目前我没有啥好的想法，我的做法是设置两个Visitor，第一个Visitor遍历到函数声明的时候把函数名和函数值存在一个static数组里，第二个Visitor为进行操作的，当遍历到$node为函数调用时，去数组里进行查询，返回对应变量的值，然后返回成String_节点</p>
 <p>目前只写了针对单字符编码的测试，还有的函数需要多个参数，参数可能为字符也可能为变量，这里后续要考虑(初级想法是argv[]依次取出通过循环拼接命令，后续进行尝试)，还有要设计数据结构，变量可以给变量复制，是不是可以使用链表进行操作，终点指向字符串等。</p>
-<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token keyword">Class</span> <span class="token class-name-definition class-name">StrVisitor</span> <span class="token keyword">extends</span> <span class="token class-name">NodeVisitorAbstract</span><span class="token punctuation">{</span>
-    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function-definition function">__construct</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token variable">$this</span><span class="token operator">-&gt;</span><span class="token property">variable</span> <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Variable</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
+<pre><code class="php">Class StrVisitor extends NodeVisitorAbstract{
+    public function __construct()
+    {
+        $this-&gt;variable = new Variable;
+    }
 
-    <span class="token keyword">function</span> <span class="token function-definition function">leavenode</span><span class="token punctuation">(</span><span class="token variable">$node</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token variable">$node</span> <span class="token keyword">instanceof</span> <span class="token class-name class-name-fully-qualified">PhpParser<span class="token punctuation">\</span>Node<span class="token punctuation">\</span>Expr<span class="token punctuation">\</span>Assign</span> <span class="token operator">&amp;&amp;</span> <span class="token variable">$node</span><span class="token operator">-&gt;</span><span class="token property">var</span> <span class="token keyword">instanceof</span> <span class="token class-name class-name-fully-qualified">PhpParser<span class="token punctuation">\</span>Node<span class="token punctuation">\</span>Expr<span class="token punctuation">\</span>Variable</span> <span class="token operator">&amp;&amp;</span> <span class="token variable">$node</span><span class="token operator">-&gt;</span><span class="token property">expr</span> <span class="token keyword">instanceof</span> <span class="token class-name class-name-fully-qualified">PhpParser<span class="token punctuation">\</span>Node<span class="token punctuation">\</span>Scalar<span class="token punctuation">\</span>String_</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-            <span class="token variable">$this</span><span class="token operator">-&gt;</span><span class="token property">variable</span><span class="token operator">-&gt;</span><span class="token function">pushvariable</span><span class="token punctuation">(</span><span class="token variable">$node</span><span class="token operator">-&gt;</span><span class="token property">var</span><span class="token operator">-&gt;</span><span class="token property">name</span><span class="token punctuation">,</span><span class="token variable">$node</span><span class="token operator">-&gt;</span><span class="token property">expr</span><span class="token operator">-&gt;</span><span class="token property">value</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">}</span>
-    <span class="token punctuation">}</span>
+    function leavenode($node){
+        if($node instanceof PhpParser\Node\Expr\Assign &amp;&amp; $node-&gt;var instanceof PhpParser\Node\Expr\Variable &amp;&amp; $node-&gt;expr instanceof PhpParser\Node\Scalar\String_) {
+            $this-&gt;variable-&gt;pushvariable($node-&gt;var-&gt;name,$node-&gt;expr-&gt;value);
+        }
+    }
 
-    <span class="token keyword">function</span> <span class="token function-definition function">afterTraverse</span><span class="token punctuation">(</span><span class="token keyword type-hint">array</span> <span class="token variable">$nodes</span><span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token variable">$this</span><span class="token operator">-&gt;</span><span class="token property">variable</span><span class="token operator">-&gt;</span><span class="token function">output</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
+    function afterTraverse(array $nodes)
+    {
+        $this-&gt;variable-&gt;output();
+    }
+}
 
-<span class="token keyword">Class</span> <span class="token class-name-definition class-name">FuncVisitor</span> <span class="token keyword">extends</span> <span class="token class-name">NodeVisitorAbstract</span><span class="token punctuation">{</span>
-    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function-definition function">__construct</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token variable">$this</span><span class="token operator">-&gt;</span><span class="token property">variable</span> <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Variable</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
+Class FuncVisitor extends NodeVisitorAbstract{
+    public function __construct()
+    {
+        $this-&gt;variable = new Variable;
+    }
 
-    <span class="token keyword">function</span> <span class="token function-definition function">leavenode</span><span class="token punctuation">(</span><span class="token variable">$node</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token variable">$node</span> <span class="token keyword">instanceof</span> <span class="token class-name class-name-fully-qualified">PhpParser<span class="token punctuation">\</span>Node<span class="token punctuation">\</span>Expr<span class="token punctuation">\</span>FuncCall</span> <span class="token operator">&amp;&amp;</span> <span class="token variable">$node</span><span class="token operator">-&gt;</span><span class="token property">name</span> <span class="token keyword">instanceof</span> <span class="token class-name class-name-fully-qualified">PhpParser<span class="token punctuation">\</span>Node<span class="token punctuation">\</span>Expr<span class="token punctuation">\</span>Variable</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-            <span class="token variable">$value</span> <span class="token operator">=</span> <span class="token variable">$node</span><span class="token operator">-&gt;</span><span class="token property">args</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token operator">-&gt;</span><span class="token property">value</span><span class="token operator">-&gt;</span><span class="token property">value</span><span class="token punctuation">;</span>
-            <span class="token variable">$name</span> <span class="token operator">=</span> <span class="token variable">$this</span><span class="token operator">-&gt;</span><span class="token property">variable</span><span class="token operator">-&gt;</span><span class="token function">popvariable</span><span class="token punctuation">(</span><span class="token variable">$node</span><span class="token operator">-&gt;</span><span class="token property">name</span><span class="token operator">-&gt;</span><span class="token property">name</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token variable">$name</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-                <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name class-name-fully-qualified">Node<span class="token punctuation">\</span>Scalar<span class="token punctuation">\</span>String_</span><span class="token punctuation">(</span><span class="token variable">$name</span><span class="token punctuation">(</span><span class="token variable">$value</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token punctuation">}</span>
-        <span class="token punctuation">}</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
+    function leavenode($node){
+        if($node instanceof PhpParser\Node\Expr\FuncCall &amp;&amp; $node-&gt;name instanceof PhpParser\Node\Expr\Variable) {
+            $value = $node-&gt;args[0]-&gt;value-&gt;value;
+            $name = $this-&gt;variable-&gt;popvariable($node-&gt;name-&gt;name);
+            if($name){
+                return new Node\Scalar\String_($name($value));
+            }
+        }
+    }
+}
 
-<span class="token keyword">Class</span> <span class="token class-name-definition class-name">Variable</span><span class="token punctuation">{</span>
-    <span class="token keyword">static</span> <span class="token variable">$variablelist</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function-definition function">pushvariable</span><span class="token punctuation">(</span><span class="token variable">$variablename</span><span class="token punctuation">,</span><span class="token variable">$variablevalue</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-        <span class="token keyword static-context">self</span><span class="token operator">::</span><span class="token variable">$variablelist</span><span class="token punctuation">[</span><span class="token variable">$variablename</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token variable">$variablevalue</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
+Class Variable{
+    static $variablelist = [];
+    public function pushvariable($variablename,$variablevalue){
+        self::$variablelist[$variablename] = $variablevalue;
+    }
 
-    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function-definition function">popvariable</span><span class="token punctuation">(</span><span class="token variable">$variablename</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-        <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">isset</span><span class="token punctuation">(</span><span class="token keyword static-context">self</span><span class="token operator">::</span><span class="token variable">$variablelist</span><span class="token punctuation">[</span><span class="token variable">$variablename</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-            <span class="token keyword">return</span> <span class="token keyword static-context">self</span><span class="token operator">::</span><span class="token variable">$variablelist</span><span class="token punctuation">[</span><span class="token variable">$variablename</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-        <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span>
-            <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
-        <span class="token punctuation">}</span>
-    <span class="token punctuation">}</span>
+    public function popvariable($variablename){
+        if(isset(self::$variablelist[$variablename])){
+            return self::$variablelist[$variablename];
+        }else{
+            return 0;
+        }
+    }
 
-    <span class="token keyword">public</span> <span class="token keyword">function</span> <span class="token function-definition function">output</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
-        <span class="token function">var_dump</span><span class="token punctuation">(</span><span class="token keyword static-context">self</span><span class="token operator">::</span><span class="token variable">$variablelist</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
+    public function output(){
+        var_dump(self::$variablelist);
+    }
+}
+</code></pre>
 <p>测试如下</p>
-<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
-<span class="token variable">$a</span> <span class="token operator">=</span> <span class="token string single-quoted-string">'base64_decode'</span><span class="token punctuation">;</span>
-<span class="token variable">$b</span> <span class="token operator">=</span> <span class="token string single-quoted-string">'str_rot13'</span><span class="token punctuation">;</span>
-<span class="token variable">$c</span> <span class="token operator">=</span> <span class="token string single-quoted-string">'chr'</span><span class="token punctuation">;</span>
-<span class="token variable">$d</span> <span class="token operator">=</span> <span class="token string single-quoted-string">'strtolower'</span><span class="token punctuation">;</span>
+<pre><code class="php">&lt;?php
+$a = 'base64_decode';
+$b = 'str_rot13';
+$c = 'chr';
+$d = 'strtolower';
 
-<span class="token variable">$d</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'@_POST'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token variable">$c</span><span class="token punctuation">(</span><span class="token number">97</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token variable">$b</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'CUC-Cnefre'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+$d('@_POST');
+$c(97);
+$b('CUC-Cnefre');
 
-<span class="token operator">--</span>After parser<span class="token punctuation">:</span><span class="token operator">--</span>
+--After parser:--
 
-<span class="token operator">&lt;</span><span class="token operator">?</span><span class="token class-name type-declaration">php</span>
+&lt;?php
 
-<span class="token variable">$a</span> <span class="token operator">=</span> <span class="token string single-quoted-string">'base64_decode'</span><span class="token punctuation">;</span>
-<span class="token variable">$b</span> <span class="token operator">=</span> <span class="token string single-quoted-string">'str_rot13'</span><span class="token punctuation">;</span>
-<span class="token variable">$c</span> <span class="token operator">=</span> <span class="token string single-quoted-string">'chr'</span><span class="token punctuation">;</span>
-<span class="token variable">$d</span> <span class="token operator">=</span> <span class="token string single-quoted-string">'strtolower'</span><span class="token punctuation">;</span>
-<span class="token string single-quoted-string">'@_post'</span><span class="token punctuation">;</span>
-<span class="token string single-quoted-string">'a'</span><span class="token punctuation">;</span>
-<span class="token string single-quoted-string">'PHP-Parser'</span><span class="token punctuation">;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+$a = 'base64_decode';
+$b = 'str_rot13';
+$c = 'chr';
+$d = 'strtolower';
+'@_post';
+'a';
+'PHP-Parser';
+</code></pre>
 <p>针对preg_replace这种多参数函数，php_deobf可以进行混淆出来，后续看一下怎么实现的<br><del>这里挖个坑，每天补一点</del></p>
 <h2 id="Yara"><a href="#Yara" class="headerlink" title="Yara"></a>Yara</h2><p>Yara规则依靠于积累的规则和开源项目例如</p>
 <p><a target="_blank" rel="noopener" href="https://github.com/ruppde/yara_rules/blob/f375dbafa7b6aabd4e8fe8506a9e3ab9b8a57cbd/webshell/gen_webshells.yar">yara_rules/gen_webshells.yar</a></p>
 <p>目前的想法是将工作的重点放在反混淆上，因为如果能将反混淆做的尽量彻底，那么规则就会很好写。</p>
 <h2 id="两者结合"><a href="#两者结合" class="headerlink" title="两者结合"></a>两者结合</h2><p>做一个后端或者直接在反混淆结束之后添加</p>
-<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token function">system</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"yara -r webshell/rule webshell/sample"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
+<pre><code class="php">system("yara -r webshell/rule webshell/sample");
+</code></pre>
 <p>如果有时间还是想做一个好看的后端</p>
 <h2 id="短期要做的事"><a href="#短期要做的事" class="headerlink" title="短期要做的事"></a>短期要做的事</h2><ul>
 <li>看一下**<a target="_blank" rel="noopener" href="https://github.com/L2ksy0d/PHPDeobfuscator">PHPDeobfuscator</a>**是怎么解决变量值的存储和后续替换的(目前的想法是如果遍历到遍历声明或者变量赋值，就把变量名和值传给一个数组，当后续遇到变量被调用时从数组调值进行替换，明天试试)</li>
