@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Hexo</title>
+  <title>RainSec</title>
   
   
   <link href="https://l2ksy0d.top/atom.xml" rel="self"/>
@@ -10,7 +10,7 @@
   <id>https://l2ksy0d.top/</id>
   
   <author>
-    <name>John Doe</name>
+    <name>RainSec</name>
     
   </author>
   
