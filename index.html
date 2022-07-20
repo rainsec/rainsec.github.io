@@ -193,13 +193,7 @@
 $ lsb_release -a
 No LSB modules are available.
 Distributor ID: Ubuntu
-Description:    Ubuntu 20.04 LTS
-Release:        20.04
-Codename:       focal
-</code></pre>
-<h3 id="查看当前已经安装的-Kernel-Image"><a href="#查看当前已经安装的-Kernel-Image" class="headerlink" title="查看当前已经安装的 Kernel Image"></a>查看当前已经安装的 Kernel Image</h3><pre><code class="shell">$ dpkg --get-selections |grep linux-image
-linux-image-5.4.0-90-generic                    purge
-...</code></pre>
+Description...</code></pre>
             
             <span class="read-more"><a href="/post/Ubuntu20.04%20%E5%8D%87%E7%BA%A7%E9%99%8D%E7%BA%A7%E5%86%85%E6%A0%B8%E5%88%B0%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC.html" title="Read article" class="posttitle">Read article</a>
                 <b class="iconfont icon-arrow-right- gradient-text"></b></span>
@@ -263,8 +257,7 @@ linux-image-5.4.0-90-generic                    purge
                 <h1 id="Go-fuzz的解析与思考"><a href="#Go-fuzz的解析与思考" class="headerlink" title="Go-fuzz的解析与思考"></a>Go-fuzz的解析与思考</h1><h2 id="go-fuzz"><a href="#go-fuzz" class="headerlink" title="go-fuzz"></a>go-fuzz</h2><blockquote>
 <p>Go-fuzz的原理很多都是基于AFL，这里只分析了一些它独特的地方，收获很多，也希望可以和大家交流，如有分析错误还望交流指正。</p>
 </blockquote>
-<p>​        go-fuzz是google开源的一款go语言fuzz框架，它和AFL很大的一个不同是在于，AFL通常通过对未修改的文件的输入进行操作，而go-fuzz需要你编写一个Fuzz函数，go-fuzz通过不断的调用该函数来进行fuzz，前者通常会为每一个输入创建一个新的进程，后者则是不断的调用Fuzz函数因此不需要经常启动或者重启进程。</p>
-<h2 id="什么是覆盖引导型Fuzz"><a href="#什么是覆盖引导型Fuzz" class="headerlink" title="什么是覆盖引导型Fuzz"></a>什么是覆盖引导型Fuzz</h2><p>​        覆盖引导型Fuzz通过代码覆盖率信息来决定一个突变是否有效，...</p>
+<p>​        go-fuzz是google开源的一款go语言fuzz框架，它和AFL很大的一个不同是在于，AFL通常通过对未修改的文件的...</p>
             
             <span class="read-more"><a href="/post/Go-Fuzz%E8%A7%A3%E6%9E%90%E4%B8%8E%E6%80%9D%E8%80%83.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>
@@ -311,11 +304,7 @@ linux-image-5.4.0-90-generic                    purge
         <div class="md-content animated fadeIn">
             
                 <p><strong>EventListener XSS</strong><br>XSS作为混”低保“的最佳漏洞，我们在日常测试中没少碰到，但是<code>DOM</code>型XSS就相对来说不容易被发现了，而本文要介绍的则是更难发现并利用的监听<code>postMessage</code>所导致漏洞。首先从事件监听器开始说起</p>
-<h2 id="事件监听器"><a href="#事件监听器" class="headerlink" title="事件监听器"></a>事件监听器</h2><p>事件监控器可以为指定对象设置一个回调函数，当该对象的指定事件被触发时会被执行：</p>
-<pre><code class="HTML">&lt;table id="outside"&gt;
-    &lt;tr&gt;&lt;td id="t1"&gt;one&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td id="t2"&gt;two&lt;/td&gt;&lt;/tr&gt;
-&lt...</code></pre>
+<h2 id="事件监听器"><a href="#事件监听器" class="headerlink" title="事件监听器"></a>事件监听器</h2><p>事件监控器可以为指定对象设置一个回调函数，当该对象的指定...</p>
             
             <span class="read-more"><a href="/post/EventListener%20XSS.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>
@@ -364,10 +353,61 @@ linux-image-5.4.0-90-generic                    purge
                 <h1 id="Linux-Kernel-保护机制绕过"><a href="#Linux-Kernel-保护机制绕过" class="headerlink" title="Linux Kernel 保护机制绕过"></a>Linux Kernel 保护机制绕过</h1><blockquote>
 <p>好久没搞kernel的洞了，最近分析的这方面的洞有点多，相关的Exp任务也比较多，因此学习总结一下方便查找和记忆。</p>
 </blockquote>
-<h2 id="SMEP-KPTI-bypass"><a href="#SMEP-KPTI-bypass" class="headerlink" title="SMEP + KPTI bypass"></a>SMEP + KPTI bypass</h2><p>​        SMEP是SupervisorModeExecutionPrevention的缩写，主要的作用其实就是抵御类似ret2user这样的攻击，简单来说就是阻止内核执行用户态传递的代码。</p>
-<p>​        检测计算机是否开启SMEP保护的方式很简单，<code>cat /proc/cpuinfo | grep smep</code>，如果有匹配到一些信息的话就说明计算机开启了SMEP保护。在CTF赛事中一般会给一些kernel启动的sh脚本，从...</p>
+<h2 id="SMEP-KPTI-bypass"><a href="#SMEP-KPTI-bypass" class="headerlink" title="SMEP + KPTI bypass"></a>SMEP + KPTI bypass</h2><p>​        SMEP是SupervisorModeExecutionPrevention的缩写，主要的作用其实就是...</p>
             
             <span class="read-more"><a href="/post/Linux%20Kernel%20%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6%E7%BB%95%E8%BF%87.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
+        </div>
+    </div>
+</div>
+
+
+<div class="post" id="post">
+    <div class="post-cover animated fadeIn" style="
+            background-image:
+            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/realworld.png);">
+    </div>
+    <div class="else">
+        <p class="animated fadeInDown">
+            
+                <a href="/categories/CTF">
+                  <b>「 </b>CTF<b> 」</b>
+                </a>
+            
+            January 28, 2022
+        </p>
+        <h3 class="post-title animated fadeInDown"><a href="/post/Qilin%E6%A1%86%E6%9E%B6%E5%88%86%E6%9E%90.html" title="RealWorld CTF之qiling框架分析" class="posttitle">RealWorld CTF之qiling框架分析</a></h3>
+        
+            <p class="post-count animated fadeInDown">
+                
+                    <span>
+                        <b class="iconfont icon-text2"></b> <i>Words count</i>
+                        17k
+                    </span>
+                
+                
+                    <span>
+                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                        15 mins.
+                    </span>
+                
+                
+            </p>
+            
+                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
+            
+        
+        <div class="md-content animated fadeIn">
+            
+                <h1 id="RealWorld-CTF之qiling框架分析"><a href="#RealWorld-CTF之qiling框架分析" class="headerlink" title="RealWorld CTF之qiling框架分析"></a>RealWorld CTF之qiling框架分析</h1><h2 id="qiling"><a href="#qiling" class="headerlink" title="qiling"></a>qiling</h2><p>​当时题目就给了一个qiling的使用的用例，甚至和官方文档上面的用例差不多因此肯定是库的问题。</p>
+<pre><code class="python">#!/usr/bin/env python3
+
+import os
+import sys
+import base64
+import tempfile...</code></pre>
+            
+            <span class="read-more"><a href="/post/Qilin%E6%A1%86%E6%9E%B6%E5%88%86%E6%9E%90.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>
     </div>
 </div>
@@ -415,12 +455,7 @@ linux-image-5.4.0-90-generic                    purge
 <span id="more"></span>
 
 <h2 id="What-is-PHP-Parser"><a href="#What-is-PHP-Parser" class="headerlink" title="What is PHP-Parser"></a>What is PHP-Parser</h2><p><code>PHP-Parser</code>是<code>nikic</code>用PHP编写的PHP5.2到PHP7.4解析器，其目的是简化静态代码分析和操作</p>
-<h2 id="PHP-Parser的基础使用"><a href="#PHP-Parser的基础使用" class="headerlink" title="PHP-Parser的基础使用"></a>PHP-Parser的基础使用</h2><p>这里先贴一下官方文档</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/tree/master/doc">PHP-Parser/doc at master · nikic/PHP-Parser (github.com)</a></p>
-<p>最基本的是要理解其中<a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/blob/master/doc/component/Walking_the_AST.markdown">Walking the AST</a>的部分</p>
-<h2 id="初始化解析器"><a href="#初始化解析器" class="headerlink" title="初始化解析器"></a>初始化解析器</h2><p>首先创建实例</p>
-<pre><code class="php">use PhpParser\ParserFactory;
-$parser = (new ParserFactory...</code></pre>
+<h2 id="PHP-Parser的基础使用"><a href="#PHP-Parser的基础使用" class="headerlink" title="PHP-Parser的基础使用"></a>PHP-Parser的基础使用</h2><p>这里先贴一下官方文档...</p>
             
             <span class="read-more"><a href="/post/PHP-Parser.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>

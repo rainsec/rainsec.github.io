@@ -188,8 +188,7 @@
             <h1 id="Go-fuzz的解析与思考"><a href="#Go-fuzz的解析与思考" class="headerlink" title="Go-fuzz的解析与思考"></a>Go-fuzz的解析与思考</h1><h2 id="go-fuzz"><a href="#go-fuzz" class="headerlink" title="go-fuzz"></a>go-fuzz</h2><blockquote>
 <p>Go-fuzz的原理很多都是基于AFL，这里只分析了一些它独特的地方，收获很多，也希望可以和大家交流，如有分析错误还望交流指正。</p>
 </blockquote>
-<p>​        go-fuzz是google开源的一款go语言fuzz框架，它和AFL很大的一个不同是在于，AFL通常通过对未修改的文件的输入进行操作，而go-fuzz需要你编写一个Fuzz函数，go-fuzz通过不断的调用该函数来进行fuzz，前者通常会为每一个输入创建一个新的进程，后者则是不断的调用Fuzz函数因此不需要经常启动或者重启进程。</p>
-<h2 id="什么是覆盖引导型Fuzz"><a href="#什么是覆盖引导型Fuzz" class="headerlink" title="什么是覆盖引导型Fuzz"></a>什么是覆盖引导型Fuzz</h2><p>​        覆盖引导型Fuzz通过代码覆盖率信息来决定一个突变是否有效，...</p>
+<p>​        go-fuzz是google开源的一款go语言fuzz框架，它和AFL很大的一个不同是在于，AFL通常通过对未修改的文件的...</p>
             
             <span class="read-more"><a href="/post/Go-Fuzz%E8%A7%A3%E6%9E%90%E4%B8%8E%E6%80%9D%E8%80%83.html" title="Read article" class="posttitle">Read article</a>
                 <b class="iconfont icon-arrow-right- gradient-text"></b></span>

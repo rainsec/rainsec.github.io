@@ -188,8 +188,7 @@
             <h1 id="Linux-Kernel-保护机制绕过"><a href="#Linux-Kernel-保护机制绕过" class="headerlink" title="Linux Kernel 保护机制绕过"></a>Linux Kernel 保护机制绕过</h1><blockquote>
 <p>好久没搞kernel的洞了，最近分析的这方面的洞有点多，相关的Exp任务也比较多，因此学习总结一下方便查找和记忆。</p>
 </blockquote>
-<h2 id="SMEP-KPTI-bypass"><a href="#SMEP-KPTI-bypass" class="headerlink" title="SMEP + KPTI bypass"></a>SMEP + KPTI bypass</h2><p>​        SMEP是SupervisorModeExecutionPrevention的缩写，主要的作用其实就是抵御类似ret2user这样的攻击，简单来说就是阻止内核执行用户态传递的代码。</p>
-<p>​        检测计算机是否开启SMEP保护的方式很简单，<code>cat /proc/cpuinfo | grep smep</code>，如果有匹配到一些信息的话就说明计算机开启了SMEP保护。在CTF赛事中一般会给一些kernel启动的sh脚本，从...</p>
+<h2 id="SMEP-KPTI-bypass"><a href="#SMEP-KPTI-bypass" class="headerlink" title="SMEP + KPTI bypass"></a>SMEP + KPTI bypass</h2><p>​        SMEP是SupervisorModeExecutionPrevention的缩写，主要的作用其实就是...</p>
             
             <span class="read-more"><a href="/post/Linux%20Kernel%20%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6%E7%BB%95%E8%BF%87.html" title="Read article" class="posttitle">Read article</a>
                 <b class="iconfont icon-arrow-right- gradient-text"></b></span>
