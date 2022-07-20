@@ -186,7 +186,10 @@
         <div class="md-content animated fadeIn">
             
             <p><strong>EventListener XSS</strong><br>XSS作为混”低保“的最佳漏洞，我们在日常测试中没少碰到，但是<code>DOM</code>型XSS就相对来说不容易被发现了，而本文要介绍的则是更难发现并利用的监听<code>postMessage</code>所导致漏洞。首先从事件监听器开始说起</p>
-<h2 id="事件监听器"><a href="#事件监听器" class="headerlink" title="事件监听器"></a>事件监听器</h2><p>事件监控器可以为指定对象设置一个回调函数，当该对象的指定...</p>
+<h2 id="事件监听器"><a href="#事件监听器" class="headerlink" title="事件监听器"></a>事件监听器</h2><p>事件监控器可以为指定对象设置一个回调函数，当该对象的指定事件被触发时会被执行：</p>
+<pre><code class="HTML">&lt;table id="outside"&gt;
+    &lt;tr&gt;&lt;td id="t1"&gt;one&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&...</code></pre>
             
             <span class="read-more"><a href="/post/EventListener%20XSS.html" title="Read article" class="posttitle">Read article</a>
                 <b class="iconfont icon-arrow-right- gradient-text"></b></span>
