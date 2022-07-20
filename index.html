@@ -149,14 +149,15 @@
             animation-duration: 2.8s;
             background-image:
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.56), #100e17),
-                url(/img/cover.jpg);">
+                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/Ubuntucover.webp);">
         </div>
     </div>
     
     <div id="post0" class="else">
         <p class="animated fadeInDown">
             
-            <a href="javascript:;"><b>「 </b>Article<b> 」</b></a>
+            <a href="/categories/Zitui"><b>「
+                </b>ZITUI<b> 」</b></a>
             
             March 28, 2022
         </p>
@@ -180,13 +181,24 @@
         </p>
         
         
-        <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Kernel/" rel="tag">Kernel</a></li></ul>
+        <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
         
         <div class="md-content animated fadeIn">
             
             <p>记一次更新内核到5.8.0-33-generic</p>
 <span id="more"></span>
 <h2 id="更新到指定版本"><a href="#更新到指定版本" class="headerlink" title="更新到指定版本"></a>更新到指定版本</h2><h3 id="查看当前版本"><a href="#查看当前版本" class="headerlink" title="查看当前版本"></a>查看当前版本</h3><pre><code class="shell">$ uname -r
+4.15.0-101-generic
+
+$ lsb_release -a
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 20.04 LTS
+Release:        20.04
+Codename:       focal
+</code></pre>
+<h3 id="查看当前已经安装的-Kernel-Image"><a href="#查看当前已经安装的-Kernel-Image" class="headerlink" title="查看当前已经安装的 Kernel Image"></a>查看当前已经安装的 Kernel Image</h3><pre><code class="shell">$ dpkg --get-selections |grep linux-image
+linux-image-5.4.0-90-generic                    purge
 ...</code></pre>
             
             <span class="read-more"><a href="/post/Ubuntu20.04%20%E5%8D%87%E7%BA%A7%E9%99%8D%E7%BA%A7%E5%86%85%E6%A0%B8%E5%88%B0%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC.html" title="Read article" class="posttitle">Read article</a>
@@ -210,6 +222,56 @@
 
     <div id="primary">
         
+<div class="post" id="post">
+    <div class="post-cover animated fadeIn" style="
+            background-image:
+            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/gofuzzcover.png);">
+    </div>
+    <div class="else">
+        <p class="animated fadeInDown">
+            
+                <a href="/categories/Clock">
+                  <b>「 </b>CLOCK<b> 」</b>
+                </a>
+            
+            March 25, 2022
+        </p>
+        <h3 class="post-title animated fadeInDown"><a href="/post/Go-Fuzz%E8%A7%A3%E6%9E%90%E4%B8%8E%E6%80%9D%E8%80%83.html" title="Go-fuzz的解析与思考" class="posttitle">Go-fuzz的解析与思考</a></h3>
+        
+            <p class="post-count animated fadeInDown">
+                
+                    <span>
+                        <b class="iconfont icon-text2"></b> <i>Words count</i>
+                        19k
+                    </span>
+                
+                
+                    <span>
+                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                        17 mins.
+                    </span>
+                
+                
+            </p>
+            
+                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li></ul>
+            
+        
+        <div class="md-content animated fadeIn">
+            
+                <h1 id="Go-fuzz的解析与思考"><a href="#Go-fuzz的解析与思考" class="headerlink" title="Go-fuzz的解析与思考"></a>Go-fuzz的解析与思考</h1><h2 id="go-fuzz"><a href="#go-fuzz" class="headerlink" title="go-fuzz"></a>go-fuzz</h2><blockquote>
+<p>Go-fuzz的原理很多都是基于AFL，这里只分析了一些它独特的地方，收获很多，也希望可以和大家交流，如有分析错误还望交流指正。</p>
+</blockquote>
+<p>​        go-fuzz是google开源的一款go语言fuzz框架，它和AFL很大的一个不同是在于，AFL通常通过对未修改的文件的输入进行操作，而go-fuzz需要你编写一个Fuzz函数，go-fuzz通过不断的调用该函数来进行fuzz，前者通常会为每一个输入创建一个新的进程，后者则是不断的调用Fuzz函数因此不需要经常启动或者重启进程。</p>
+<h2 id="什么是覆盖引导型Fuzz"><a href="#什么是覆盖引导型Fuzz" class="headerlink" title="什么是覆盖引导型Fuzz"></a>什么是覆盖引导型Fuzz</h2><p>​        覆盖引导型Fuzz通过代码覆盖率信息来决定一个突变是否有效，...</p>
+            
+            <span class="read-more"><a href="/post/Go-Fuzz%E8%A7%A3%E6%9E%90%E4%B8%8E%E6%80%9D%E8%80%83.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
+        </div>
+    </div>
+</div>
+
+
 <div class="post" id="post">
     <div class="post-cover animated fadeIn" style="
             background-image:
@@ -256,211 +318,6 @@
 &lt...</code></pre>
             
             <span class="read-more"><a href="/post/EventListener%20XSS.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
-        </div>
-    </div>
-</div>
-
-
-<div class="post" id="post">
-    <div class="post-cover animated fadeIn" style="
-            background-image:
-            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-            url(/img/welcome-cover.jpg);">
-    </div>
-    <div class="else">
-        <p class="animated fadeInDown">
-            
-                <a href="javascript:;"><b>「 </b>Article<b> 」</b></a>
-            
-            March 25, 2022
-        </p>
-        <h3 class="post-title animated fadeInDown"><a href="/post/%E9%9D%A2%E8%AF%95%E5%87%86%E5%A4%87.html" title="信安面试问题准备" class="posttitle">信安面试问题准备</a></h3>
-        
-            <p class="post-count animated fadeInDown">
-                
-                    <span>
-                        <b class="iconfont icon-text2"></b> <i>Words count</i>
-                        21k
-                    </span>
-                
-                
-                    <span>
-                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                        19 mins.
-                    </span>
-                
-                
-            </p>
-            
-                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E9%9D%A2%E7%BB%8F/" rel="tag">面经</a></li></ul>
-            
-        
-        <div class="md-content animated fadeIn">
-            
-                <p>收集一些常见的信息安全面试问题</p>
-<span id="more"></span>
-<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="假如给你一个网站你怎么去渗透"><a href="#假如给你一个网站你怎么去渗透" class="headerlink" title="假如给你一个网站你怎么去渗透"></a>假如给你一个网站你怎么去渗透</h3><pre><code class="plaintext">信息收集
-
-首先看是什么类型的网站，针对不同类型的网站有不同的信息搜集方案，如大型企业网站可以用天眼查，启信宝等查询法人股份等信息，小型网站可以查询使用了哪类建站系统
-
-1.whois查詢,获取注册者邮箱姓名电话等。
-
-2.查询服务器旁站以及子域名站点，因为主站一般比较难，所以先看看旁站有没有通用性的cms或者其他漏洞。
-
-3.查看服务器操作系统版本，web中间件，看看是否存在已知的漏洞，比如IIS，APACHE,NGINX的解析漏洞...</code></pre>
-            
-            <span class="read-more"><a href="/post/%E9%9D%A2%E8%AF%95%E5%87%86%E5%A4%87.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
-        </div>
-    </div>
-</div>
-
-
-<div class="post" id="post">
-    <div class="post-cover animated fadeIn" style="
-            background-image:
-            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-            url(/img/welcome-cover.jpg);">
-    </div>
-    <div class="else">
-        <p class="animated fadeInDown">
-            
-                <a href="javascript:;"><b>「 </b>Article<b> 」</b></a>
-            
-            February 22, 2022
-        </p>
-        <h3 class="post-title animated fadeInDown"><a href="/post/PHP_deobf%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.html" title="PHP_Deobf源码分析" class="posttitle">PHP_Deobf源码分析</a></h3>
-        
-            <p class="post-count animated fadeInDown">
-                
-                    <span>
-                        <b class="iconfont icon-text2"></b> <i>Words count</i>
-                        233
-                    </span>
-                
-                
-                    <span>
-                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                        1 mins.
-                    </span>
-                
-                
-            </p>
-            
-                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E5%AE%89%E5%85%A8%E5%BC%80%E5%8F%91/" rel="tag">安全开发</a></li><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1/" rel="tag">毕业设计</a></li><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" rel="tag">源码分析</a></li></ul>
-            
-        
-        <div class="md-content animated fadeIn">
-            
-                <p>分析一下毕设的参考项目于源码</p>
-<span id="more"></span>
-
-<h1 id="PHP-deobf源码分析"><a href="#PHP-deobf源码分析" class="headerlink" title="PHP_deobf源码分析"></a>PHP_deobf源码分析</h1><p>因为毕设主要依托于这个(<del>不是直接down了交嗷</del>)</p>
-<p>所以近期要分析一下这个项目对于各种混淆的处理方式</p>
-
-            
-            <span class="read-more"><a href="/post/PHP_deobf%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
-        </div>
-    </div>
-</div>
-
-
-<div class="post" id="post">
-    <div class="post-cover animated fadeIn" style="
-            background-image:
-            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-            url(/img/welcome-cover.jpg);">
-    </div>
-    <div class="else">
-        <p class="animated fadeInDown">
-            
-                <a href="javascript:;"><b>「 </b>Article<b> 」</b></a>
-            
-            February 22, 2022
-        </p>
-        <h3 class="post-title animated fadeInDown"><a href="/post/W9scan%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.html" title="W9scan源码分析" class="posttitle">W9scan源码分析</a></h3>
-        
-            <p class="post-count animated fadeInDown">
-                
-                    <span>
-                        <b class="iconfont icon-text2"></b> <i>Words count</i>
-                        219
-                    </span>
-                
-                
-                    <span>
-                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                        1 mins.
-                    </span>
-                
-                
-            </p>
-            
-                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E5%AE%89%E5%85%A8%E5%BC%80%E5%8F%91/" rel="tag">安全开发</a></li><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" rel="tag">源码分析</a></li></ul>
-            
-        
-        <div class="md-content animated fadeIn">
-            
-                <p>分析漏洞扫描器W9scan的源码，准备入坑安全开发？？</p>
-<span id="more"></span>
-
-
-
-<h1 id="W9scan源码分析"><a href="#W9scan源码分析" class="headerlink" title="W9scan源码分析"></a>W9scan源码分析</h1><p>目前准备稍微入坑一下Python安全开发，准备从w9scan的源码入手开始学习，这个用来记录源码学习</p>
-
-            
-            <span class="read-more"><a href="/post/W9scan%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
-        </div>
-    </div>
-</div>
-
-
-<div class="post" id="post">
-    <div class="post-cover animated fadeIn" style="
-            background-image:
-            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-            url(/img/welcome-cover.jpg);">
-    </div>
-    <div class="else">
-        <p class="animated fadeInDown">
-            
-                <a href="javascript:;"><b>「 </b>Article<b> 」</b></a>
-            
-            February 10, 2022
-        </p>
-        <h3 class="post-title animated fadeInDown"><a href="/post/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%E3%81%AE%E6%83%B3%E6%B3%95.html" title="毕设项目:基于PHP-Parser进行反混淆与检测的规划" class="posttitle">毕设项目:基于PHP-Parser进行反混淆与检测的规划</a></h3>
-        
-            <p class="post-count animated fadeInDown">
-                
-                    <span>
-                        <b class="iconfont icon-text2"></b> <i>Words count</i>
-                        5k
-                    </span>
-                
-                
-                    <span>
-                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                        5 mins.
-                    </span>
-                
-                
-            </p>
-            
-                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/PHP-Parser/" rel="tag">PHP-Parser</a></li></ul>
-            
-        
-        <div class="md-content animated fadeIn">
-            
-                <p>对于自己的毕设的一些功能的想法和未来该怎么做的一些规划</p>
-<span id="more"></span>
-
-<h1 id="毕设项目-基于PHP-Parser的反混淆"><a href="#毕设项目-基于PHP-Parser的反混淆" class="headerlink" title="毕设项目-基于PHP-Parser的反混淆"></a>毕设项目-基于PHP-Parser的反混淆</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>大致设想是使用PHP-Parser完成反混淆，然后结合Yara进行检测。</p>
-<p>目前是没考虑过机器学习，后续可能会使用吧(<del>maybe</del></p>
-<h2 id="反混淆"><a href="#反混淆" class="headerlink" title="反混淆"></a>反混淆</h2><p>PHP-Parser基础来源于FeatureExtract中积累的操作</p>
-<p>根据Github上的反混淆项目和Deof项目进行改造，尽量理解两个项目的运行方式以及对待不同混淆时的操作</p>
-<h3 id="Deobf"><a href="#Deobf" class="headerlink" title="Deobf"></a>Deobf</h3><p>编写比较有逻辑，整体框架一目了然，对应文件的功能比较清晰</p>
-<p>但是现在功能不够...</p>
-            
-            <span class="read-more"><a href="/post/%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%E3%81%AE%E6%83%B3%E6%B3%95.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>
     </div>
 </div>
