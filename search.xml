@@ -883,9 +883,12 @@ afterTraverse方法与beforeTraverse方法类似，唯一的区别是它只在�
 例子基于 AST（抽象语法树）解 PHP 混淆 | J0k3r’s Blog
 P.S.我们需要知道你需要什么样的Node，进行什么样的操作，Node下数据的格式会有哪几种情况，会不会因为代码不够严谨导致错误或者无限递归
 ]]></content>
+      <categories>
+        <category>Zitui</category>
+        <category>PHP</category>
+      </categories>
       <tags>
         <tag>PHP-Parser</tag>
-        <tag>PHP</tag>
       </tags>
   </entry>
   <entry>
