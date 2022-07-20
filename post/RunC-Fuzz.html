@@ -5,12 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EventListener XSS - RainSec</title>
+    <title>runC-fuzz - RainSec</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="RainSec,"> 
-    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,EventListener XSSXSS作为混”低保“的最佳漏洞，我们在日常测试中没少碰到，但是DOM型XSS就相对来说不容易被发现了，而本文要介绍的则是更难发现并利用的监听postMessage所,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,runC-fuzz​本文主要是根据AdaLogics开源的runc-fuzzers和自己之前做的一些fuzz，研究一下可能的问题和相关的解决方案。在此之前可能会有朋友对runc比较陌生，可以参考一下,"> 
     <meta name="author" content="RainSec"> 
     <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
     <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
@@ -76,7 +76,7 @@
     <div class="navigation animated fadeIn fast delay-1s">
         <img id="home-icon" class="icon-home" src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="" data-url="https://rainsec.cn">
         <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
-        <h3 class="subtitle">EventListener XSS</h3>
+        <h3 class="subtitle">runC-fuzz</h3>
         <div class="social">
             <!--        <div class="like-icon">-->
             <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -101,17 +101,17 @@
             animation-duration: 1.2s;
             background-image: 
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/XSS_cover.jpg') ">
+                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/runCcover.png') ">
         </div>
         <div class="else">
             <p class="animated fadeInDown">
                 
-                <a href="/categories/渗透测试"><b>「
-                    </b>渗透测试<b> 」</b></a>
+                <a href="/categories/漏洞挖掘"><b>「
+                    </b>漏洞挖掘<b> 」</b></a>
                 
-                March 25, 2022
+                March 11, 2022
             </p>
-            <h3 class="post-title animated fadeInDown"><a href="/post/EventListener%20XSS.html" title="EventListener XSS" class="">EventListener XSS</a>
+            <h3 class="post-title animated fadeInDown"><a href="/post/RunC-Fuzz.html" title="runC-fuzz" class="">runC-fuzz</a>
             </h3>
             
             <p class="post-count animated fadeInDown">
@@ -137,7 +137,7 @@
             </p>
             
             
-            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/XSS/" rel="tag">XSS</a></li></ul>
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/fuzz/" rel="tag">fuzz</a></li></ul>
             
         </div>
     </div>
@@ -158,119 +158,102 @@
 <div class="article">
     <div class='main'>
         <div class="content markdown animated fadeIn">
-            <p><strong>EventListener XSS</strong><br>XSS作为混”低保“的最佳漏洞，我们在日常测试中没少碰到，但是<code>DOM</code>型XSS就相对来说不容易被发现了，而本文要介绍的则是更难发现并利用的监听<code>postMessage</code>所导致漏洞。首先从事件监听器开始说起</p>
-<h2 id="事件监听器"><a href="#事件监听器" class="headerlink" title="事件监听器"></a>事件监听器</h2><p>事件监控器可以为指定对象设置一个回调函数，当该对象的指定事件被触发时会被执行：</p>
-<pre><code class="HTML">&lt;table id="outside"&gt;
-    &lt;tr&gt;&lt;td id="t1"&gt;one&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td id="t2"&gt;two&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;
-&lt;script&gt;
-function modifyText() {
-  var t2 = document.getElementById("t2");
-  if (t2.firstChild.nodeValue == "three") {
-    t2.firstChild.nodeValue = "two";
-  } else {
-    t2.firstChild.nodeValue = "three";
-  }
+            <h1 id="runC-fuzz"><a href="#runC-fuzz" class="headerlink" title="runC-fuzz"></a>runC-fuzz</h1><p>​本文主要是根据AdaLogics开源的<a target="_blank" rel="noopener" href="https://github.com/AdaLogics/runc-fuzzers">runc-fuzzers</a>和自己之前做的一些fuzz，研究一下可能的问题和相关的解决方案。在此之前可能会有朋友对runc比较陌生，可以参考一下之前的文章：<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-271130.htm">https://bbs.pediy.com/thread-271130.htm</a></p>
+<h2 id="AdaLogics如何fuzz"><a href="#AdaLogics如何fuzz" class="headerlink" title="AdaLogics如何fuzz"></a>AdaLogics如何fuzz</h2><p>​runC是go语言编写的，那么对于fuzz引擎的选择毫无疑问应该是go-fuzz，纵观runC的项目结构，其实就是包裹了libcontainer，这也不难理解，因为在我的印象里面runC项目本身就是为了符合OCI标准拆分出来的。</p>
+<p>​如果是fuzz的话，go语言里面最经常出现的问题其实就是索引超出边界，切片边界超出范围nil指针解引用等等，因此对于go-fuzz这种深入项目内部编写Fuzz函数的引擎，其实对于项目内部目标的选取十分关键。在AdaLogics的报告中指出runC具备较少的fuzz引擎入口点，因为现代模糊测试引擎其实更加适合解析，比如文本解析，编码解码或者各种其它API，但是这其实在runC里面比较少。</p>
+<p>​首先分析AdaLogics是怎么做的，在思考了上述问题之后他们把目标放在了API和信息解析上面，相对于信息解析还好说，本身利用go-fuzz引擎生成的大量数据可以轻松实现fuzz，但是对于API来说，其输入内容还是相对结构化的，可以看看下面的例子：</p>
+<pre><code class="go">// 抽取的runC代码片段
+func parseCgroupFromReader(r io.Reader) (string, error) {
+    s := bufio.NewScanner(r)
+    for s.Scan() {
+        var (
+            text  = s.Text()
+            parts = strings.SplitN(text, ":", 3)
+        )
+        if len(parts) &lt; 3 {
+            return "", fmt.Errorf("invalid cgroup entry: %q", text)
+        }
+        // text is like "0::/user.slice/user-1001.slice/session-1.scope"
+        if parts[0] == "0" &amp;&amp; parts[1] == "" {
+            return parts[2], nil
+        }
+    }
+    if err := s.Err(); err != nil {
+        return "", err
+    }
+    return "", errors.New("cgroup path not found")
 }
+</code></pre>
+<p>这样的代码显然就比较适合利用go-fuzz引擎生成的测试用例直接跑fuzz，但是对于下面的例子：</p>
+<pre><code class="go">func statPids(dirPath string, stats *cgroups.Stats) error {
+    current, err := fscommon.GetCgroupParamUint(dirPath, "pids.current")
+    if err != nil {
+        if os.IsNotExist(err) {
+            return statPidsFromCgroupProcs(dirPath, stats)
+        }
+        return err
+    }
 
-// 为table添加事件监听器
-var el = document.getElementById("outside");
-el.addEventListener("click", modifyText, false);
-&lt;/script&gt;
+    max, err := fscommon.GetCgroupParamUint(dirPath, "pids.max")
+    if err != nil {
+        return err
+    }
+    // If no limit is set, read from pids.max returns "max", which is
+    // converted to MaxUint64 by GetCgroupParamUint. Historically, we
+    // represent "no limit" for pids as 0, thus this conversion.
+    if max == math.MaxUint64 {
+        max = 0
+    }
+
+    stats.PidsStats.Current = current
+    stats.PidsStats.Limit = max
+    return nil
+}
 </code></pre>
-<p>以上代码监听了<code>table</code>的<code>click</code>事件，当点击<code>table</code>时会触发<code>modifyText</code>,下面链接列出了所有的事件:</p>
-<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/Events#event_index">https://developer.mozilla.org/en-US/docs/Web/Events#event_index</a></p>
-<p>这里要说的是<code>postMessage</code>与其对应的事件监听器在不安全配置情况下导致的漏洞，首先看下<code>postMessage</code>的介绍：</p>
-<p>&gt; window.postMessage() 方法可以安全地实现跨源通信。通常，对于两个不同页面的脚本，只有当执行它们的页面位于具有相同的协议（通常为https），端口号（443为https的默认值），以及主机 (两个页面的模数 <code>Document.domain</code>设置为相同的值) 时，这两个脚本才能相互通信。window.postMessage() 方法提供了一种受控机制来规避此限制，只要<strong>正确的使用</strong>，这种方法就很安全。 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/postMessage">https://developer.mozilla.org/zh-CN/docs/Web/API/Window/postMessage</a></p>
-<p>它的用法也很简单：</p>
-<pre><code>windows.postMessage(message, targetOrigin, [transfer])
+<p>这显然就是比较结构化的输入了，其实这种问题在面对其它语言的时候也有遇到，结构化Fuzz一直是Fuzz的难点之一，但是和go-fuzz项目，因为引擎和fuzz方式的不同其实在结构化上面也有很大的差异，比如一些C/C++项目，可能会用protobuf或者中间语言IR的方式来实现数据结构化，但是go-fuzz的话在对应的Fuzz函数内部引入这些功能无疑是比较麻烦。这里AdaLogics实现了<a target="_blank" rel="noopener" href="https://github.com/AdaLogics/go-fuzz-headers">go-fuzz-headers</a>来帮助实现结构化。</p>
+<p>​        从<code>statPids</code>就可以看出，在结构化的目标中大多都是相关结构体：</p>
+<pre><code class="go">type Stats struct {
+    CpuStats    CpuStats    `json:"cpu_stats,omitempty"`
+    CPUSetStats CPUSetStats `json:"cpuset_stats,omitempty"`
+    MemoryStats MemoryStats `json:"memory_stats,omitempty"`
+    PidsStats   PidsStats   `json:"pids_stats,omitempty"`
+    BlkioStats  BlkioStats  `json:"blkio_stats,omitempty"`
+    // the map is in the format "size of hugepage: stats of the hugepage"
+    HugetlbStats map[string]HugetlbStats `json:"hugetlb_stats,omitempty"`
+    RdmaStats    RdmaStats               `json:"rdma_stats,omitempty"`
+}
 </code></pre>
+<p>因此其实只需要吧go-fuzz根据种子数据生成的脏数据进行结构体类型转化就能实现这个目标，这也正是go-fuzz-headers所做的，当然实际要做的工作比这个目标要麻烦的多。</p>
+<p>​        在实现了结构化之后接下来其实就比较简单了，选取目标进行Fuzz，AdaLogics对项目结构进行分析之后决定选取下面库作为目标：</p>
 <ul>
-<li><p>windows是指一个窗口，可以是当前页面的<code>window</code>、<code>window.open</code>返回的窗口对象、<code>iframe</code>的<code>contentWindow</code>属性等</p>
-</li>
-<li><p>message是要发送的消息，可以是字符串，也可以是<code>json</code>格式</p>
-</li>
-<li><p><code>targetOrigin</code>用来指定哪个窗口可以接收到消息，如果为<code>*</code>则表示任意窗口均可收到信息。而如果指定了特定的域名后要求发送消息的窗口其协议、端口、主机地址与指定域名匹配才可发送消息。</p>
-</li>
+<li>fs2</li>
+<li>specconv</li>
+<li>devices</li>
+<li>fscommon</li>
+<li>intelrdt</li>
+<li>libcontainer</li>
+<li>user</li>
+<li>userns</li>
+<li>configs</li>
 </ul>
-<p>发送消息事件可以通过如下方式添加监听事件：</p>
-<pre><code class="JavaScript">window.addEventListener("message", receiveMessage, false);
-function receiveMessage(event)
-{
+<p>总共建立了12个Fuzz，在库中选取符合文本解析，编码解码或者各种其它API这些目标的函数进行了Fuzz。</p>
+<h2 id="我如何Fuzz"><a href="#我如何Fuzz" class="headerlink" title="我如何Fuzz"></a>我如何Fuzz</h2><p>​        其实在runc-fuzzers开源以前本人就开始思考如何对容器相关的目标进行fuzz，对比该开源项目其实在runc的fuzz上面我们撞了很多库和函数，因此对于这一部分就不多说了，本人做的不足的是没有实现类似go-fuzz-headers这样的辅助库来帮助生成更强大的语料库，而是通过裁剪目标函数来让目标更适合fuzz引擎，对比之下本人的语料库显然low了很多，但是这种裁剪也使得目标每一部分的代码更清晰明了，个人觉得还是有助于发现一些细节问题的，并且fuzz的速度也应该更快。</p>
+<p>​        在对于目标的选取上，本人也更加“放肆”，因为因为容器的安全模型还不完善不必过于考虑引擎入口点的问题（也可能是我拆代码的原因）对apparmor这类的库也进行了Fuzz编写，但是问题在于合理的属于也可能带来灾难性的后果，详情可以参考之前分析的<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg3NzczOTA3OQ==&amp;tempkey=MTE1MV9wVHdrYTBGZW8yVjVxOEFuNXFKRC1UNHJGMDE4clNTdG15Ni1NM05Va3dhQ2tGLVYwTFM3U3o3YjBRNlBFaW1CN08tdEFWR0NuOHAya2dFeFpJcElsTWpfS01ycXdSaHFKZ3dzNWM0WXJ3OWNiRjlLQU5yOTdreWRGREtmMGxqOWlVNjFKLTVubTlDd0pGVmt3ejF1YjNkZHdQVE84cVppclgzV0tBfn4=&amp;chksm=4f1f2e957868a783215742944470f7dbb2a5355bc3bc586c4e2b6adf667ea9bcff445928f0d6&amp;scene=0&amp;xtrack=1&amp;previewkey=Vic7j%252B%252BS0aUVSaKkG5ZwE8wqSljwj2bfCUaCyDofEow%253D#wechat_redirect">apparmor漏洞</a>，但是这些逻辑类型的漏洞很难通过fuzz来找到，希望大佬们有啥更好的办法可以提出吧。</p>
+<h2 id="结果如何"><a href="#结果如何" class="headerlink" title="结果如何"></a>结果如何</h2><p>​        其实结果对于一个安全研究者来说是绝望的，可以看下AdaLogics发布的漏洞报告：</p>
+<blockquote>
+<p>The fuzzers found no bug during the assessment, which is a great achievement to the RunC and Umoci authors. However, we acknowledge that there is a reasonable expectation that bugs will occur once the pending pull requests are merged in. We go into details with this in the next section.</p>
+</blockquote>
+<p>本人自己的Fuzz在跑了2天之后也是no bug found，这也说明或许对于这些go项目来说，它们一边自身不断的集成Fuzz：比如runC的fuzz pr，或者是argo的fuzz项目都开始利用oss-fuzz将fuzz演变为常态化的手段来不断测试新加入的项目代码，同时从报告里看出，fuzz也确实需要常态化：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/runcfuzz.png" alt="image-20220311110516312"></p>
+<h2 id="未来展望"><a href="#未来展望" class="headerlink" title="未来展望"></a>未来展望</h2><p>​        一方面，这些其实只是对于runc项目进行了部分测试，就代码覆盖率而言其实完全不能算是达标，同时fuzz本身的运行时间过短其实不能算是一次合格的模糊测试，就长期来看Fuzz需要在CI tests中不断继承来确保软件的内生安全问题，通过持续不断的Fuzz运行也会不断的对新代码进行安全测试。</p>
+<p>​        就长远来看AdaLogics提出了一种观点，在fuzz中产生容器同时在容器内运行大量不同进程来进行整体性的安全测试，但是就目前fuzz的成熟度而言，还远不能达到这种效果。</p>
+<pre><code class="go">    err := container.Run(process) 
+if err != nil {
+    container.Destroy() 
+  logrus.Fatal(err) 
+  return
 }
 </code></pre>
-<p>当发送信息时就会触发<code>receiveMessage</code>。其中<code>event</code>的属性比较重要的有：</p>
-<ul>
-<li><p>data 即<code>postMessage</code>发送的数据</p>
-</li>
-<li><p>origin 发送信息窗口的<code>origin</code></p>
-</li>
-</ul>
-<h2 id="漏洞触发"><a href="#漏洞触发" class="headerlink" title="漏洞触发"></a>漏洞触发</h2><p>比起原理，大家肯定对漏洞如何利用更感兴趣。看下面这段代码</p>
-<pre><code class="HTML">&lt;html&gt;
-  &lt;head&gt;&lt;title&gt;Toxic DOM&lt;/title&gt;&lt;/head&gt;
-  &lt;body&gt;
-    &lt;script&gt;
-      var postMessageHandler = function(msg) {
-  var content = msg.data;
-  var msgObj = eval(content);
-
-  if (msgObj.isActive) {
-    document.write("PostMessage arrived!");
-  }
-}
-
-window.addEventListener('message', postMessageHandler, false);
-
-    &lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-&lt;!-- https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval --&gt;
-</code></pre>
-<p>很明显可以看出这个页面在监听到<code>postMessage</code>时会调用<code>eval</code>执行发送的信息，那我们就可以构造<code>payload</code>了</p>
-<pre><code class="HTML">&lt;script&gt;
-                    function pocLink() {
-                        let win = window.open('https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval');
-                        let msg = "alert(1);";
-
-                        setTimeout(function(){
-                            win.postMessage(msg, '*');
-                        }, 5000);
-                    }
-&lt;/script&gt;
- &lt;a href="#" onclick="pocLink();"&gt;PoC link&lt;/a&gt;         
-</code></pre>
-<p>或者是使用<code>iframe</code></p>
-<pre><code class="HTML">&lt;script&gt;
-
-  function pocFrame(win) {           
-    let msg = "alert(1);";
-
-    win.postMessage(msg, '*');          
-  }
-&lt;/script&gt;
- &lt;iframe src="https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval" onload="pocFrame(this.contentWindow)"&gt;&lt;/iframe&gt;    
-</code></pre>
-<p>也就是说我们需要在自己服务器上新建一个页面，用来打开一个新窗口或是加载一个<code>iframe</code>并获取其句柄，用来传递信息。当打开的窗口中存在有<code>message</code>监听，且其触发代码有可利用点时就可以触发漏洞。</p>
-<h2 id="工具检测"><a href="#工具检测" class="headerlink" title="工具检测"></a>工具检测</h2><p>纯手工发现漏洞不可取，<code>Burp</code>的<code>DOM Invader</code>就可以帮助发现此类问题</p>
-<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image20.1l50zy96mokg.png" alt="img"></p>
-<p>对于<code>https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval</code> 它可以直接检测出漏洞存在并一键生成<code>POC</code></p>
-<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image21.n4byv2n2acw.png" alt="img"></p>
-<p>为了了解原理最好可以看看它的代码，但是其源码做了混淆，没办法了解它的原理，所以我们从它的平替<a target="_blank" rel="noopener" href="https://github.com/fransr/postMessage-tracker">postMessage-tracker</a>入手进行分析。 其检测结果展示形式为</p>
-<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image22.6qq7cqyazzg0.png" alt="img"></p>
-<p>平平无奇的一个小框框，相较于<code>DOM Invader</code>的可利用性分析差了许多，不过仅仅了解下原理已然足够了。</p>
-<p>它的目录结构非常简单，首先看下<code>mainfest.json</code></p>
-<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image23.1tng48w41gyo.png" alt="img"></p>
-<p><code>run_at</code>表明注入在<code>css</code>之后，<code>dom</code>构建之前。关键代码在<code>content_script.js</code>当中：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image24.6br43k6e3x00.png" alt="img"></p>
-<p>这一段的主要作用就是在添加监听器前判断其类型是否时<code>message</code>，如果是则记录下来一些数据，比如此时的堆栈信息等。合理推测<code>Burp</code>在此之上加入了危险函数判断的操作，后续有空的话就给<code>DOM Invader</code>加一个类似的功能练练手吧，日常使用当然还是<code>Burp</code>的香啊~</p>
-<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/fransr/postMessage-tracker">https://github.com/fransr/postMessage-tracker</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://portswigger.net/burp/documentation/desktop/tools/dom-invader">https://portswigger.net/burp/documentation/desktop/tools/dom-invader</a></p>
-</li>
-</ul>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
@@ -307,9 +290,9 @@ window.addEventListener('message', postMessageHandler, false);
         <div class="sidebar">
             <div class="box animated fadeInRight">
                 <div class="subbox">
-                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220211/noel.47xsfyg7vt40.webp" height=300 width=300></img>
-                    <p>Noel</p>
-                    <span>无情的挖洞机器</span>
+                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/clocklogo.jpg" height=300 width=300></img>
+                    <p>Clock</p>
+                    <span>克劳克歪歪滴艾斯</span>
                     <dl>
                         
                         
@@ -337,7 +320,7 @@ window.addEventListener('message', postMessageHandler, false);
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>Contents</h4>
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">事件监听器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%A7%A6%E5%8F%91"><span class="toc-number">2.</span> <span class="toc-text">漏洞触发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E6%A3%80%E6%B5%8B"><span class="toc-number">3.</span> <span class="toc-text">工具检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">4.</span> <span class="toc-text">参考文章</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#runC-fuzz"><span class="toc-number">1.</span> <span class="toc-text">runC-fuzz</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#AdaLogics%E5%A6%82%E4%BD%95fuzz"><span class="toc-number">1.1.</span> <span class="toc-text">AdaLogics如何fuzz</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E5%A6%82%E4%BD%95Fuzz"><span class="toc-number">1.2.</span> <span class="toc-text">我如何Fuzz</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%9C%E5%A6%82%E4%BD%95"><span class="toc-number">1.3.</span> <span class="toc-text">结果如何</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AA%E6%9D%A5%E5%B1%95%E6%9C%9B"><span class="toc-number">1.4.</span> <span class="toc-text">未来展望</span></a></li></ol></li></ol>
                 </div>
             </div>
             

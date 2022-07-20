@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Category: Web - RainSec</title>
+    <title>Category: 渗透测试 - RainSec</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
@@ -149,49 +149,47 @@
             animation-duration: 2.8s;
             background-image:
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.56), #100e17),
-                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/XSS_cover.jpg);">
+                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/what-is-dns.3wivpbhx9do.png);">
         </div>
     </div>
     
     <div id="post0" class="else">
         <p class="animated fadeInDown">
             
-            <a href="/categories/Noel"><b>「
-                </b>NOEL<b> 」</b></a>
+            <a href="/categories/渗透测试"><b>「
+                </b>渗透测试<b> 」</b></a>
             
-            March 25, 2022
+            March 26, 2022
         </p>
         <h3 class="post-title animated fadeInDown">
-            <a href="/post/EventListener%20XSS.html" title="EventListener XSS" class="posttitle">EventListener XSS</a></h3>
+            <a href="/post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html" title="URLDNS调试那些小事" class="posttitle">URLDNS调试那些小事</a></h3>
         
         <p class="post-count animated fadeInDown">
             
             <span>
                 <b class="iconfont icon-text2"></b> <i>Words count</i>
-                6k
+                4.4k
             </span>
             
             
             <span>
                 <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                5 mins.
+                4 mins.
             </span>
             
             
         </p>
         
         
-        <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/XSS/" rel="tag">XSS</a></li></ul>
-        
         <div class="md-content animated fadeIn">
             
-            <p><strong>EventListener XSS</strong><br>XSS作为混”低保“的最佳漏洞，我们在日常测试中没少碰到，但是<code>DOM</code>型XSS就相对来说不容易被发现了，而本文要介绍的则是更难发现并利用的监听<code>postMessage</code>所导致漏洞。首先从事件监听器开始说起</p>
-<h2 id="事件监听器"><a href="#事件监听器" class="headerlink" title="事件监听器"></a>事件监听器</h2><p>事件监控器可以为指定对象设置一个回调函数，当该对象的指定事件被触发时会被执行：</p>
-<pre><code class="HTML">&lt;table id="outside"&gt;
-    &lt;tr&gt;&lt;td id="t1"&gt;one&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&...</code></pre>
+            <h1 id="URLDNS调试那些小事"><a href="#URLDNS调试那些小事" class="headerlink" title="URLDNS调试那些小事"></a>URLDNS调试那些小事</h1><p>近期在看javaweb相关的知识，ysoserial作为反序列化利用链的神器，想稍微利用它来调试一个简单的urldns利用链，进而了解这个工具。</p>
+<h4 id="ysoserial链接："><a href="#ysoserial链接：" class="headerlink" title="ysoserial链接："></a>ysoserial链接：</h4><pre><code class="txt">下载地址: https://github.com/frohoff/ysoserial
+这里用jdk1.8来编译
+</code></pre>
+<h4 id="编译ysoserial"><a href="#编译ysoserial" class="headerlink" title="编译ysoserial"></a>编译ysoserial</h4><p>用JIdea打开导入，会自动导入依赖，导入以后可能还会出现pom.xml红色表示找不到对应依赖的情况，这时可以进入依赖文件夹，可能是用于多个版本jar下载到了其他版本，删...</p>
             
-            <span class="read-more"><a href="/post/EventListener%20XSS.html" title="Read article" class="posttitle">Read article</a>
+            <span class="read-more"><a href="/post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html" title="Read article" class="posttitle">Read article</a>
                 <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>
     </div>
@@ -212,6 +210,110 @@
 
     <div id="primary">
         
+<div class="post" id="post">
+    <div class="post-cover animated fadeIn" style="
+            background-image:
+            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/XSS_cover.jpg);">
+    </div>
+    <div class="else">
+        <p class="animated fadeInDown">
+            
+                <a href="/categories/渗透测试">
+                  <b>「 </b>渗透测试<b> 」</b>
+                </a>
+            
+            March 25, 2022
+        </p>
+        <h3 class="post-title animated fadeInDown"><a href="/post/EventListener%20XSS.html" title="EventListener XSS" class="posttitle">EventListener XSS</a></h3>
+        
+            <p class="post-count animated fadeInDown">
+                
+                    <span>
+                        <b class="iconfont icon-text2"></b> <i>Words count</i>
+                        6k
+                    </span>
+                
+                
+                    <span>
+                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                        5 mins.
+                    </span>
+                
+                
+            </p>
+            
+                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/XSS/" rel="tag">XSS</a></li></ul>
+            
+        
+        <div class="md-content animated fadeIn">
+            
+                <p><strong>EventListener XSS</strong><br>XSS作为混”低保“的最佳漏洞，我们在日常测试中没少碰到，但是<code>DOM</code>型XSS就相对来说不容易被发现了，而本文要介绍的则是更难发现并利用的监听<code>postMessage</code>所导致漏洞。首先从事件监听器开始说起</p>
+<h2 id="事件监听器"><a href="#事件监听器" class="headerlink" title="事件监听器"></a>事件监听器</h2><p>事件监控器可以为指定对象设置一个回调函数，当该对象的指定事件被触发时会被执行：</p>
+<pre><code class="HTML">&lt;table id="outside"&gt;
+    &lt;tr&gt;&lt;td id="t1"&gt;one&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&...</code></pre>
+            
+            <span class="read-more"><a href="/post/EventListener%20XSS.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
+        </div>
+    </div>
+</div>
+
+
+<div class="post" id="post">
+    <div class="post-cover animated fadeIn" style="
+            background-image:
+            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/burp.png);">
+    </div>
+    <div class="else">
+        <p class="animated fadeInDown">
+            
+                <a href="/categories/渗透测试">
+                  <b>「 </b>渗透测试<b> 」</b>
+                </a>
+            
+            March 05, 2022
+        </p>
+        <h3 class="post-title animated fadeInDown"><a href="/post/%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82.html" title="灵活的修改Burp请求" class="posttitle">灵活的修改Burp请求</a></h3>
+        
+            <p class="post-count animated fadeInDown">
+                
+                    <span>
+                        <b class="iconfont icon-text2"></b> <i>Words count</i>
+                        4.5k
+                    </span>
+                
+                
+                    <span>
+                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                        4 mins.
+                    </span>
+                
+                
+            </p>
+            
+                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/BurpSuite/" rel="tag">BurpSuite</a></li></ul>
+            
+        
+        <div class="md-content animated fadeIn">
+            
+                <h1 id="灵活的修改Burp请求"><a href="#灵活的修改Burp请求" class="headerlink" title="灵活的修改Burp请求"></a>灵活的修改Burp请求</h1><p>  在日常渗透测试中经常会遇到请求头需要替换、请求或响应内容需要解密等一系列麻烦的事。更换请求头可以通过<code>Burp</code>的<code>Match and Replace</code>功能来实现，加解密也有一些插件可以实现，但是它们普遍存在着以下缺陷：</p>
+<ul>
+<li><p>自定义数据不能进行保存</p>
+</li>
+<li><p>加解密不能灵活的指定位置</p>
+</li>
+</ul>
+<p>  带着这些需求，笔者在寻找工具时发现了一款有趣的插件<code>Python Scripter: https://github.com/PortSwigger/python-scripter</code> </p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>  与其说这是一个插...</p>
+            
+            <span class="read-more"><a href="/post/%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
+        </div>
+    </div>
+</div>
+
+
     </div>
     
 </div>

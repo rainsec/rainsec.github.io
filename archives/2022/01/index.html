@@ -79,7 +79,7 @@
                 <div class="content animated fadeIn">
                     <div class="set">
                         <h1 style="text-align: center">Archived</h1>
-                        <p style="text-align: center">「 6 」</p>
+                        <p style="text-align: center">「 10 」</p>
                         <ul class="timeline timeline-centered">
                             
                             
@@ -124,7 +124,7 @@ SMEP + KPTI bypass​        SMEP是SupervisorModeExecutionPrevention的缩写�
                                     </div>
                                     <div class="timeline-marker"></div>
                                     <div class="timeline-content">
-                                        <a class="timeline-title" target="_self" href="/post/Ubuntu20.04%20%E5%8D%87%E7%BA%A7%E9%99%8D%E7%BA%A7%E5%86%85%E6%A0%B8%E5%88%B0%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC.html">Ubuntu 20.04更新内核到指定版本</a>
+                                        <a class="timeline-title" target="_self" href="/post/Ubuntu20.04%20%E5%8D%87%E7%BA%A7%E9%99%8D%E7%BA%A7%E5%86%85%E6%A0%B8%E5%88%B0%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC.html">Ubuntu 更新内核到指定版本</a>
                                         <p>
                                             记一次更新内核到5.8.0-33-generic
 
@@ -144,11 +144,29 @@ Co...
                                 
                                 <li class="timeline-item">
                                     <div class="timeline-info">
+                                        <span class="gradient-text">March 26, 2022</span>
+                                    </div>
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <a class="timeline-title" target="_self" href="/post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html">URLDNS调试那些小事</a>
+                                        <p>
+                                            URLDNS调试那些小事近期在看javaweb相关的知识，ysoserial作为反序列化利用链的神器，想稍微利用它来调试一个简单的urldns利用链，进而了解这个工具。
+ysoserial链接：下载地址: https://github.com/frohoff/ysoserial
+这里用jdk1.8来编译
+
+编译ysoserial用JIdea打开导入，会自动导入依赖，导入以后可能还会出现pom...
+                                        </p>
+                                    </div>
+                                </li>
+                            
+                                
+                                <li class="timeline-item">
+                                    <div class="timeline-info">
                                         <span class="gradient-text">March 25, 2022</span>
                                     </div>
                                     <div class="timeline-marker"></div>
                                     <div class="timeline-content">
-                                        <a class="timeline-title" target="_self" href="/post/Go-Fuzz%E8%A7%A3%E6%9E%90%E4%B8%8E%E6%80%9D%E8%80%83.html">Go-fuzz的解析与思考</a>
+                                        <a class="timeline-title" target="_self" href="/post/Go-Fuzz%E8%A7%A3%E6%9E%90%E4%B8%8E%E6%80%9D%E8%80%83.html">云原生项目Fuzz特点及思考</a>
                                         <p>
                                             Go-fuzz的解析与思考go-fuzz
 Go-fuzz的原理很多都是基于AFL，这里只分析了一些它独特的地方，收获很多，也希望可以和大家交流，如有分析错误还望交流指正。
@@ -171,6 +189,64 @@ Go-fuzz的原理很多都是基于AFL，这里只分析了一些它独特的地�
 事件监听器事件监控器可以为指定对象设置一个回调函数，当该对象的指定事件被触发时会被执行：
 &lt;table id="outside"&gt;
     &lt;...
+                                        </p>
+                                    </div>
+                                </li>
+                            
+                                
+                                <li class="timeline-item">
+                                    <div class="timeline-info">
+                                        <span class="gradient-text">March 11, 2022</span>
+                                    </div>
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <a class="timeline-title" target="_self" href="/post/RunC-Fuzz.html">runC-fuzz</a>
+                                        <p>
+                                            runC-fuzz​本文主要是根据AdaLogics开源的runc-fuzzers和自己之前做的一些fuzz，研究一下可能的问题和相关的解决方案。在此之前可能会有朋友对runc比较陌生，可以参考一下之前的文章：https://bbs.pediy.com/thread-271130.htm
+AdaLogics如何fuzz​runC是go语言编写的，那么对于fuzz引擎的选择毫无疑问应该是go-...
+                                        </p>
+                                    </div>
+                                </li>
+                            
+                                
+                                <li class="timeline-item">
+                                    <div class="timeline-info">
+                                        <span class="gradient-text">March 05, 2022</span>
+                                    </div>
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <a class="timeline-title" target="_self" href="/post/%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82.html">灵活的修改Burp请求</a>
+                                        <p>
+                                            灵活的修改Burp请求  在日常渗透测试中经常会遇到请求头需要替换、请求或响应内容需要解密等一系列麻烦的事。更换请求头可以通过Burp的Match and Replace功能来实现，加解密也有一些插件可以实现，但是它们普遍存在着以下缺陷：
+
+自定义数据不能进行保存
+
+加解密不能灵活的指定位置
+
+
+  带着这些需求，笔者在寻找工具时发现了一款有趣的插件Python Scripter: http...
+                                        </p>
+                                    </div>
+                                </li>
+                            
+                                
+                                <li class="timeline-item period">
+                                    <div class="timeline-info"></div>
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h2 class="timeline-title">February 2022</h2>
+                                    </div>
+                                </li>
+                                
+                                <li class="timeline-item">
+                                    <div class="timeline-info">
+                                        <span class="gradient-text">February 13, 2022</span>
+                                    </div>
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <a class="timeline-title" target="_self" href="/post/%E5%AE%B9%E5%99%A8%E8%BF%9B%E7%A8%8B%E5%88%87%E6%8D%A2%E6%BC%8F%E6%B4%9E.html">容器进程切换漏洞</a>
+                                        <p>
+                                            容器进程切换思考前置技术Magic Link​        /proc/目录下存在很多的链接文件，但是在Linux 也存在一种特殊的链接文件，这种文件的大小为0，我们知道普通的链接文件的大小等于链接目标的文件路径长度，但是Magic Link的大小为0，它们在打开方式上面也存在差别，普通链接文件会解析出链接文件的路径然后进行打开操作，但是Magic LInk的话不会这样，它会调用内核专门的...
                                         </p>
                                     </div>
                                 </li>

