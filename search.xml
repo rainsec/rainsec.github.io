@@ -1734,7 +1734,7 @@ if err != nil {
         <category>漏洞挖掘</category>
       </categories>
       <tags>
-        <tag>fuzz</tag>
+        <tag>Fuzz</tag>
       </tags>
   </entry>
   <entry>
