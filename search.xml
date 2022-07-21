@@ -1089,262 +1089,6 @@ https://github.com/pr0cf5/kernel-exploit-practice
       </tags>
   </entry>
   <entry>
-    <title>PHP-Parser的基本使用</title>
-    <url>//post/PHP-Parser.html</url>
-    <content><![CDATA[PHP-ParserPHP-Parser组件的基础使用，该组件为静态分析和反混淆常用的第三方依赖。
-
-
-What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2到PHP7.4解析器，其目的是简化静态代码分析和操作
-PHP-Parser的基础使用这里先贴一下官方文档
-PHP-Parser/doc at master · nikic/PHP-Parser (github.com)
-最基本的是要理解其中Walking the AST的部分
-初始化解析器首先创建实例
-use PhpParser\ParserFactory;
-$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);
-
-这其中有以下参数
-KindBehaviorParserFactory::PREFER_PHP7Try to parse code as PHP 7. If this fails, try to parse it as PHP 5.ParserFactory::PREFER_PHP5Try to parse code as PHP 5. If this fails, try to parse it as PHP 7.ParserFactory::ONLY_PHP7Parse code as PHP 7.ParserFactory::ONLY_PHP5Parse code as PHP 5.
-create还有一个参数Lexer，这里先不做讨论
-在实例化之后我们就可以通过
-$stmts = $parser-&gt;parse($code);
-
-来将代码转换成AST
-为了防止抛出异常，最好在try….catch中执行
-生成更加直观的AST当我们var_dump上面的$stmt时，会得到一个比较乱的AST，可以使用NodeDump将其转化为更加直观的AST
-这里需要使用NodeDump
-对于代码
-&lt;?php
-function printLine($msg) {
-    echo $msg, "\n";
-}
-printLine('Hello World!!!');
-
-将其转换为AST
-&lt;?php
-use PhpParser\NodeDumper;
-$nodeDumper = new NodeDumper;echo $nodeDumper-&gt;dump($stmts), "\n";
-
-得到以下输出
-array(
-    0: Stmt_Function(
-        byRef: false
-        name: Identifier(
-            name: printLine
-        )
-        params: array(
-            0: Param(
-                type: null
-                byRef: false
-                variadic: false
-                var: Expr_Variable(
-                    name: msg
-                )
-                default: null
-            )
-        )
-        returnType: null
-        stmts: array(
-            0: Stmt_Echo(
-                exprs: array(
-                    0: Expr_Variable(
-                        name: msg
-                    )
-                    1: Scalar_String(
-                        value:
-
-                    )
-                )
-            )
-        )
-    )
-    1: Stmt_Expression(
-        expr: Expr_FuncCall(
-            name: Name(
-                parts: array(
-                    0: printLine
-                )
-            )
-            args: array(
-                0: Arg(
-                    value: Scalar_String(
-                        value: Hello World!!!
-                    )
-                    byRef: false
-                    unpack: false
-                )
-            )
-        )
-    )
-)
-
-Node tree structure上面我们可以看到生成了很多的Node类型
-PHP是一个成熟的脚本语言，它大约有140个不同的节点。但是为了方便使用，将他们分为三类：
-
-PhpParser\Node\Stmts是语句节点，即不返回值且不能出现在表达式中的语言构造。例如，类定义是一个语句，它不返回值，你不能编写类似func(class {})的语句。
-
-PhpParser\Node\expr是表达式节点，即返回值的语言构造，因此可以出现在其他表达式中。如：$var (PhpParser\Node\Expr\Variable)和func() (PhpParser\Node\Expr\FuncCall)。
-
-PhpParser\Node\Scalars是表示标量值的节点，如"string" (PhpParser\Node\scalar\string)、0 (PhpParser\Node\scalar\LNumber) 或魔术常量，如”FILE“ (PhpParser\Node\scalar\MagicConst\FILE) 。所有PhpParser\Node\scalar都是延伸自PhpParser\Node\Expr，因为scalar也是表达式。
-
-需要注意的是PhpParser\Node\Name和PhpParser\Node\Arg不在以上的节点之中
-
-
-Pretty printerPrettyprinter用来将我们修改后的AST转换回PHP代码，使用如下
-use PhpParser\Error;
-use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter;
-$code = "&lt;?php echo 'Hi ', hi\\getTarget();";
-$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);$prettyPrinter = new PrettyPrinter\Standard;
-try {
-    //生成AST
-    $stmts = $parser-&gt;parse($code);
-    //对节点进行操作
-    $stmts[0]         // the echo statement
-          -&gt;exprs     // sub expressions
-          [0]         // the first of them (the string node)
-          -&gt;value     // it's value, i.e. 'Hi '
-          = 'Hello '; // change to 'Hello '
-
-    // pretty print
-    $code = $prettyPrinter-&gt;prettyPrint($stmts);
-    echo $code;
-} catch (Error $e) {
-    echo 'Parse Error: ', $e-&gt;getMessage();
-}
-
-在反混淆中我们一般很少使用$stmts[0]这种方式，因为我们要考虑节点的各种类型
-此外还有prettyPrintExpr()，它可以用来输出一个表达式类型的节点
-例如当你需要提取全局变量时
-&lt;?php
-    $a = $_POST['a'];
-
-他的语法树如下
-0: Stmt_Expression(
-        expr: Expr_Assign(
-            var: Expr_Variable(
-                name: a
-            )
-            expr: Expr_ArrayDimFetch(
-                var: Expr_Variable(
-                    name: _POST
-                )
-                dim: Scalar_String(
-                    value: a
-                )
-            )
-        )
-    )
-
-如果我想获取$_POST[‘a’],我就需要先判断节点类型是不是Expr_ArrayDimFetch
-然后判断$node-&gt;var-&gt;name是不是全局变量
-最后提取$node-&gt;var-&gt;name和$node-&gt;dim-&gt;value然后将它们拼接
-当我的全局变量为$_POST[a]时，dim部分的AST也会变化，我们还需要考虑这种情况。
-但是我们可以使用
-/*
-    用来识别全局变量;
-    如果要获取全局变量格式无需考虑value的节点类型
-    expr: Expr_ArrayDimFetch(
-            var: Expr_Variable(
-                name: _POST
-            )
-    )
-*/
-        if ($node instanceof Node\Expr\ArrayDimFetch &amp;&amp; $node-&gt;var instanceof Node\Expr\Variable &amp;&amp; (in_array($node-&gt;var-&gt;name ,GLOBAL_VAR)))
-        {
-            self::$globalname = $this-&gt;prettyPrinter-&gt;prettyPrintExpr($node);
-        }
-
-其中
-$this-&gt;prettyPrinter-&gt;prettyPrintExpr($node);
-
-就会返回该Expr节点的表达式，无论是$_POST['a']还是$_POST[a]都可以正常返回
-PHP-Parser/Pretty_printing.markdown at master · nikic/PHP-Parser (github.com)
-Node traversation我们使用PHP-Parser对文件的节点进行修改，最关键的就是编写节点遍历操作
-使用PhpParser\NodeTraverser我们可以遍历每一个节点，举几个简单的例子：解析php中的所有字符串，并输出
-&lt;?php
-use PhpParser\Error;
-use PhpParser\ParserFactory;
-use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitorAbstract;
-use PhpParser\Node;
-
-require 'vendor/autoload.php';
-
-class MyVisitor extends NodeVisitorAbstract{
-    public function leaveNode(Node $node)
-    {
-        //判断如果是一个String_节点，就输出
-        if ($node instanceof Node\Scalar\String_)
-        {
-            echo $node -&gt; value,"\n";
-        }
-
-    }
-}
-
-$code = file_get_contents("./test.php");
-
-//实例化解释器
-$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);
-$traverser = New NodeTraverser;
-//添加自己的Visitor
-$traverser-&gt;addVisitor(new MyVisitor);
-
-try {
-    //转化AST
-    $ast = $parser-&gt;parse($code);
-    //开始遍历
-    $stmts = $traverser-&gt;traverse($ast);
-} catch (Error $error) {
-    echo "Parse error: {$error-&gt;getMessage()}\n";
-    return;
-}
-
-?&gt;
-
-替换php脚本中函数以及类的成员方法函数名为小写
-class MyVisitor extends NodeVisitorAbstract{
-    public function leaveNode(Node $node)
-    {
-        if( $node instanceof Node\Expr\FuncCall) {
-            $node-&gt;name-&gt;parts[0]=strtolower($node-&gt;name-&gt;parts[0]);
-        }elseif($node instanceof Node\Stmt\ClassMethod){
-            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
-        }elseif ($node instanceof Node\Stmt\Function_){
-            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
-        }elseif($node instanceof Node\Expr\MethodCall){
-            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
-        }
-    }
-}
-
-需要注意的是所有的visitors都必须实现PhpParser\NodeVisitor接口，该接口定义了如下4个方法：
-public function beforeTraverse(array $nodes);
-public function enterNode(\PhpParser\Node $node);
-public function leaveNode(\PhpParser\Node $node);
-public function afterTraverse(array $nodes);
-
-
-beforeTraverse方法在遍历开始之前调用一次，并将其传递给调用遍历器的节点。此方法可用于在遍历之前重置值或准备遍历树。
-
-afterTraverse方法与beforeTraverse方法类似，唯一的区别是它只在遍历之后调用一次。
-
-在每个节点上都调用enterNode和leaveNode方法，前者在它被输入时，即在它的子节点被遍历之前，后者在它被离开时。
-
-这四个方法要么返回更改的节点，要么根本不返回(即null)，在这种情况下，当前节点不更改。
-
-
-例子基于 AST（抽象语法树）解 PHP 混淆 | J0k3r’s Blog
-P.S.我们需要知道你需要什么样的Node，进行什么样的操作，Node下数据的格式会有哪几种情况，会不会因为代码不够严谨导致错误或者无限递归
-]]></content>
-      <categories>
-        <category>漏洞挖掘</category>
-      </categories>
-      <tags>
-        <tag>PHP</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>RealWorld CTF之qiling框架分析</title>
     <url>//post/Qilin%E6%A1%86%E6%9E%B6%E5%88%86%E6%9E%90.html</url>
     <content><![CDATA[RealWorld CTF之qiling框架分析qiling​当时题目就给了一个qiling的使用的用例，甚至和官方文档上面的用例差不多因此肯定是库的问题。
@@ -1628,6 +1372,262 @@ https://github.com/qilingframework/qiling/pull/1076/commits/6d0fc4a81880abc29845
       </categories>
       <tags>
         <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PHP-Parser的基本使用</title>
+    <url>//post/PHP-Parser.html</url>
+    <content><![CDATA[PHP-ParserPHP-Parser组件的基础使用，该组件为静态分析和反混淆常用的第三方依赖。
+
+
+What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2到PHP7.4解析器，其目的是简化静态代码分析和操作
+PHP-Parser的基础使用这里先贴一下官方文档
+PHP-Parser/doc at master · nikic/PHP-Parser (github.com)
+最基本的是要理解其中Walking the AST的部分
+初始化解析器首先创建实例
+use PhpParser\ParserFactory;
+$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);
+
+这其中有以下参数
+KindBehaviorParserFactory::PREFER_PHP7Try to parse code as PHP 7. If this fails, try to parse it as PHP 5.ParserFactory::PREFER_PHP5Try to parse code as PHP 5. If this fails, try to parse it as PHP 7.ParserFactory::ONLY_PHP7Parse code as PHP 7.ParserFactory::ONLY_PHP5Parse code as PHP 5.
+create还有一个参数Lexer，这里先不做讨论
+在实例化之后我们就可以通过
+$stmts = $parser-&gt;parse($code);
+
+来将代码转换成AST
+为了防止抛出异常，最好在try….catch中执行
+生成更加直观的AST当我们var_dump上面的$stmt时，会得到一个比较乱的AST，可以使用NodeDump将其转化为更加直观的AST
+这里需要使用NodeDump
+对于代码
+&lt;?php
+function printLine($msg) {
+    echo $msg, "\n";
+}
+printLine('Hello World!!!');
+
+将其转换为AST
+&lt;?php
+use PhpParser\NodeDumper;
+$nodeDumper = new NodeDumper;echo $nodeDumper-&gt;dump($stmts), "\n";
+
+得到以下输出
+array(
+    0: Stmt_Function(
+        byRef: false
+        name: Identifier(
+            name: printLine
+        )
+        params: array(
+            0: Param(
+                type: null
+                byRef: false
+                variadic: false
+                var: Expr_Variable(
+                    name: msg
+                )
+                default: null
+            )
+        )
+        returnType: null
+        stmts: array(
+            0: Stmt_Echo(
+                exprs: array(
+                    0: Expr_Variable(
+                        name: msg
+                    )
+                    1: Scalar_String(
+                        value:
+
+                    )
+                )
+            )
+        )
+    )
+    1: Stmt_Expression(
+        expr: Expr_FuncCall(
+            name: Name(
+                parts: array(
+                    0: printLine
+                )
+            )
+            args: array(
+                0: Arg(
+                    value: Scalar_String(
+                        value: Hello World!!!
+                    )
+                    byRef: false
+                    unpack: false
+                )
+            )
+        )
+    )
+)
+
+Node tree structure上面我们可以看到生成了很多的Node类型
+PHP是一个成熟的脚本语言，它大约有140个不同的节点。但是为了方便使用，将他们分为三类：
+
+PhpParser\Node\Stmts是语句节点，即不返回值且不能出现在表达式中的语言构造。例如，类定义是一个语句，它不返回值，你不能编写类似func(class {})的语句。
+
+PhpParser\Node\expr是表达式节点，即返回值的语言构造，因此可以出现在其他表达式中。如：$var (PhpParser\Node\Expr\Variable)和func() (PhpParser\Node\Expr\FuncCall)。
+
+PhpParser\Node\Scalars是表示标量值的节点，如"string" (PhpParser\Node\scalar\string)、0 (PhpParser\Node\scalar\LNumber) 或魔术常量，如”FILE“ (PhpParser\Node\scalar\MagicConst\FILE) 。所有PhpParser\Node\scalar都是延伸自PhpParser\Node\Expr，因为scalar也是表达式。
+
+需要注意的是PhpParser\Node\Name和PhpParser\Node\Arg不在以上的节点之中
+
+
+Pretty printerPrettyprinter用来将我们修改后的AST转换回PHP代码，使用如下
+use PhpParser\Error;
+use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter;
+$code = "&lt;?php echo 'Hi ', hi\\getTarget();";
+$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);$prettyPrinter = new PrettyPrinter\Standard;
+try {
+    //生成AST
+    $stmts = $parser-&gt;parse($code);
+    //对节点进行操作
+    $stmts[0]         // the echo statement
+          -&gt;exprs     // sub expressions
+          [0]         // the first of them (the string node)
+          -&gt;value     // it's value, i.e. 'Hi '
+          = 'Hello '; // change to 'Hello '
+
+    // pretty print
+    $code = $prettyPrinter-&gt;prettyPrint($stmts);
+    echo $code;
+} catch (Error $e) {
+    echo 'Parse Error: ', $e-&gt;getMessage();
+}
+
+在反混淆中我们一般很少使用$stmts[0]这种方式，因为我们要考虑节点的各种类型
+此外还有prettyPrintExpr()，它可以用来输出一个表达式类型的节点
+例如当你需要提取全局变量时
+&lt;?php
+    $a = $_POST['a'];
+
+他的语法树如下
+0: Stmt_Expression(
+        expr: Expr_Assign(
+            var: Expr_Variable(
+                name: a
+            )
+            expr: Expr_ArrayDimFetch(
+                var: Expr_Variable(
+                    name: _POST
+                )
+                dim: Scalar_String(
+                    value: a
+                )
+            )
+        )
+    )
+
+如果我想获取$_POST[‘a’],我就需要先判断节点类型是不是Expr_ArrayDimFetch
+然后判断$node-&gt;var-&gt;name是不是全局变量
+最后提取$node-&gt;var-&gt;name和$node-&gt;dim-&gt;value然后将它们拼接
+当我的全局变量为$_POST[a]时，dim部分的AST也会变化，我们还需要考虑这种情况。
+但是我们可以使用
+/*
+    用来识别全局变量;
+    如果要获取全局变量格式无需考虑value的节点类型
+    expr: Expr_ArrayDimFetch(
+            var: Expr_Variable(
+                name: _POST
+            )
+    )
+*/
+        if ($node instanceof Node\Expr\ArrayDimFetch &amp;&amp; $node-&gt;var instanceof Node\Expr\Variable &amp;&amp; (in_array($node-&gt;var-&gt;name ,GLOBAL_VAR)))
+        {
+            self::$globalname = $this-&gt;prettyPrinter-&gt;prettyPrintExpr($node);
+        }
+
+其中
+$this-&gt;prettyPrinter-&gt;prettyPrintExpr($node);
+
+就会返回该Expr节点的表达式，无论是$_POST['a']还是$_POST[a]都可以正常返回
+PHP-Parser/Pretty_printing.markdown at master · nikic/PHP-Parser (github.com)
+Node traversation我们使用PHP-Parser对文件的节点进行修改，最关键的就是编写节点遍历操作
+使用PhpParser\NodeTraverser我们可以遍历每一个节点，举几个简单的例子：解析php中的所有字符串，并输出
+&lt;?php
+use PhpParser\Error;
+use PhpParser\ParserFactory;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
+use PhpParser\Node;
+
+require 'vendor/autoload.php';
+
+class MyVisitor extends NodeVisitorAbstract{
+    public function leaveNode(Node $node)
+    {
+        //判断如果是一个String_节点，就输出
+        if ($node instanceof Node\Scalar\String_)
+        {
+            echo $node -&gt; value,"\n";
+        }
+
+    }
+}
+
+$code = file_get_contents("./test.php");
+
+//实例化解释器
+$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);
+$traverser = New NodeTraverser;
+//添加自己的Visitor
+$traverser-&gt;addVisitor(new MyVisitor);
+
+try {
+    //转化AST
+    $ast = $parser-&gt;parse($code);
+    //开始遍历
+    $stmts = $traverser-&gt;traverse($ast);
+} catch (Error $error) {
+    echo "Parse error: {$error-&gt;getMessage()}\n";
+    return;
+}
+
+?&gt;
+
+替换php脚本中函数以及类的成员方法函数名为小写
+class MyVisitor extends NodeVisitorAbstract{
+    public function leaveNode(Node $node)
+    {
+        if( $node instanceof Node\Expr\FuncCall) {
+            $node-&gt;name-&gt;parts[0]=strtolower($node-&gt;name-&gt;parts[0]);
+        }elseif($node instanceof Node\Stmt\ClassMethod){
+            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
+        }elseif ($node instanceof Node\Stmt\Function_){
+            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
+        }elseif($node instanceof Node\Expr\MethodCall){
+            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
+        }
+    }
+}
+
+需要注意的是所有的visitors都必须实现PhpParser\NodeVisitor接口，该接口定义了如下4个方法：
+public function beforeTraverse(array $nodes);
+public function enterNode(\PhpParser\Node $node);
+public function leaveNode(\PhpParser\Node $node);
+public function afterTraverse(array $nodes);
+
+
+beforeTraverse方法在遍历开始之前调用一次，并将其传递给调用遍历器的节点。此方法可用于在遍历之前重置值或准备遍历树。
+
+afterTraverse方法与beforeTraverse方法类似，唯一的区别是它只在遍历之后调用一次。
+
+在每个节点上都调用enterNode和leaveNode方法，前者在它被输入时，即在它的子节点被遍历之前，后者在它被离开时。
+
+这四个方法要么返回更改的节点，要么根本不返回(即null)，在这种情况下，当前节点不更改。
+
+
+例子基于 AST（抽象语法树）解 PHP 混淆 | J0k3r’s Blog
+P.S.我们需要知道你需要什么样的Node，进行什么样的操作，Node下数据的格式会有哪几种情况，会不会因为代码不够严谨导致错误或者无限递归
+]]></content>
+      <categories>
+        <category>漏洞挖掘</category>
+      </categories>
+      <tags>
+        <tag>PHP</tag>
       </tags>
   </entry>
   <entry>
