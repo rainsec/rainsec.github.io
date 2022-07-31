@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="RainSec,"> 
-    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,Fuzzing之GrammarsFuzzing input​        Fuzzing的一大核心思想其实就是通过大量的Input去触发程序的各个分支逻辑，因此Fuzzing的成功与否和Input,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,Fuzzing之GrammarsFuzzing input​  Fuzzing的一大核心思想其实就是通过大量的Input去触发程序的各个分支逻辑，因此Fuzzing的成功与否和Input的生成关系密,"> 
     <meta name="author" content="RainSec"> 
     <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
     <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
@@ -158,11 +158,11 @@
 <div class="article">
     <div class='main'>
         <div class="content markdown animated fadeIn">
-            <h1 id="Fuzzing之Grammars"><a href="#Fuzzing之Grammars" class="headerlink" title="Fuzzing之Grammars"></a>Fuzzing之Grammars</h1><h2 id="Fuzzing-input"><a href="#Fuzzing-input" class="headerlink" title="Fuzzing input"></a>Fuzzing input</h2><p>​        Fuzzing的一大核心思想其实就是通过大量的Input去触发程序的各个分支逻辑，因此Fuzzing的成功与否和Input的生成关系密切。Input的格式多种多样，可以是文件，代码，json数据等等。但是各种各样的数据都有自己的格式，程序的输入也是如此，那么在生成Input的过程中，格式化非常关键，程序无法接受的输入对于Fuzzing来说是毫无意义的。</p>
-<p>​        为了很好的描述一个程序的输入，一个很有必要的事情是为输入制定一些语法规范。比如编译器的输入：python解释器规定了符合python语法的程序才能得以执行，gcc规定了符合C语言语法的程序才能被完成编译进而生成二进制文件。Fuzzing也是如此，为了很好的达到Fuzzing的效果，为程序定义一种输入的语法规范往往是一种不错的选择。</p>
-<p>​        一般而言，对于Fuzzing简单的程序来说，正则表达式往往是一个不错的选择，它所具备的有限状态机属性使得它易于推理进而获得一个满意的Input。但是如果面临的Fuzzing目标需要非常复杂的输入，那么它就会表现的捉襟见肘。</p>
-<p>​        我曾见过为了更好的实现某些功能而专门设计一些语言，从计算机理论的角度这显然是非常有用的，一些特殊功能在特殊语言的加持之下表现出超高的质量，但是对于Fuzzing而言这确实是成本过高了，Grammars其实就是正则表达式和专业语言之间的一个中间地带。它易于理解，并且能很好的完成Fuzzing对它的期望–生成大量合法输入，因为通过Grammars可以规定Inputs的大量属性，完美的表达一个复杂输入的语法结构。</p>
-<h2 id="Grammars初探"><a href="#Grammars初探" class="headerlink" title="Grammars初探"></a>Grammars初探</h2><p>​        Grammar一般由符号和一组表达式组成，例如<code>A = 10 | 9 | 0 |1</code>，符号化使得递归成为可能，假设<code>B = A | AB</code>，这无疑就使得符号所代表的范围倍增。根据这种思想我们可以制作一个算数表达式：</p>
+            <h1 id="Fuzzing之Grammars"><a href="#Fuzzing之Grammars" class="headerlink" title="Fuzzing之Grammars"></a>Fuzzing之Grammars</h1><h2 id="Fuzzing-input"><a href="#Fuzzing-input" class="headerlink" title="Fuzzing input"></a>Fuzzing input</h2><p>​  Fuzzing的一大核心思想其实就是通过大量的Input去触发程序的各个分支逻辑，因此Fuzzing的成功与否和Input的生成关系密切。Input的格式多种多样，可以是文件，代码，json数据等等。但是各种各样的数据都有自己的格式，程序的输入也是如此，那么在生成Input的过程中，格式化非常关键，程序无法接受的输入对于Fuzzing来说是毫无意义的。</p>
+<p>​  为了很好的描述一个程序的输入，一个很有必要的事情是为输入制定一些语法规范。比如编译器的输入：python解释器规定了符合python语法的程序才能得以执行，gcc规定了符合C语言语法的程序才能被完成编译进而生成二进制文件。Fuzzing也是如此，为了很好的达到Fuzzing的效果，为程序定义一种输入的语法规范往往是一种不错的选择。</p>
+<p>​  一般而言，对于Fuzzing简单的程序来说，正则表达式往往是一个不错的选择，它所具备的有限状态机属性使得它易于推理进而获得一个满意的Input。但是如果面临的Fuzzing目标需要非常复杂的输入，那么它就会表现的捉襟见肘。</p>
+<p>​  我曾见过为了更好的实现某些功能而专门设计一些语言，从计算机理论的角度这显然是非常有用的，一些特殊功能在特殊语言的加持之下表现出超高的质量，但是对于Fuzzing而言这确实是成本过高了，Grammars其实就是正则表达式和专业语言之间的一个中间地带。它易于理解，并且能很好的完成Fuzzing对它的期望–生成大量合法输入，因为通过Grammars可以规定Inputs的大量属性，完美的表达一个复杂输入的语法结构。</p>
+<h2 id="Grammars初探"><a href="#Grammars初探" class="headerlink" title="Grammars初探"></a>Grammars初探</h2><p>​  Grammar一般由符号和一组表达式组成，例如<code>A = 10 | 9 | 0 |1</code>，符号化使得递归成为可能，假设<code>B = A | AB</code>，这无疑就使得符号所代表的范围倍增。根据这种思想我们可以制作一个算数表达式：</p>
 <pre><code>&lt;start&gt;   ::= &lt;expr&gt;
 &lt;expr&gt;    ::= &lt;term&gt; + &lt;expr&gt; | &lt;term&gt; - &lt;expr&gt; | &lt;term&gt;
 &lt;term&gt;    ::= &lt;term&gt; * &lt;factor&gt; | &lt;term&gt; / &lt;factor&gt; | &lt;factor&gt;
@@ -199,7 +199,7 @@
     }
 </code></pre>
 <p>前三行代码定义了一个Grammar应该如何在Python中构成。通过代码中的<code>EXPR_GRAMMAR["&lt;digit&gt;"]</code>可以访问当前Grammar的各个组成部分并对其进行操作。</p>
-<h3 id="Sample-Grammar-Fuzz"><a href="#Sample-Grammar-Fuzz" class="headerlink" title="Sample Grammar Fuzz"></a>Sample Grammar Fuzz</h3><p>​        那么该如何对Grammar语法进行解析呢？一种最简单的方式就是通过字符串替换，因为在Grammar中<code>:</code>的左右两侧本身就是一种映射关系，因此利用字符串替换不断迭代是一种最为直观的选择。</p>
+<h3 id="Sample-Grammar-Fuzz"><a href="#Sample-Grammar-Fuzz" class="headerlink" title="Sample Grammar Fuzz"></a>Sample Grammar Fuzz</h3><p>​  那么该如何对Grammar语法进行解析呢？一种最简单的方式就是通过字符串替换，因为在Grammar中<code>:</code>的左右两侧本身就是一种映射关系，因此利用字符串替换不断迭代是一种最为直观的选择。</p>
 <p>实例代码：</p>
 <pre><code class="python">START_SYMBOL = "&lt;start&gt;"
 # 一个简单的gramar fuzzer
@@ -242,7 +242,7 @@ def simple_grammar_fuzzer(grammar: Grammar,
     return term
 </code></pre>
 <p>利用上面的表达式Grammar可以制作一个简单的grammar fuzz，Fuzz的编写过程其实面临着很多的取舍，便利和速度或者各种各样的可行性之间的考虑，以上面的Grammar为例子，我们肯定不希望其陷入类似无限递归或者大量符号解析的情况，而是会限制对字段的提取次数和对符号的解析次数。</p>
-<p>​        但是此类Grammar Fuzz都面临几个问题就是大量的字符串搜索和替换操作导致效率低下，而且可以看出存在Input生成失败的情况（ExpansionError），而且这是一个典型的上下文无关的Fuzz。不过，依赖于上述功能，我们只要编写Grammar就可以很好的对一些Inputs进行大量生成。</p>
+<p>​  但是此类Grammar Fuzz都面临几个问题就是大量的字符串搜索和替换操作导致效率低下，而且可以看出存在Input生成失败的情况（ExpansionError），而且这是一个典型的上下文无关的Fuzz。不过，依赖于上述功能，我们只要编写Grammar就可以很好的对一些Inputs进行大量生成。</p>
 <p>比如URL生成：</p>
 <pre><code class="python">URL_GRAMMAR: Grammar = {
     "&lt;start&gt;":
@@ -321,7 +321,7 @@ def simple_grammar_fuzzer(grammar: Grammar,
 }
 </code></pre>
 <p>到此，我们理解了Grammar对于Fuzzing的重要性，一个杰出的Grammar能够有效的生成大量合法输入，不过这只是从输入组成（句法）来看，这毕竟是一个庞大的范围，虽然有时候满足程序的输入格式，但是未必真的对Fuzzing起作用，这种情况非常常见。再一次以编译器为例子，你的程序在满足语言语法的同时更应该具备正确的语义。但是语义很难再以Grammar的形式表达。以URL生成Grammar为例，简单通过Grammar很难定义端口的范围。面对这样的问题，最简单的解决办法其实就是在Fuzz里面而不是在Grammar里面进行限制。以URL Grammar为例，通过Grammar生成的URL在真正的被作为Input给予目标之前，应该在Fuzz系统里面经过URL“合法性”判断，这里的判断可以由作者根据自己的需求来进行限制。</p>
-<h3 id="Grammar-Toolbox"><a href="#Grammar-Toolbox" class="headerlink" title="Grammar Toolbox"></a>Grammar Toolbox</h3><p>​        在Fuzzing项目中对于Grammar的需求并不是一成不变的，因此Grammar的一大需求就是具备可扩展性。以一个简单的Gramar为例：</p>
+<h3 id="Grammar-Toolbox"><a href="#Grammar-Toolbox" class="headerlink" title="Grammar Toolbox"></a>Grammar Toolbox</h3><p>​  在Fuzzing项目中对于Grammar的需求并不是一成不变的，因此Grammar的一大需求就是具备可扩展性。以一个简单的Gramar为例：</p>
 <pre><code class="python">simple_nonterminal_grammar: Grammar = {
     "&lt;start&gt;": ["&lt;nonterminal&gt;"],
     "&lt;nonterminal&gt;": ["&lt;left-angle&gt;&lt;identifier&gt;&lt;right-angle&gt;"],
@@ -599,9 +599,9 @@ def is_valid_grammar(grammar: Grammar,
     return used_nonterminals == defined_nonterminals and len(unreachable) == 0
 </code></pre>
 <p>以上列举的是常用的Tools，在Fuzz的编写过程中，要根据实际问题针对性的编写各式各样的工具。</p>
-<h2 id="高效Grammars-Fuzz"><a href="#高效Grammars-Fuzz" class="headerlink" title="高效Grammars Fuzz"></a>高效Grammars Fuzz</h2><p>​        前面提供的simple_grammar_fuzzer其实存在大量的问题，比如性能低下，对于符号的解析次数受限，容易引起报错等，因此需要更加高明的算法。这里选择的是派生树，因为树形结构易于追踪而且易于添加和删除其中分支。关于Fuzz的编写其实就是不断的对派生树进行分析和对子节点的不断扩展。</p>
-<h3 id="派生树算法"><a href="#派生树算法" class="headerlink" title="派生树算法"></a>派生树算法</h3><p>​        从上述的简单算法可以看出，整个的Grammar Fuzz的核心其实就是通过大量的符号扩展形成对应的数据结构，那么用来存储或者拓展符号的数据结构其实尤为重要。派生树的树状结构其实完美的符合了我们的要求，树形结构自上而下的扩展正好和符号的扩展相对应。而且<code>派生树使得我们可以掌控整个扩展过程的状态</code>，比如那些节点已经被扩展，或者某个节点是否需要扩展等，同时，在扩展过程中增加新节点的速度远超把一个符号替换为一个值的过程，因此使用这种数据结构也带来了一定的性能增益。</p>
-<p>​        让我们以下面的Grammar为例子：</p>
+<h2 id="高效Grammars-Fuzz"><a href="#高效Grammars-Fuzz" class="headerlink" title="高效Grammars Fuzz"></a>高效Grammars Fuzz</h2><p>​  前面提供的simple_grammar_fuzzer其实存在大量的问题，比如性能低下，对于符号的解析次数受限，容易引起报错等，因此需要更加高明的算法。这里选择的是派生树，因为树形结构易于追踪而且易于添加和删除其中分支。关于Fuzz的编写其实就是不断的对派生树进行分析和对子节点的不断扩展。</p>
+<h3 id="派生树算法"><a href="#派生树算法" class="headerlink" title="派生树算法"></a>派生树算法</h3><p>​  从上述的简单算法可以看出，整个的Grammar Fuzz的核心其实就是通过大量的符号扩展形成对应的数据结构，那么用来存储或者拓展符号的数据结构其实尤为重要。派生树的树状结构其实完美的符合了我们的要求，树形结构自上而下的扩展正好和符号的扩展相对应。而且<code>派生树使得我们可以掌控整个扩展过程的状态</code>，比如那些节点已经被扩展，或者某个节点是否需要扩展等，同时，在扩展过程中增加新节点的速度远超把一个符号替换为一个值的过程，因此使用这种数据结构也带来了一定的性能增益。</p>
+<p>​  让我们以下面的Grammar为例子：</p>
 <pre><code class="python"># URL Grammar
 URL_GRAMMAR: Grammar = {
     "&lt;start&gt;":
@@ -635,7 +635,7 @@ URL_GRAMMAR: Grammar = {
 }
 </code></pre>
 <p>以派生树算法来看，首先以<code>&lt;start&gt;</code>为初始节点，然后在Grammar中发现其存在对应的表达，所以就会选择<code>&lt;url&gt;</code>作为它的子节点，循环往复知道一个节点不再出现对应的子节点，然后整个的树形结构完成解析，输出对应的结构化数据。</p>
-<p>​        对应的数据表示如下：</p>
+<p>​  对应的数据表示如下：</p>
 <pre><code class="python">(SYMBOL_NAME, CHILDREN)
 DerivationTree = Tuple[str, Optional[List[Any]]]
 derivation_tree: DerivationTree = ("&lt;start&gt;",
@@ -655,7 +655,7 @@ derivation_tree: DerivationTree = ("&lt;start&gt;",
     f = GrammarFuzzer(URL_GRAMMAR)
     f.fuzz()
 </code></pre>
-<h3 id="ProbabilisticGrammarFuzzer"><a href="#ProbabilisticGrammarFuzzer" class="headerlink" title="ProbabilisticGrammarFuzzer"></a>ProbabilisticGrammarFuzzer</h3><p>​        有时候完全随机的进行表达式展开其实会白白浪费大量的时间和资源，因此可以对表达式附加概率值，这一块涉及到大量的概率学问题，有部分数据来源于世界的统计规律，比如下面给出的<code>leaddigit</code>符号对应的概率，这些就不在深入分析。</p>
+<h3 id="ProbabilisticGrammarFuzzer"><a href="#ProbabilisticGrammarFuzzer" class="headerlink" title="ProbabilisticGrammarFuzzer"></a>ProbabilisticGrammarFuzzer</h3><p>​  有时候完全随机的进行表达式展开其实会白白浪费大量的时间和资源，因此可以对表达式附加概率值，这一块涉及到大量的概率学问题，有部分数据来源于世界的统计规律，比如下面给出的<code>leaddigit</code>符号对应的概率，这些就不在深入分析。</p>
 <pre><code class="python">PROBABILISTIC_EXPR_GRAMMAR: Grammar = {
     "&lt;start&gt;":
         ["&lt;expr&gt;"],
@@ -700,12 +700,12 @@ derivation_tree: DerivationTree = ("&lt;start&gt;",
 }
 </code></pre>
 <p>跟之前的Grammar有很大不同的地方在于，现在的Grammar可以通过增加注释的方式为列表中的值添加随机概率，使得作者可以通过逆向获取其它渠道得到的信息可以在Fuzz中获得利用。那现在问题就显而易见了，如何确定概率？</p>
-<p>​        当Fuzz的作者没办法直接给出一个符号对应的所有项具体的概率的时候，可以遵循的最直接的规则就是下面三个公式：</p>
+<p>​  当Fuzz的作者没办法直接给出一个符号对应的所有项具体的概率的时候，可以遵循的最直接的规则就是下面三个公式：</p>
 <p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220731/image-20220727074801193.2ln12v05bx40.png"></p>
 <p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220731/image-20220727074816609.10867094x8k0.png"></p>
 <p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220731/image-20220727074824325.1vqo9xj0oiw0.png"></p>
 <p>大致含义也很好理解，就是a代表的是已知概率的项，而u代表的未知概率的项目，已知概率自然可以通过<code>opts</code>的方法给对应项附加概率，未知概率的项则按照概率平分的原则来赋予概率。之后自然是要在Fuzz里面引入概率，使得在生成种子的时候可以对符号解析的选择赋予权重，进而提高Fuzz效率。</p>
-<p>​        就Fuzz的具体实现而言，其实相比于上述的Grammar Fuzz只是增加了一个对于opts注释的访问，以便在随机解析的时候可以附加概率值权重。但是这样带来的优势是很明显的，甚至可以通过控制输入Fuzz目标指定的Func等。但是还有一种情况，我第一次解析Grammar symbol的时候希望它的概率为0.3，但是我第二次解析Grammar symbol的时候希望其概率为0.5，为了实现这一点其实可以利用上下文，在不同的上下文中复制希望赋予其不同概率的symbol，以IP Grammar为例子：</p>
+<p>​  就Fuzz的具体实现而言，其实相比于上述的Grammar Fuzz只是增加了一个对于opts注释的访问，以便在随机解析的时候可以附加概率值权重。但是这样带来的优势是很明显的，甚至可以通过控制输入Fuzz目标指定的Func等。但是还有一种情况，我第一次解析Grammar symbol的时候希望它的概率为0.3，但是我第二次解析Grammar symbol的时候希望其概率为0.5，为了实现这一点其实可以利用上下文，在不同的上下文中复制希望赋予其不同概率的symbol，以IP Grammar为例子：</p>
 <pre><code class="python">IP_ADDRESS_GRAMMAR: Grammar = {
     "&lt;start&gt;": ["&lt;address&gt;"],
     "&lt;address&gt;": ["&lt;octet&gt;.&lt;octet&gt;.&lt;octet&gt;.&lt;octet&gt;"],
@@ -785,7 +785,7 @@ set_prob(probabilistic_ip_address_grammar, "&lt;octet-2&gt;", "0", 1.0)
 <li>测试不常用功能，通过规避Inputs中解析到的symbol，Fuzz就会更偏向于测试一些不常用的功能。</li>
 <li>专注于指定的Inputs，一些漏洞挖掘可能希望专注于已有的非常有价值的poc inputs，通过专注于这些inputs，Fuzz可以测试软件的一些薄弱环节从而达到很好的效果。</li>
 </ol>
-<p>​        理论已经存在，那么如何实现呢？第一步肯定是需要将已经存在的Inputs种子恢复成为派生树，然后对派生树种每个Symbol对应的值有多少来计算将来的概率值。</p>
+<p>​  理论已经存在，那么如何实现呢？第一步肯定是需要将已经存在的Inputs种子恢复成为派生树，然后对派生树种每个Symbol对应的值有多少来计算将来的概率值。</p>
 <p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220731/image-20220727103008425.4agknyqe2ly0.png"></p>
 <p>如上图，假设我给与一个<code>127.0.0.1</code>的种子，那么被解析之后，0在<code>&lt;octet&gt;</code>中的概率值就会被限制为<code>50%</code>，127和1分别为<code>25%</code>，那么在Fuzz运行的时候相关的概率值就可以赋予给<code>&lt;octet&gt;</code>。那么如果测试一些不常用功能该怎么办呢？其实就是通过原来测常用功能的Inputs得到相关概率，然后进行概率翻转就行了，比如常用功能的Inputs概率如下：</p>
 <pre><code>[('http', {'prob': 0.2222222222222222}),
@@ -800,7 +800,7 @@ set_prob(probabilistic_ip_address_grammar, "&lt;octet-2&gt;", "0", 1.0)
  ('ftps', {'prob': 0.2222222222222222})]
 </code></pre>
 <p>上述就是之前讲到的专注测试常用功能或者非常用功能的基本思路，从此处引出的另一个比较关键的是通过Inputs帮我们专注于目标的特定功能，它和测试常用功能的区别就是首先要找到一批特殊的Inputs，通过这些Inputs作为seeds就可以对语法解析的过程进行概率分析和限制，使得后续的变异可以一直有较高的目标命中率。</p>
-<h3 id="Generator-With-Pre-or-Post-or-order-Func"><a href="#Generator-With-Pre-or-Post-or-order-Func" class="headerlink" title="Generator With Pre or Post or order Func"></a>Generator With Pre or Post or order Func</h3><p>​        在某些Inputs在生成的时候，Fuzz作者可能希望对他们进行一些限制调整，获取其它的操作，这些都可以通过<code>pre func</code>完成。这类似于hook，那么对于func触发的时机一般就分为两种，在Inputs的生成之前或者是生成之后，在语法里面的表示就是：</p>
+<h3 id="Generator-With-Pre-or-Post-or-order-Func"><a href="#Generator-With-Pre-or-Post-or-order-Func" class="headerlink" title="Generator With Pre or Post or order Func"></a>Generator With Pre or Post or order Func</h3><p>​  在某些Inputs在生成的时候，Fuzz作者可能希望对他们进行一些限制调整，获取其它的操作，这些都可以通过<code>pre func</code>完成。这类似于hook，那么对于func触发的时机一般就分为两种，在Inputs的生成之前或者是生成之后，在语法里面的表示就是：</p>
 <pre><code class="python">CHARGE_GRAMMAR: Grammar = {
     "&lt;start&gt;": ["Charge &lt;amount&gt; to my credit card &lt;credit-card-number&gt;"],
     "&lt;amount&gt;": ["$&lt;float&gt;"],
@@ -828,8 +828,8 @@ CHARGE_GRAMMAR.update({
 })
 </code></pre>
 <p>比如生成的digits不能满足Fuzz的需求，我们就可以通过这种方式来进行及时的修正，以提高Fuzz的效率。</p>
-<h3 id="Greybox-Fuzzing-with-Grammars"><a href="#Greybox-Fuzzing-with-Grammars" class="headerlink" title="Greybox Fuzzing with Grammars"></a>Greybox Fuzzing with Grammars</h3><p>​        除了Fuzzing性能类的问题之外的另一个问题就是变异的导向问题，在Grammars Fuzz生成Input的过程中对于Grammar的内部解析是随机的，但是对于Fuzz目标来说，大量的Input可能会触发相同的分支进而导致代码覆盖率难以达到理想的值。对于AFL类似的覆盖引导型Fuzz来说，因为白盒Fuzz的源代码插桩缘故可以统计代码覆盖率来进行不错的引导，但是还存在很多情况，比如黑盒，甚至是以一种WebServer为目标的Fuzz，统计代码覆盖率并不是一件简单的事情，这时候采取的措施应该是不断的增加Inputs生成的多样性，比如在上述的派生树的子节点的扩展过程进行统计，使其在生成Input语料的时候偏向于还没扩展过的节点。这时候就会面临新的问题，如何快速提升代码覆盖率？</p>
-<p>​        在进行Fuzz的时候，有时候一些输入的部分会被识别为关键字，比如C语言里面的int等，如果告诉Fuzz这些关键字就可以在短时间内极大的提升代码覆盖率，但是就长远来看整体的代码覆盖率还是要差于不使用关键字字典的情况。下面是使用关键字字典的变异Inputs生成器。</p>
+<h3 id="Greybox-Fuzzing-with-Grammars"><a href="#Greybox-Fuzzing-with-Grammars" class="headerlink" title="Greybox Fuzzing with Grammars"></a>Greybox Fuzzing with Grammars</h3><p>​  除了Fuzzing性能类的问题之外的另一个问题就是变异的导向问题，在Grammars Fuzz生成Input的过程中对于Grammar的内部解析是随机的，但是对于Fuzz目标来说，大量的Input可能会触发相同的分支进而导致代码覆盖率难以达到理想的值。对于AFL类似的覆盖引导型Fuzz来说，因为白盒Fuzz的源代码插桩缘故可以统计代码覆盖率来进行不错的引导，但是还存在很多情况，比如黑盒，甚至是以一种WebServer为目标的Fuzz，统计代码覆盖率并不是一件简单的事情，这时候采取的措施应该是不断的增加Inputs生成的多样性，比如在上述的派生树的子节点的扩展过程进行统计，使其在生成Input语料的时候偏向于还没扩展过的节点。这时候就会面临新的问题，如何快速提升代码覆盖率？</p>
+<p>​  在进行Fuzz的时候，有时候一些输入的部分会被识别为关键字，比如C语言里面的int等，如果告诉Fuzz这些关键字就可以在短时间内极大的提升代码覆盖率，但是就长远来看整体的代码覆盖率还是要差于不使用关键字字典的情况。下面是使用关键字字典的变异Inputs生成器。</p>
 <pre><code class="python">class DictMutator(Mutator):
     """Mutate strings using keywords from a dictionary"""
 
@@ -860,7 +860,7 @@ BlackFuzz
 From the 300 generated inputs, 36 (12.00%) can be parsed.In total, 161 statements are covered.
 </code></pre>
 <p>可以看出以Fragments为基础的变异的优势在于它可以很好的生成符合结构化语法的变异。那么现在的疑问就是如何在保证输入语法正确性的前提下提升代码覆盖率？</p>
-<p>​        一种方法是利用类似AFL的覆盖引导方式，利用代码覆盖率不断作为变异的反馈，以此来不断的增添提高代码覆盖率的种子，同时提供<code>structural mutations</code>和<code>32 byte-level mutations</code>两种变异方式，如下：</p>
+<p>​  一种方法是利用类似AFL的覆盖引导方式，利用代码覆盖率不断作为变异的反馈，以此来不断的增添提高代码覆盖率的种子，同时提供<code>structural mutations</code>和<code>32 byte-level mutations</code>两种变异方式，如下：</p>
 <pre><code class="python">class GreyboxGrammarFuzzer(GreyboxFuzzer):
     """Greybox fuzzer using grammars."""
 
@@ -916,9 +916,9 @@ In total, 162 statements are covered.
 On average, 23.7% of a seed in the population can be successfully parsed.
 </code></pre>
 <p>可以看出在代码覆盖率保持较高水平的情况下，Inputs的合法性也得到了大幅度的提升，但是在Inputs的生成速度上来看，还是远弱于普通的GrammarFuzz。</p>
-<p>​        从上面可以看出，在选择Fuzz的时候本身就是一个取舍的问题，通过二次开发或者针对不同场景的选择才能更好的达到我们想要的结果。</p>
-<h3 id="Parser-input"><a href="#Parser-input" class="headerlink" title="Parser input"></a>Parser input</h3><p>​        假设你在做一个模糊测试，无论是Grammar Fuzz 或者其他的Fuzz也好，如果没有合适的种子那么通过不断变异形成合适的Inputs是非常困难的，当然AFL的作者展示了通过简单的输入不断向目标进化的可能性，但是这毕竟十分浪费时间和性能，效果在很多场景下估计也是不尽人意的。</p>
-<p>​        因此在进行模糊测试的时候如果可以获取一些poc，或者其它较好种子，比如在Fuzz js解释器的一个比较经常的做法就是将一些公开的poc，如下：</p>
+<p>​  从上面可以看出，在选择Fuzz的时候本身就是一个取舍的问题，通过二次开发或者针对不同场景的选择才能更好的达到我们想要的结果。</p>
+<h3 id="Parser-input"><a href="#Parser-input" class="headerlink" title="Parser input"></a>Parser input</h3><p>​  假设你在做一个模糊测试，无论是Grammar Fuzz 或者其他的Fuzz也好，如果没有合适的种子那么通过不断变异形成合适的Inputs是非常困难的，当然AFL的作者展示了通过简单的输入不断向目标进化的可能性，但是这毕竟十分浪费时间和性能，效果在很多场景下估计也是不尽人意的。</p>
+<p>​  因此在进行模糊测试的时候如果可以获取一些poc，或者其它较好种子，比如在Fuzz js解释器的一个比较经常的做法就是将一些公开的poc，如下：</p>
 <pre><code class="js">var haystack = "foo";
 var re_text = "^foo";
 haystack += "x";
@@ -932,10 +932,9 @@ print(RegExp.$1);
 <blockquote>
 <p>Tips:如何判断对面的代码覆盖率，一般黑盒情况下可以试时间，如果一个Input在对面耗费了更多的时间来运行，那么可以猜测其走过了更多的代码分支。</p>
 </blockquote>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>​        在面对Fuzz的目标的时候最重要的是选择合适的变异方式以及较好的初始种子，根据目标和测试目的不断地进行取舍和针对性开发才能得到比较理想的结果。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>​  在面对Fuzz的目标的时候最重要的是选择合适的变异方式以及较好的初始种子，根据目标和测试目的不断地进行取舍和针对性开发才能得到比较理想的结果。</p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><blockquote>
 <p><a target="_blank" rel="noopener" href="https://www.fuzzingbook.org/">https://www.fuzzingbook.org</a></p>
-<p>文中数据测试来源大多为Fuzzingbook，因为根据电脑不同，其实具体数值结果会有一定偏差，但是结论都是一样的，因此就展示了书中的测试数据。</p>
 </blockquote>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
