@@ -821,7 +821,6 @@ class DictMutator(Mutator):
 对派生树进行还原，形成新的Input。
 
 以上的所有操作都在派生树上进行。为了更方便的进行编译操作，可以建立一个派生树的碎片池，每个碎片都由子树组成，子树包括符号和对应的Node节点和其子节点。不过对于派生树的parse其实是非常耗时的，因此可以设置一些时间限制来防止速度过低。不过以Fragments为基础的变异虽然可以很好的符合Inputs合法性的要求但是在代码覆盖率提升方面并不亮眼。而且以此为基础的LangFuzz其实在Inputs生成的速度上也远低于平常的结构化黑盒Fuzz。下面是两组对比数据：
-（数据来源Fuzzingbook，本人测试过，该数据确实合理）
 LangFuzz
 From the 300 generated inputs, 152 (50.67%) can be parsed.In total, 91 statements are covered.
 
@@ -870,15 +869,14 @@ In total, 180 statements are covered.
 
 同时，在Inputs生成的速度方面极大提升，较高的代码覆盖率，但是在Inputs的合法性方面表现是最差的。那这个问题该如何解决呢？答案就是Fuzzing with Input Regions，这种Fuzz的变异方法不再使用派生树节点拆分重组等方式，而是通过将合法种子的不同区域直接进行拆分重组的方式，这里的区域指的是可以和派生树符号对应的连续的字节序列，这样的好处其实在于它操作的对象可能比Fragments更大或者更小，以此种方式进行变异在和上述变异条件相同的情况下测试结构如下：
 It took the structural greybox fuzzer with region mutator
-    11.35 seconds to generate and execute 300 inputs.
-    
+        11.35 seconds to generate and execute 300 inputs.
+
 From the 300 generated inputs, 4 (1.33%) can be parsed.
 In total, 168 statements are covered.
 On average, 9.1% of a seed in the population can be successfully parsed.
 
 可以看到存在较高的代码覆盖率，在速度方面虽然优于Fragments Fuzz但是还是弱于普通的黑盒Fuzz，在代码覆盖率方面高于Fragments Fuzz并和GreyboxGrammarFuzzer维持在相差无几的水平。不过核心原因还是在于，通过的合法Inputs其实占比很低。那么如何解决这个问题？首先要让Fuzzer可以聚焦合法的Inputs。这一点其实前面已经讨论过了，只需要利用schedule给合法Inputs的相关结构赋予更多的权重。测试结果如下：
 It took AFLSmart 20.75 seconds to generate and execute 300 inputs.
-
 
 From the 300 generated inputs, 46 (15.33%) can be parsed.
 In total, 162 statements are covered.
@@ -904,6 +902,7 @@ Tips:如何判断对面的代码覆盖率，一般黑盒情况下可以试时间
 总结​  在面对Fuzz的目标的时候最重要的是选择合适的变异方式以及较好的初始种子，根据目标和测试目的不断地进行取舍和针对性开发才能得到比较理想的结果。
 参考链接
 https://www.fuzzingbook.org
+文中数据测试来源大多为Fuzzingbook，因为根据电脑不同，其实具体数值结果会有一定偏差，但是结论都是一样的，因此就展示了书中的测试数据。
 
 ]]></content>
       <categories>
