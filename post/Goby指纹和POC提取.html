@@ -5,15 +5,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PHP-Parser的基本使用 - RainSec</title>
+    <title>Goby指纹与POC提取复现 - RainSec</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="RainSec,"> 
-    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,PHP-ParserPHP-Parser组件的基础使用，该组件为静态分析和反混淆常用的第三方依赖。
-
-
-What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,Goby指纹与POC提取复现最近看了w8ay师傅发的关于提取Goby指纹的帖子，发现自己加入师傅的知识星球却一直没认真学习过实在是难顶嗷，根据师傅的帖子来复现自己提取一下，补上第一期的作业。
+Gob,"> 
     <meta name="author" content="RainSec"> 
     <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
     <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
@@ -79,7 +77,7 @@ What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,">
     <div class="navigation animated fadeIn fast delay-1s">
         <img id="home-icon" class="icon-home" src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="" data-url="https://rainsec.cn">
         <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
-        <h3 class="subtitle">PHP-Parser的基本使用</h3>
+        <h3 class="subtitle">Goby指纹与POC提取复现</h3>
         <div class="social">
             <!--        <div class="like-icon">-->
             <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -104,30 +102,30 @@ What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,">
             animation-duration: 1.2s;
             background-image: 
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/parsercover.png') ">
+                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/image.x02df1872g.webp') ">
         </div>
         <div class="else">
             <p class="animated fadeInDown">
                 
-                <a href="/categories/漏洞挖掘"><b>「
-                    </b>漏洞挖掘<b> 」</b></a>
+                <a href="/categories/渗透测试"><b>「
+                    </b>渗透测试<b> 」</b></a>
                 
-                January 28, 2022
+                September 30, 2022
             </p>
-            <h3 class="post-title animated fadeInDown"><a href="/post/PHP-Parser.html" title="PHP-Parser的基本使用" class="">PHP-Parser的基本使用</a>
+            <h3 class="post-title animated fadeInDown"><a href="/post/Goby%E6%8C%87%E7%BA%B9%E5%92%8CPOC%E6%8F%90%E5%8F%96.html" title="Goby指纹与POC提取复现" class="">Goby指纹与POC提取复现</a>
             </h3>
             
             <p class="post-count animated fadeInDown">
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>Words count</i>
-                    9.7k
+                    11k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                    9 mins.
+                    10 mins.
                 </span>
                 
                 
@@ -140,7 +138,7 @@ What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,">
             </p>
             
             
-            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/PHP/" rel="tag">PHP</a></li></ul>
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li></ul>
             
         </div>
     </div>
@@ -161,251 +159,248 @@ What is PHP-ParserPHP-Parser是nikic用PHP编写的PHP5.2,">
 <div class="article">
     <div class='main'>
         <div class="content markdown animated fadeIn">
-            <h1 id="PHP-Parser"><a href="#PHP-Parser" class="headerlink" title="PHP-Parser"></a>PHP-Parser</h1><p>PHP-Parser组件的基础使用，该组件为静态分析和反混淆常用的第三方依赖。</p>
-<span id="more"></span>
+            <h1 id="Goby指纹与POC提取复现"><a href="#Goby指纹与POC提取复现" class="headerlink" title="Goby指纹与POC提取复现"></a>Goby指纹与POC提取复现</h1><p>最近看了w8ay师傅发的关于提取Goby指纹的帖子，发现自己加入师傅的知识星球却一直没认真学习过实在是难顶嗷，根据师傅的帖子来复现自己提取一下，补上第一期的作业。</p>
+<h2 id="Goby指纹提取"><a href="#Goby指纹提取" class="headerlink" title="Goby指纹提取"></a>Goby指纹提取</h2><p>首先是指纹提取，这里也分别准备了三个版本的Goby文件进行复现，分别是1.4.76、1.7.192和1.8.279</p>
+<h3 id="1-4-76"><a href="#1-4-76" class="headerlink" title="1.4.76"></a>1.4.76</h3><p>因为版本比较低所以不需要我们手动去从goby程序里提crules，直接用winhex打开<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927205348.6efba3mc0j00.webp" alt="Pasted-image-20220927205348"><br>笔者从事的工作与Yara息息相关，但是从来没有深入的去了解Yara的原理和流程，只是把它当作加强版的正则，从来没有想过能用来进行指纹识别，愧疚愧疚~~</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927205630.2cfsp2nwmlus.webp" alt="Pasted-image-20220927205630"><br>到这里已经看到出现指纹了，接下来就是将指纹提取出来，笔者在复现的时候起初以为自己写过Yara规则，猜测每个规则都是rule_id开头，然后后面跟字段，妹有好好观察，最后还是老老实实寻找开始和结束段。<br>我们提取的内容应该是以rules_0开始，按照师傅的文章正是从default之后开始进行提取，所以开始字段为<code>64 65 66 61 75 6C 74 00</code> ，往下寻找结束的标记，从图上可以看出结束的标记为<code>66 6F 65 79 65</code><br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927210430.7efe7ytm4mc0.webp" alt="Pasted-image-20220927210430"></p>
+<p>接下来就是将这两段之间的内容提取出来，笔者最近正好在学习Go，就用Go写了个辣眼的提取脚本</p>
+<pre><code class="go">package main
 
-<h2 id="What-is-PHP-Parser"><a href="#What-is-PHP-Parser" class="headerlink" title="What is PHP-Parser"></a>What is PHP-Parser</h2><p><code>PHP-Parser</code>是<code>nikic</code>用PHP编写的PHP5.2到PHP7.4解析器，其目的是简化静态代码分析和操作</p>
-<h2 id="PHP-Parser的基础使用"><a href="#PHP-Parser的基础使用" class="headerlink" title="PHP-Parser的基础使用"></a>PHP-Parser的基础使用</h2><p>这里先贴一下官方文档</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/tree/master/doc">PHP-Parser/doc at master · nikic/PHP-Parser (github.com)</a></p>
-<p>最基本的是要理解其中<a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/blob/master/doc/component/Walking_the_AST.markdown">Walking the AST</a>的部分</p>
-<h2 id="初始化解析器"><a href="#初始化解析器" class="headerlink" title="初始化解析器"></a>初始化解析器</h2><p>首先创建实例</p>
-<pre><code class="php">use PhpParser\ParserFactory;
-$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);
-</code></pre>
-<p>这其中有以下参数</p>
-<p>KindBehaviorParserFactory::PREFER_PHP7Try to parse code as PHP 7. If this fails, try to parse it as PHP 5.ParserFactory::PREFER_PHP5Try to parse code as PHP 5. If this fails, try to parse it as PHP 7.ParserFactory::ONLY_PHP7Parse code as PHP 7.ParserFactory::ONLY_PHP5Parse code as PHP 5.</p>
-<p>create还有一个参数Lexer，这里先不做讨论</p>
-<p>在实例化之后我们就可以通过</p>
-<pre><code class="php">$stmts = $parser-&gt;parse($code);
-</code></pre>
-<p>来将代码转换成AST</p>
-<p>为了防止抛出异常，最好在try….catch中执行</p>
-<h3 id="生成更加直观的AST"><a href="#生成更加直观的AST" class="headerlink" title="生成更加直观的AST"></a>生成更加直观的AST</h3><p>当我们var_dump上面的$stmt时，会得到一个比较乱的AST，可以使用NodeDump将其转化为更加直观的AST</p>
-<p>这里需要使用NodeDump</p>
-<p>对于代码</p>
-<pre><code class="PHP">&lt;?php
-function printLine($msg) {
-    echo $msg, "\n";
-}
-printLine('Hello World!!!');
-</code></pre>
-<p>将其转换为AST</p>
-<pre><code class="PHP">&lt;?php
-use PhpParser\NodeDumper;
-$nodeDumper = new NodeDumper;echo $nodeDumper-&gt;dump($stmts), "\n";
-</code></pre>
-<p>得到以下输出</p>
-<pre><code class="YAML">array(
-    0: Stmt_Function(
-        byRef: false
-        name: Identifier(
-            name: printLine
-        )
-        params: array(
-            0: Param(
-                type: null
-                byRef: false
-                variadic: false
-                var: Expr_Variable(
-                    name: msg
-                )
-                default: null
-            )
-        )
-        returnType: null
-        stmts: array(
-            0: Stmt_Echo(
-                exprs: array(
-                    0: Expr_Variable(
-                        name: msg
-                    )
-                    1: Scalar_String(
-                        value:
-
-                    )
-                )
-            )
-        )
-    )
-    1: Stmt_Expression(
-        expr: Expr_FuncCall(
-            name: Name(
-                parts: array(
-                    0: printLine
-                )
-            )
-            args: array(
-                0: Arg(
-                    value: Scalar_String(
-                        value: Hello World!!!
-                    )
-                    byRef: false
-                    unpack: false
-                )
-            )
-        )
-    )
+import (
+&nbsp; &nbsp; "io/ioutil"
+&nbsp; &nbsp; "fmt"
+&nbsp; &nbsp; "strings"
+&nbsp; &nbsp; "os"
 )
-</code></pre>
-<h3 id="Node-tree-structure"><a href="#Node-tree-structure" class="headerlink" title="Node tree structure"></a>Node tree structure</h3><p>上面我们可以看到生成了很多的Node类型</p>
-<p>PHP是一个成熟的脚本语言，它大约有140个不同的节点。但是为了方便使用，将他们分为三类：</p>
-<ul>
-<li><p><code>PhpParser\Node\Stmts</code>是语句节点，即不返回值且不能出现在表达式中的语言构造。例如，类定义是一个语句，它不返回值，你不能编写类似func(class {})的语句。</p>
-</li>
-<li><p><code>PhpParser\Node\expr</code>是表达式节点，即返回值的语言构造，因此可以出现在其他表达式中。如：<code>$var (PhpParser\Node\Expr\Variable)</code>和<code>func() (PhpParser\Node\Expr\FuncCall)</code>。</p>
-</li>
-<li><p><code>PhpParser\Node\Scalars</code>是表示标量值的节点，如<code>"string" (PhpParser\Node\scalar\string)</code>、<code>0 (PhpParser\Node\scalar\LNumber)</code> 或魔术常量，如”<strong>FILE</strong>“ <code>(PhpParser\Node\scalar\MagicConst\FILE)</code> 。所有<code>PhpParser\Node\scalar</code>都是延伸自<code>PhpParser\Node\Expr</code>，因为scalar也是表达式。</p>
-</li>
-<li><p>需要注意的是<code>PhpParser\Node\Name</code>和<code>PhpParser\Node\Arg</code>不在以上的节点之中</p>
-</li>
-</ul>
-<h3 id="Pretty-printer"><a href="#Pretty-printer" class="headerlink" title="Pretty printer"></a>Pretty printer</h3><p>Prettyprinter用来将我们修改后的AST转换回PHP代码，使用如下</p>
-<pre><code class="php">use PhpParser\Error;
-use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter;
-$code = "&lt;?php echo 'Hi ', hi\\getTarget();";
-$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);$prettyPrinter = new PrettyPrinter\Standard;
-try {
-    //生成AST
-    $stmts = $parser-&gt;parse($code);
-    //对节点进行操作
-    $stmts[0]         // the echo statement
-          -&gt;exprs     // sub expressions
-          [0]         // the first of them (the string node)
-          -&gt;value     // it's value, i.e. 'Hi '
-          = 'Hello '; // change to 'Hello '
 
-    // pretty print
-    $code = $prettyPrinter-&gt;prettyPrint($stmts);
-    echo $code;
-} catch (Error $e) {
-    echo 'Parse Error: ', $e-&gt;getMessage();
-}
-</code></pre>
-<p>在反混淆中我们一般很少使用$stmts[0]这种方式，因为我们要考虑节点的各种类型</p>
-<p>此外还有prettyPrintExpr()，它可以用来输出一个表达式类型的节点</p>
-<p>例如当你需要提取全局变量时</p>
-<pre><code class="PHP">&lt;?php
-    $a = $_POST['a'];
-</code></pre>
-<p>他的语法树如下</p>
-<pre><code class="YAML">0: Stmt_Expression(
-        expr: Expr_Assign(
-            var: Expr_Variable(
-                name: a
-            )
-            expr: Expr_ArrayDimFetch(
-                var: Expr_Variable(
-                    name: _POST
-                )
-                dim: Scalar_String(
-                    value: a
-                )
-            )
-        )
-    )
-</code></pre>
-<p>如果我想获取$_POST[‘a’],我就需要先判断节点类型是不是<code>Expr_ArrayDimFetch</code></p>
-<p>然后判断<code>$node-&gt;var-&gt;name</code>是不是全局变量</p>
-<p>最后提取<code>$node-&gt;var-&gt;name</code>和<code>$node-&gt;dim-&gt;value</code>然后将它们拼接</p>
-<p>当我的全局变量为<code>$_POST[a]</code>时，dim部分的AST也会变化，我们还需要考虑这种情况。</p>
-<p>但是我们可以使用</p>
-<pre><code class="PHP">/*
-    用来识别全局变量;
-    如果要获取全局变量格式无需考虑value的节点类型
-    expr: Expr_ArrayDimFetch(
-            var: Expr_Variable(
-                name: _POST
-            )
-    )
-*/
-        if ($node instanceof Node\Expr\ArrayDimFetch &amp;&amp; $node-&gt;var instanceof Node\Expr\Variable &amp;&amp; (in_array($node-&gt;var-&gt;name ,GLOBAL_VAR)))
-        {
-            self::$globalname = $this-&gt;prettyPrinter-&gt;prettyPrintExpr($node);
-        }
-</code></pre>
-<p>其中</p>
-<pre><code class="PHP">$this-&gt;prettyPrinter-&gt;prettyPrintExpr($node);
-</code></pre>
-<p>就会返回该Expr节点的表达式，无论是<code>$_POST['a']</code>还是<code>$_POST[a]</code>都可以正常返回</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/blob/master/doc/component/Pretty_printing.markdown">PHP-Parser/Pretty_printing.markdown at master · nikic/PHP-Parser (github.com)</a></p>
-<h2 id="Node-traversation"><a href="#Node-traversation" class="headerlink" title="Node traversation"></a>Node traversation</h2><p>我们使用PHP-Parser对文件的节点进行修改，最关键的就是编写节点遍历操作</p>
-<p>使用<code>PhpParser\NodeTraverser</code>我们可以遍历每一个节点，举几个简单的例子：解析php中的所有字符串，并输出</p>
-<pre><code class="PHP">&lt;?php
-use PhpParser\Error;
-use PhpParser\ParserFactory;
-use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitorAbstract;
-use PhpParser\Node;
-
-require 'vendor/autoload.php';
-
-class MyVisitor extends NodeVisitorAbstract{
-    public function leaveNode(Node $node)
-    {
-        //判断如果是一个String_节点，就输出
-        if ($node instanceof Node\Scalar\String_)
-        {
-            echo $node -&gt; value,"\n";
-        }
-
-    }
+func Read()(string){
+&nbsp; &nbsp; f, err := ioutil.ReadFile("/home/ubuntu/go/gopro/crules")
+&nbsp; &nbsp; if err != nil {
+&nbsp; &nbsp; &nbsp; &nbsp; fmt.Println("read fail", err)
+&nbsp; &nbsp; }
+&nbsp; &nbsp; return string(f)
 }
 
-$code = file_get_contents("./test.php");
-
-//实例化解释器
-$parser = (new ParserFactory)-&gt;create(ParserFactory::PREFER_PHP7);
-$traverser = New NodeTraverser;
-//添加自己的Visitor
-$traverser-&gt;addVisitor(new MyVisitor);
-
-try {
-    //转化AST
-    $ast = $parser-&gt;parse($code);
-    //开始遍历
-    $stmts = $traverser-&gt;traverse($ast);
-} catch (Error $error) {
-    echo "Parse error: {$error-&gt;getMessage()}\n";
-    return;
+func Write(s string) &nbsp;{
+&nbsp; &nbsp; fileName := "finger.txt"
+&nbsp; &nbsp; var d1 = []byte(s)
+&nbsp; &nbsp; f, err3 := os.Create(fileName) //创建文件
+&nbsp; &nbsp; if err3 != nil{
+&nbsp; &nbsp; &nbsp; &nbsp; fmt.Println("create file fail")
+&nbsp; &nbsp; }
+&nbsp; &nbsp; defer f.Close()
+&nbsp; &nbsp; n2, err3 := f.Write(d1) //写入文件(字节数组)
+&nbsp; &nbsp; fmt.Printf("写入 %d 个字节n", n2)
+&nbsp; &nbsp; f.Sync()
 }
 
-?&gt;
-</code></pre>
-<p>替换php脚本中函数以及类的成员方法函数名为小写</p>
-<pre><code class="PHP">class MyVisitor extends NodeVisitorAbstract{
-    public function leaveNode(Node $node)
-    {
-        if( $node instanceof Node\Expr\FuncCall) {
-            $node-&gt;name-&gt;parts[0]=strtolower($node-&gt;name-&gt;parts[0]);
-        }elseif($node instanceof Node\Stmt\ClassMethod){
-            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
-        }elseif ($node instanceof Node\Stmt\Function_){
-            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
-        }elseif($node instanceof Node\Expr\MethodCall){
-            $node-&gt;name-&gt;name=strtolower($node-&gt;name-&gt;name);
-        }
-    }
+func main() {
+&nbsp; &nbsp; crules := Read()
+&nbsp; &nbsp; start := strings.Index(crules, "\x64\x65\x66\x61\x75\x6C\x74\x00")
+&nbsp; &nbsp; end := strings.Index(crules, "\x00\x00\x66\x6F\x65\x79\x65\x00")
+&nbsp; &nbsp; finger := crules[start : end]
+&nbsp; &nbsp; Write(finger)
 }
 </code></pre>
-<p>需要注意的是所有的<code>visitors</code>都必须实现<code>PhpParser\NodeVisitor</code>接口，该接口定义了如下4个方法：</p>
-<pre><code class="PHP">public function beforeTraverse(array $nodes);
-public function enterNode(\PhpParser\Node $node);
-public function leaveNode(\PhpParser\Node $node);
-public function afterTraverse(array $nodes);
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927214744.5ysoua033fg0.webp" alt="Pasted-image-20220927214744"></p>
+<p>真的辣眼睛，因为妹有做分割，真没眼看。。。。</p>
+<p>接下来就是进行分割，观察不同的rule_id之间的字节<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927213623.3zwsqrnq73m0.webp" alt="Pasted-image-20220927213623"></p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927213654.3f5jzeybxji0.webp" alt="Pasted-image-20220927213654"><br>由此可以确定不同规则rule_id之间的分隔符为<code>\x00\x00\x00\x00\x73\x00</code> ,不同字段之间的分隔符为<code>\x00</code> </p>
+<p>尝试对其进行拆分，这段写得太辣眼睛了，还是放师傅的脚本吧</p>
+<pre><code class="python">filename = r"crules"
+with open(filename, 'rb') as f:
+&nbsp; &nbsp; data = f.read()
+start = data.index(b"default\x00fofa")
+end = data.index(b"\x00" * 16, start)
+data = data[start:end]
+datas = data.split(b"rule_id")[1:]
+sep = b"\x00"
+options_set = set()
+results = []
+for item in datas:
+&nbsp; &nbsp; ff = item.split(sep)
+&nbsp; &nbsp; rule_id = ff[1].decode()
+&nbsp; &nbsp; level = ff[3].decode()
+&nbsp; &nbsp; softhard = ff[5].decode()
+&nbsp; &nbsp; product = ff[7].decode()
+&nbsp; &nbsp; company = ff[9].decode()
+&nbsp; &nbsp; category = ff[11].decode()
+&nbsp; &nbsp; parent_category = ff[13].decode()
+&nbsp; &nbsp; dd = {
+&nbsp; &nbsp; &nbsp; &nbsp; "rule_id": rule_id,
+&nbsp; &nbsp; &nbsp; &nbsp; "level": level,
+&nbsp; &nbsp; &nbsp; &nbsp; "softhard": softhard,
+&nbsp; &nbsp; &nbsp; &nbsp; "product": product,
+&nbsp; &nbsp; &nbsp; &nbsp; "company": company,
+&nbsp; &nbsp; &nbsp; &nbsp; "category": category,
+&nbsp; &nbsp; &nbsp; &nbsp; "parent_category": parent_category,
+&nbsp; &nbsp; &nbsp; &nbsp; "rules": []
+&nbsp; &nbsp; }
+&nbsp; &nbsp; bb = b'\x00'.join(ff[14:])
+&nbsp; &nbsp; s = bb.split(b'\x00\x00\x00\x00\x73\x00')
+&nbsp; &nbsp; _rr2 = []
+&nbsp; &nbsp; for rr in s:
+&nbsp; &nbsp; &nbsp; &nbsp; _rules = []
+&nbsp; &nbsp; &nbsp; &nbsp; if not rr.startswith(b'fofa'):
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; continue
+&nbsp; &nbsp; &nbsp; &nbsp; index = 0
+&nbsp; &nbsp; &nbsp; &nbsp; while index &lt; len(rr):
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; prefixx = b"fofa\x00"
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; try:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; start = rr.index(prefixx, index) + len(prefixx)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; except:
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; break
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; end = rr.index(b'\x00', start)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; match_way = rr[start:end].decode()
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; _length = rr[end + 1]
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; content = rr[end + 9:end + 9 + _length]
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; index = end + 9 + _length
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; _rules.append(
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "match": match_way,
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "content": content.decode('utf-8', errors="ignore")
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; )
+&nbsp; &nbsp; &nbsp; &nbsp; _rr2.append(_rules)
+&nbsp; &nbsp; dd["rules"] = _rr2
+&nbsp; &nbsp; results.append(dd)
+print(results)
+with open("fofa.json", "w", encoding="utf-8") as f:
+&nbsp; &nbsp; import json
+&nbsp; &nbsp; json.dump(results, f, ensure_ascii=False, indent=4)
 </code></pre>
-<ul>
-<li><p><code>beforeTraverse</code>方法在遍历开始之前调用一次，并将其传递给调用遍历器的节点。此方法可用于在遍历之前重置值或准备遍历树。</p>
-</li>
-<li><p><code>afterTraverse</code>方法与<code>beforeTraverse</code>方法类似，唯一的区别是它只在遍历之后调用一次。</p>
-</li>
-<li><p>在每个节点上都调用<code>enterNode</code>和<code>leaveNode</code>方法，前者在它被输入时，即在它的子节点被遍历之前，后者在它被离开时。</p>
-</li>
-<li><p>这四个方法要么返回更改的节点，要么根本不返回(即null)，在这种情况下，当前节点不更改。</p>
-</li>
-</ul>
-<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p><a target="_blank" rel="noopener" href="http://j0k3r.top/2020/03/24/php-Deobfuscator/#0x01-php-parser">基于 AST（抽象语法树）解 PHP 混淆 | J0k3r’s Blog</a></p>
-<h2 id="P-S"><a href="#P-S" class="headerlink" title="P.S."></a>P.S.</h2><p>我们需要知道你需要什么样的Node，进行什么样的操作，Node下数据的格式会有哪几种情况，会不会因为代码不够严谨导致错误或者无限递归</p>
+<p>最后得到结果如下</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927223539.6p7nldhpe340.webp" alt="Pasted-image-20220927223539"></p>
+<h3 id="1-7-192"><a href="#1-7-192" class="headerlink" title="1.7.192"></a>1.7.192</h3><p>1.7.192版本不在含有crules文件，它被包含在了可执行程序中，打开可执行程序可以看到其中引用了<code>github.com/rakyll/statik/fs</code> 库，官方的描述如下：<br><code>statik allows you to embed a directory of static files into your Go binary</code><br>根据师傅的文章，我们也可以查看fs的源码<br><a target="_blank" rel="noopener" href="https://github.com/rakyll/statik/blob/master/fs/fs.go">fs.go的源码</a><br>发现该库即是生成了ZIP内嵌在程序中<br>笔者之前有过一些Misc经验（雾，这里列出常见的文件头</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>文件头</th>
+<th>文件尾</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JEPG</td>
+<td>FFD8FF</td>
+<td>FFD9</td>
+</tr>
+<tr>
+<td>PNG</td>
+<td>89504E47</td>
+<td>AE426082</td>
+</tr>
+<tr>
+<td>GIF</td>
+<td>47484638</td>
+<td>003B</td>
+</tr>
+<tr>
+<td>ZIP</td>
+<td>504B0304</td>
+<td>504B</td>
+</tr>
+<tr>
+<td>TIFF</td>
+<td>49492A00</td>
+<td></td>
+</tr>
+<tr>
+<td>XML</td>
+<td>68746D6C3E</td>
+<td></td>
+</tr>
+<tr>
+<td>PDF</td>
+<td>25504446</td>
+<td></td>
+</tr>
+<tr>
+<td>RAR</td>
+<td>52617221</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>这里搜索ZIP的格式头<code>50 4B 03 04</code> 即可定位到压缩包的起始位置</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.5ndi5mufazw0.png" alt="image"></p>
+<p>看到crules，就应该是这个压缩包了，接下来就是寻找结尾进行提取压缩包文件。因为<code>50 4B 03 04</code> 这段数据在文本中有很多，在进行提取的时候可以多选几个字节进行准确定位，这里师傅网友多定了一个字节到<code>50 4B 03 04 14 00 08 00 08 00</code></p>
+<p>接下来寻找压缩包结尾，先看看<code>50 4B</code> 的搜索结果<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.2e4qv9eoqr28.png" alt="image"></p>
+<p>在搜索开始头的时候就能看到存在这么多的<code>50 4B</code> 如果直接提取到下一个<code>50 4B</code> 无法判断压缩包的准确性，借鉴师傅的解决方法，每次读字节并且尝试解压，代码如下：</p>
+<pre><code class="python"># @Author &nbsp;: w8ay
+import zipfile
+from io import BytesIO
+
+filename = "goby-cmd-linux"
+with open(filename, 'rb') as stream:
+&nbsp; &nbsp; data = stream.read()
+&nbsp; &nbsp; start = data.find(b'\x50\x4B\x03\x04\x14\x00\x08\x00\x08\x00')
+&nbsp; &nbsp; end = start + 1200
+while True:
+&nbsp; &nbsp; fenli = data[start:end]
+&nbsp; &nbsp; try:
+&nbsp; &nbsp; &nbsp; &nbsp; fio = BytesIO(fenli)
+&nbsp; &nbsp; &nbsp; &nbsp; f = zipfile.ZipFile(file=fio)
+&nbsp; &nbsp; &nbsp; &nbsp; print(fenli[:100])
+&nbsp; &nbsp; &nbsp; &nbsp; print(fenli[-10:])
+&nbsp; &nbsp; &nbsp; &nbsp; print(len(fenli) // 1024)
+&nbsp; &nbsp; &nbsp; &nbsp; print(f.namelist())
+&nbsp; &nbsp; &nbsp; &nbsp; break
+&nbsp; &nbsp; except zipfile.BadZipFile:
+&nbsp; &nbsp; &nbsp; &nbsp; end += 1
+with open("test.zip", 'wb') as f:
+&nbsp; &nbsp; f.write(fenli)
+</code></pre>
+<p>成功分离出crules_1.7.192，用之前的提取脚本提取即可</p>
+<p><del>这个微微离谱的指纹还在</del></p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.21ucigcs7ie8.png" alt="image"></p>
+<h2 id="Goby-Poc提取"><a href="#Goby-Poc提取" class="headerlink" title="Goby Poc提取"></a>Goby Poc提取</h2><p>Goby的POC分为json与go两种格式，本次只尝试提取json’格式（wtcldbq</p>
+<p>用winhex打开可执行程序观察</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.7cr1bfp8q840.png" alt="image"></p>
+<p>可以直接确认Name段，那么提取数据的起始段也可以确认为<code>\x23\x7B\x0A\x20\x20\x22\x4E\x61\x6D\x65\x22\x3A\x20</code><br><del>（在看的时候搜索Name字段第二个处的CS字段与下面不同，不知道为啥师傅没有提取</del><br>结束段标记为<code>\x65\x0A\x7D\x0A\x66\x75\x6E\x63\x74\x69\x6F\x6E</code></p>
+<p>暴力提取辣眼脚本：</p>
+<pre><code class="go">package main
+
+import (
+&nbsp; &nbsp; "io/ioutil"
+&nbsp; &nbsp; "fmt"
+&nbsp; &nbsp; "strings"
+&nbsp; &nbsp; "os"
+)
+
+func Read()(string){
+&nbsp; &nbsp; f, err := ioutil.ReadFile("goby_1.8")
+&nbsp; &nbsp; if err != nil {
+&nbsp; &nbsp; &nbsp; &nbsp; fmt.Println("read fail", err)
+&nbsp; &nbsp; }
+&nbsp; &nbsp; return string(f)
+}
+
+func Write(s string) {
+&nbsp; &nbsp; fileName := "finger.json"
+&nbsp; &nbsp; var d1 = []byte(s)
+&nbsp; &nbsp; f, err3 := os.Create(fileName) //创建文件
+&nbsp; &nbsp; if err3 != nil{
+&nbsp; &nbsp; &nbsp; &nbsp; fmt.Println("create file fail")
+&nbsp; &nbsp; }
+&nbsp; &nbsp; defer f.Close()
+&nbsp; &nbsp; n2, err3 := f.Write(d1) //写入文件(字节数组)
+&nbsp; &nbsp; fmt.Printf("写入 %d 个字节n", n2)
+&nbsp; &nbsp; f.Sync()
+}
+
+func main() {
+&nbsp; &nbsp; crules := Read()
+&nbsp; &nbsp; start := strings.Index(crules, "\x23\x7B\x0A\x20\x20\x22\x4E\x61\x6D\x65\x22\x3A\x20")
+&nbsp; &nbsp; end := strings.Index(crules, "\x65\x0A\x7D\x0A\x66\x75\x6E\x63\x74\x69\x6F\x6E")
+&nbsp; &nbsp; finger := crules[start + 1 : end + 3]
+&nbsp; &nbsp; Write(finger)
+}
+</code></pre>
+<p>提取结果如下<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.3m0ztpkxvt40.png" alt="image"></p>
+<p>但是存在一些不可见字符干扰，后续再优化</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>首先是 W8ay师傅太强了orz，后面到了逆向yara虚拟机的程度，对字符处理也很细节，学，学无止境。<br>wtcl。。<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/aaa.qtgewqib3bk.jpg" alt="aaa"></p>
+<p>以后要忠实的做好每一个大佬的舔狗</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/qq.5hrr22slzeo0.jpg" alt="qq"></p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
@@ -444,7 +439,7 @@ public function afterTraverse(array $nodes);
                 <div class="subbox">
                     <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/zitui_logo.jpg" height=300 width=300></img>
                     <p>Zitui</p>
-                    <span>纯纯的飞舞</span>
+                    <span>为热爱全情投入</span>
                     <dl>
                         
                         
@@ -472,7 +467,7 @@ public function afterTraverse(array $nodes);
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>Contents</h4>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PHP-Parser"><span class="toc-number">1.</span> <span class="toc-text">PHP-Parser</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#What-is-PHP-Parser"><span class="toc-number">1.1.</span> <span class="toc-text">What is PHP-Parser</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP-Parser%E7%9A%84%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">PHP-Parser的基础使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text">初始化解析器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E6%9B%B4%E5%8A%A0%E7%9B%B4%E8%A7%82%E7%9A%84AST"><span class="toc-number">1.3.1.</span> <span class="toc-text">生成更加直观的AST</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Node-tree-structure"><span class="toc-number">1.3.2.</span> <span class="toc-text">Node tree structure</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pretty-printer"><span class="toc-number">1.3.3.</span> <span class="toc-text">Pretty printer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Node-traversation"><span class="toc-number">1.4.</span> <span class="toc-text">Node traversation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90"><span class="toc-number">1.5.</span> <span class="toc-text">例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#P-S"><span class="toc-number">1.6.</span> <span class="toc-text">P.S.</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Goby%E6%8C%87%E7%BA%B9%E4%B8%8EPOC%E6%8F%90%E5%8F%96%E5%A4%8D%E7%8E%B0"><span class="toc-number">1.</span> <span class="toc-text">Goby指纹与POC提取复现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Goby%E6%8C%87%E7%BA%B9%E6%8F%90%E5%8F%96"><span class="toc-number">1.1.</span> <span class="toc-text">Goby指纹提取</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-76"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.4.76</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-192"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.7.192</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Goby-Poc%E6%8F%90%E5%8F%96"><span class="toc-number">1.2.</span> <span class="toc-text">Goby Poc提取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
                 </div>
             </div>
             
