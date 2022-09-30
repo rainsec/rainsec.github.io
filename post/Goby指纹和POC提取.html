@@ -161,8 +161,8 @@ Gob,">
         <div class="content markdown animated fadeIn">
             <h1 id="Goby指纹与POC提取复现"><a href="#Goby指纹与POC提取复现" class="headerlink" title="Goby指纹与POC提取复现"></a>Goby指纹与POC提取复现</h1><p>最近看了w8ay师傅发的关于提取Goby指纹的帖子，发现自己加入师傅的知识星球却一直没认真学习过实在是难顶嗷，根据师傅的帖子来复现自己提取一下，补上第一期的作业。</p>
 <h2 id="Goby指纹提取"><a href="#Goby指纹提取" class="headerlink" title="Goby指纹提取"></a>Goby指纹提取</h2><p>首先是指纹提取，这里也分别准备了三个版本的Goby文件进行复现，分别是1.4.76、1.7.192和1.8.279</p>
-<h3 id="1-4-76"><a href="#1-4-76" class="headerlink" title="1.4.76"></a>1.4.76</h3><p>因为版本比较低所以不需要我们手动去从goby程序里提crules，直接用winhex打开<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927205348.6efba3mc0j00.webp" alt="Pasted-image-20220927205348"><br>笔者从事的工作与Yara息息相关，但是从来没有深入的去了解Yara的原理和流程，只是把它当作加强版的正则，从来没有想过能用来进行指纹识别，愧疚愧疚~~</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927205630.2cfsp2nwmlus.webp" alt="Pasted-image-20220927205630"><br>到这里已经看到出现指纹了，接下来就是将指纹提取出来，笔者在复现的时候起初以为自己写过Yara规则，猜测每个规则都是rule_id开头，然后后面跟字段，妹有好好观察，最后还是老老实实寻找开始和结束段。<br>我们提取的内容应该是以rules_0开始，按照师傅的文章正是从default之后开始进行提取，所以开始字段为<code>64 65 66 61 75 6C 74 00</code> ，往下寻找结束的标记，从图上可以看出结束的标记为<code>66 6F 65 79 65</code><br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927210430.7efe7ytm4mc0.webp" alt="Pasted-image-20220927210430"></p>
+<h3 id="1-4-76"><a href="#1-4-76" class="headerlink" title="1.4.76"></a>1.4.76</h3><p>因为版本比较低所以不需要我们手动去从goby程序里提crules，直接用winhex打开<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927205348.6efba3mc0j00.webp"><br>笔者从事的工作与Yara息息相关，但是从来没有深入的去了解Yara的原理和流程，只是把它当作加强版的正则，从来没有想过能用来进行指纹识别，愧疚愧疚~~</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927205630.2cfsp2nwmlus.webp"><br>到这里已经看到出现指纹了，接下来就是将指纹提取出来，笔者在复现的时候起初以为自己写过Yara规则，猜测每个规则都是rule_id开头，然后后面跟字段，妹有好好观察，最后还是老老实实寻找开始和结束段。<br>我们提取的内容应该是以rules_0开始，按照师傅的文章正是从default之后开始进行提取，所以开始字段为<code>64 65 66 61 75 6C 74 00</code> ，往下寻找结束的标记，从图上可以看出结束的标记为<code>66 6F 65 79 65</code><br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927210430.7efe7ytm4mc0.webp"></p>
 <p>接下来就是将这两段之间的内容提取出来，笔者最近正好在学习Go，就用Go写了个辣眼的提取脚本</p>
 <pre><code class="go">package main
 
@@ -202,10 +202,10 @@ func main() {
 &nbsp; &nbsp; Write(finger)
 }
 </code></pre>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927214744.5ysoua033fg0.webp" alt="Pasted-image-20220927214744"></p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927214744.5ysoua033fg0.webp"></p>
 <p>真的辣眼睛，因为妹有做分割，真没眼看。。。。</p>
-<p>接下来就是进行分割，观察不同的rule_id之间的字节<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927213623.3zwsqrnq73m0.webp" alt="Pasted-image-20220927213623"></p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927213654.3f5jzeybxji0.webp" alt="Pasted-image-20220927213654"><br>由此可以确定不同规则rule_id之间的分隔符为<code>\x00\x00\x00\x00\x73\x00</code> ,不同字段之间的分隔符为<code>\x00</code> </p>
+<p>接下来就是进行分割，观察不同的rule_id之间的字节<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927213623.3zwsqrnq73m0.webp"></p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927213654.3f5jzeybxji0.webp"><br>由此可以确定不同规则rule_id之间的分隔符为<code>\x00\x00\x00\x00\x73\x00</code> ,不同字段之间的分隔符为<code>\x00</code> </p>
 <p>尝试对其进行拆分，这段写得太辣眼睛了，还是放师傅的脚本吧</p>
 <pre><code class="python">filename = r"crules"
 with open(filename, 'rb') as f:
@@ -270,7 +270,7 @@ with open("fofa.json", "w", encoding="utf-8") as f:
 &nbsp; &nbsp; json.dump(results, f, ensure_ascii=False, indent=4)
 </code></pre>
 <p>最后得到结果如下</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927223539.6p7nldhpe340.webp" alt="Pasted-image-20220927223539"></p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/Pasted-image-20220927223539.6p7nldhpe340.webp"></p>
 <h3 id="1-7-192"><a href="#1-7-192" class="headerlink" title="1.7.192"></a>1.7.192</h3><p>1.7.192版本不在含有crules文件，它被包含在了可执行程序中，打开可执行程序可以看到其中引用了<code>github.com/rakyll/statik/fs</code> 库，官方的描述如下：<br><code>statik allows you to embed a directory of static files into your Go binary</code><br>根据师傅的文章，我们也可以查看fs的源码<br><a target="_blank" rel="noopener" href="https://github.com/rakyll/statik/blob/master/fs/fs.go">fs.go的源码</a><br>发现该库即是生成了ZIP内嵌在程序中<br>笔者之前有过一些Misc经验（雾，这里列出常见的文件头</p>
 <table>
 <thead>
@@ -322,9 +322,9 @@ with open("fofa.json", "w", encoding="utf-8") as f:
 </tr>
 </tbody></table>
 <p>这里搜索ZIP的格式头<code>50 4B 03 04</code> 即可定位到压缩包的起始位置</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.5ndi5mufazw0.png" alt="image"></p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.5ndi5mufazw0.png"></p>
 <p>看到crules，就应该是这个压缩包了，接下来就是寻找结尾进行提取压缩包文件。因为<code>50 4B 03 04</code> 这段数据在文本中有很多，在进行提取的时候可以多选几个字节进行准确定位，这里师傅网友多定了一个字节到<code>50 4B 03 04 14 00 08 00 08 00</code></p>
-<p>接下来寻找压缩包结尾，先看看<code>50 4B</code> 的搜索结果<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.2e4qv9eoqr28.png" alt="image"></p>
+<p>接下来寻找压缩包结尾，先看看<code>50 4B</code> 的搜索结果<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.2e4qv9eoqr28.png"></p>
 <p>在搜索开始头的时候就能看到存在这么多的<code>50 4B</code> 如果直接提取到下一个<code>50 4B</code> 无法判断压缩包的准确性，借鉴师傅的解决方法，每次读字节并且尝试解压，代码如下：</p>
 <pre><code class="python"># @Author &nbsp;: w8ay
 import zipfile
@@ -352,10 +352,10 @@ with open("test.zip", 'wb') as f:
 </code></pre>
 <p>成功分离出crules_1.7.192，用之前的提取脚本提取即可</p>
 <p><del>这个微微离谱的指纹还在</del></p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.21ucigcs7ie8.png" alt="image"></p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.21ucigcs7ie8.png"></p>
 <h2 id="Goby-Poc提取"><a href="#Goby-Poc提取" class="headerlink" title="Goby Poc提取"></a>Goby Poc提取</h2><p>Goby的POC分为json与go两种格式，本次只尝试提取json’格式（wtcldbq</p>
 <p>用winhex打开可执行程序观察</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.7cr1bfp8q840.png" alt="image"></p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.7cr1bfp8q840.png"></p>
 <p>可以直接确认Name段，那么提取数据的起始段也可以确认为<code>\x23\x7B\x0A\x20\x20\x22\x4E\x61\x6D\x65\x22\x3A\x20</code><br><del>（在看的时候搜索Name字段第二个处的CS字段与下面不同，不知道为啥师傅没有提取</del><br>结束段标记为<code>\x65\x0A\x7D\x0A\x66\x75\x6E\x63\x74\x69\x6F\x6E</code></p>
 <p>暴力提取辣眼脚本：</p>
 <pre><code class="go">package main
@@ -396,11 +396,11 @@ func main() {
 &nbsp; &nbsp; Write(finger)
 }
 </code></pre>
-<p>提取结果如下<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.3m0ztpkxvt40.png" alt="image"></p>
+<p>提取结果如下<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/image.3m0ztpkxvt40.png"></p>
 <p>但是存在一些不可见字符干扰，后续再优化</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>首先是 W8ay师傅太强了orz，后面到了逆向yara虚拟机的程度，对字符处理也很细节，学，学无止境。<br>wtcl。。<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/aaa.qtgewqib3bk.jpg" alt="aaa"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>首先是 W8ay师傅太强了orz，后面到了逆向yara虚拟机的程度，对字符处理也很细节，学，学无止境。<br>wtcl。。<br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/aaa.qtgewqib3bk.jpg"></p>
 <p>以后要忠实的做好每一个大佬的舔狗</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/qq.5hrr22slzeo0.jpg" alt="qq"></p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220928/qq.5hrr22slzeo0.jpg"></p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
