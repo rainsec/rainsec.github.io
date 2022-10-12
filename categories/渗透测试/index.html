@@ -149,7 +149,7 @@
             animation-duration: 2.8s;
             background-image:
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.56), #100e17),
-                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/image.x02df1872g.webp);">
+                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221012/image-20221009230905837.2jiiuh6lk5s0.png);">
         </div>
     </div>
     
@@ -159,37 +159,46 @@
             <a href="/categories/渗透测试"><b>「
                 </b>渗透测试<b> 」</b></a>
             
-            September 30, 2022
+            October 12, 2022
         </p>
         <h3 class="post-title animated fadeInDown">
-            <a href="/post/Goby%E6%8C%87%E7%BA%B9%E5%92%8CPOC%E6%8F%90%E5%8F%96.html" title="Goby指纹与POC提取复现" class="posttitle">Goby指纹与POC提取复现</a></h3>
+            <a href="/post/Xray%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90.html" title="对Xray 5.6W条结果的简单分析" class="posttitle">对Xray 5.6W条结果的简单分析</a></h3>
         
         <p class="post-count animated fadeInDown">
             
             <span>
                 <b class="iconfont icon-text2"></b> <i>Words count</i>
-                11k
+                6.1k
             </span>
             
             
             <span>
                 <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                10 mins.
+                6 mins.
             </span>
             
             
         </p>
         
         
-        <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li></ul>
-        
         <div class="md-content animated fadeIn">
             
-            <h1 id="Goby指纹与POC提取复现"><a href="#Goby指纹与POC提取复现" class="headerlink" title="Goby指纹与POC提取复现"></a>Goby指纹与POC提取复现</h1><p>最近看了w8ay师傅发的关于提取Goby指纹的帖子，发现自己加入师傅的知识星球却一直没认真学习过实在是难顶嗷，根据师傅的帖子来复现自己提取一下，补上第一期的作业。</p>
-<h2 id="Goby指纹提取"><a href="#Goby指纹提取" class="headerlink" title="Goby指纹提取"></a>Goby指纹提取</h2><p>首先是指纹提取，这里也分别准备了三个版本的Goby文件进行复现，分别是1.4.76、1.7.192和1.8.279</p>
-<h3 id="1-4-76"><a href="#1-4-76" class="headerlink" title="1.4.76"></a>1.4.76</h3><p>因为版本比较低所以不需要我们手动去从goby程序里提crules，直接用winhex打开<br><br>笔者从事的工作与Yara息息相关，但是从来没有深入的去了解Yara的原理和流...</p>
+            <h1 id="对Xray-5-6W条结果的简单分析"><a href="#对Xray-5-6W条结果的简单分析" class="headerlink" title="对Xray 5.6W条结果的简单分析"></a>对Xray 5.6W条结果的简单分析</h1><p></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>自动化扫描src已经做一段时间了，各类问题累计扫出来7.3w+，其中xray作为扫描漏洞的主力之一，上报了5.6w+问题 。目前应该是全网使用xray漏洞记录最多的一个了吧。</p>
+<p>这里便根据这5.6w+扫描结果来对xray做一个简单的分析及复盘，先说下我目前使用方式:</p>
+<p><strong>扫描目标</strong></p>
+<ul>
+<li>各大国内src相关资产</li>
+</ul>
+<p><strong>扫描方式</strong></p>
+<ul>
+<li>crawlgergo爬取网站请求并发送到xray</li>
+<li>xray扫描爬取的网站请求将结果发送给webhook</li>
+<li>webhook收集并报告漏洞</li>
+</ul>
+<p>简单来...</p>
             
-            <span class="read-more"><a href="/post/Goby%E6%8C%87%E7%BA%B9%E5%92%8CPOC%E6%8F%90%E5%8F%96.html" title="Read article" class="posttitle">Read article</a>
+            <span class="read-more"><a href="/post/Xray%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90.html" title="Read article" class="posttitle">Read article</a>
                 <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>
     </div>
@@ -210,6 +219,54 @@
 
     <div id="primary">
         
+<div class="post" id="post">
+    <div class="post-cover animated fadeIn" style="
+            background-image:
+            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/image.x02df1872g.webp);">
+    </div>
+    <div class="else">
+        <p class="animated fadeInDown">
+            
+                <a href="/categories/渗透测试">
+                  <b>「 </b>渗透测试<b> 」</b>
+                </a>
+            
+            September 30, 2022
+        </p>
+        <h3 class="post-title animated fadeInDown"><a href="/post/Goby%E6%8C%87%E7%BA%B9%E5%92%8CPOC%E6%8F%90%E5%8F%96.html" title="Goby指纹与POC提取复现" class="posttitle">Goby指纹与POC提取复现</a></h3>
+        
+            <p class="post-count animated fadeInDown">
+                
+                    <span>
+                        <b class="iconfont icon-text2"></b> <i>Words count</i>
+                        11k
+                    </span>
+                
+                
+                    <span>
+                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                        10 mins.
+                    </span>
+                
+                
+            </p>
+            
+                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li></ul>
+            
+        
+        <div class="md-content animated fadeIn">
+            
+                <h1 id="Goby指纹与POC提取复现"><a href="#Goby指纹与POC提取复现" class="headerlink" title="Goby指纹与POC提取复现"></a>Goby指纹与POC提取复现</h1><p>最近看了w8ay师傅发的关于提取Goby指纹的帖子，发现自己加入师傅的知识星球却一直没认真学习过实在是难顶嗷，根据师傅的帖子来复现自己提取一下，补上第一期的作业。</p>
+<h2 id="Goby指纹提取"><a href="#Goby指纹提取" class="headerlink" title="Goby指纹提取"></a>Goby指纹提取</h2><p>首先是指纹提取，这里也分别准备了三个版本的Goby文件进行复现，分别是1.4.76、1.7.192和1.8.279</p>
+<h3 id="1-4-76"><a href="#1-4-76" class="headerlink" title="1.4.76"></a>1.4.76</h3><p>因为版本比较低所以不需要我们手动去从goby程序里提crules，直接用winhex打开<br><br>笔者从事的工作与Yara息息相关，但是从来没有深入的去了解Yara的原理和流...</p>
+            
+            <span class="read-more"><a href="/post/Goby%E6%8C%87%E7%BA%B9%E5%92%8CPOC%E6%8F%90%E5%8F%96.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
+        </div>
+    </div>
+</div>
+
+
 <div class="post" id="post">
     <div class="post-cover animated fadeIn" style="
             background-image:
