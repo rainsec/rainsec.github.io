@@ -149,7 +149,7 @@
             animation-duration: 2.8s;
             background-image:
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.56), #100e17),
-                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220731/fuzzinggrammar.jpeg);">
+                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221015/sanitizers.5w0qyt2gbqg0.webp);">
         </div>
     </div>
     
@@ -159,36 +159,38 @@
             <a href="/categories/漏洞挖掘"><b>「
                 </b>漏洞挖掘<b> 」</b></a>
             
-            July 31, 2022
+            October 08, 2022
         </p>
         <h3 class="post-title animated fadeInDown">
-            <a href="/post/Fuzzing%E4%B9%8BGrammers.html" title="Fuzzing之Grammars" class="posttitle">Fuzzing之Grammars</a></h3>
+            <a href="/post/AddressSanitizer.html" title="AddressSanitizer 漏洞检测技术剖析" class="posttitle">AddressSanitizer 漏洞检测技术剖析</a></h3>
         
         <p class="post-count animated fadeInDown">
             
             <span>
                 <b class="iconfont icon-text2"></b> <i>Words count</i>
-                39k
+                10k
             </span>
             
             
             <span>
                 <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                35 mins.
+                9 mins.
             </span>
             
             
         </p>
         
         
-        <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li></ul>
+        <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/" rel="tag">漏洞挖掘</a></li></ul>
         
         <div class="md-content animated fadeIn">
             
-            <h1 id="Fuzzing之Grammars"><a href="#Fuzzing之Grammars" class="headerlink" title="Fuzzing之Grammars"></a>Fuzzing之Grammars</h1><h2 id="Fuzzing-input"><a href="#Fuzzing-input" class="headerlink" title="Fuzzing input"></a>Fuzzing input</h2><p>​  Fuzzing的一大核心思想其实就是通过大量的Input去触发程序的各个分支逻辑，因此Fuzzing的成功与否和Input的生成关系密切。Input的格式多种多样，可以是文件，代码，json数据等等。但是各种各样的数据都有自己的格式，程序的输入也是如此，那么在生成Input的过程中，格式化非常关键，程序无法接受的输入对于Fuzzing来说是毫无意义的。</p>
-<p>​  为了很好的描述一个程序的输入，一个很有必要的事情是为输入制定一些语法规范。...</p>
+            <h1 id="AddressSanitizer-漏洞检测技术剖析"><a href="#AddressSanitizer-漏洞检测技术剖析" class="headerlink" title="AddressSanitizer 漏洞检测技术剖析"></a>AddressSanitizer 漏洞检测技术剖析</h1><p>  类似AFL之类的Fuzzing技术不断强大的一个核心原因就是漏洞检测能力的不断增强，作为AFL这款经典工具的核心，ASAN的漏洞检测核心能力值得关注。</p>
+<h2 id="ASAN简介"><a href="#ASAN简介" class="headerlink" title="ASAN简介"></a>ASAN简介</h2><p>  ASAN其实本身是作为LLVM项目的一部分存在于Clang里面，其作用就是一个强大的内存错误检测器，它由一个编译插桩模块和一个运行时库组成，据官网介绍其可以检测以下类型的漏洞：</p>
+<ol>
+<li>Out-of-bounds accesses to heap, stack and globals...</li></ol>
             
-            <span class="read-more"><a href="/post/Fuzzing%E4%B9%8BGrammers.html" title="Read article" class="posttitle">Read article</a>
+            <span class="read-more"><a href="/post/AddressSanitizer.html" title="Read article" class="posttitle">Read article</a>
                 <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>
     </div>
@@ -209,6 +211,53 @@
 
     <div id="primary">
         
+<div class="post" id="post">
+    <div class="post-cover animated fadeIn" style="
+            background-image:
+            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220731/fuzzinggrammar.jpeg);">
+    </div>
+    <div class="else">
+        <p class="animated fadeInDown">
+            
+                <a href="/categories/漏洞挖掘">
+                  <b>「 </b>漏洞挖掘<b> 」</b>
+                </a>
+            
+            July 31, 2022
+        </p>
+        <h3 class="post-title animated fadeInDown"><a href="/post/Fuzzing%E4%B9%8BGrammers.html" title="Fuzzing之Grammars" class="posttitle">Fuzzing之Grammars</a></h3>
+        
+            <p class="post-count animated fadeInDown">
+                
+                    <span>
+                        <b class="iconfont icon-text2"></b> <i>Words count</i>
+                        39k
+                    </span>
+                
+                
+                    <span>
+                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                        35 mins.
+                    </span>
+                
+                
+            </p>
+            
+                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li></ul>
+            
+        
+        <div class="md-content animated fadeIn">
+            
+                <h1 id="Fuzzing之Grammars"><a href="#Fuzzing之Grammars" class="headerlink" title="Fuzzing之Grammars"></a>Fuzzing之Grammars</h1><h2 id="Fuzzing-input"><a href="#Fuzzing-input" class="headerlink" title="Fuzzing input"></a>Fuzzing input</h2><p>​  Fuzzing的一大核心思想其实就是通过大量的Input去触发程序的各个分支逻辑，因此Fuzzing的成功与否和Input的生成关系密切。Input的格式多种多样，可以是文件，代码，json数据等等。但是各种各样的数据都有自己的格式，程序的输入也是如此，那么在生成Input的过程中，格式化非常关键，程序无法接受的输入对于Fuzzing来说是毫无意义的。</p>
+<p>​  为了很好的描述一个程序的输入，一个很有必要的事情是为输入制定一些语法规范。...</p>
+            
+            <span class="read-more"><a href="/post/Fuzzing%E4%B9%8BGrammers.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
+        </div>
+    </div>
+</div>
+
+
 <div class="post" id="post">
     <div class="post-cover animated fadeIn" style="
             background-image:
