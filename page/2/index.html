@@ -149,48 +149,47 @@
             animation-duration: 2.8s;
             background-image:
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.56), #100e17),
-                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/gofuzzcover.png);">
+                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/what-is-dns.3wivpbhx9do.png);">
         </div>
     </div>
     
     <div id="post0" class="else">
         <p class="animated fadeInDown">
             
-            <a href="/categories/漏洞挖掘"><b>「
-                </b>漏洞挖掘<b> 」</b></a>
+            <a href="/categories/渗透测试"><b>「
+                </b>渗透测试<b> 」</b></a>
             
-            March 25, 2022
+            March 26, 2022
         </p>
         <h3 class="post-title animated fadeInDown">
-            <a href="/post/Go-Fuzz%E8%A7%A3%E6%9E%90%E4%B8%8E%E6%80%9D%E8%80%83.html" title="云原生项目Fuzz特点及思考" class="posttitle">云原生项目Fuzz特点及思考</a></h3>
+            <a href="/post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html" title="URLDNS调试那些小事" class="posttitle">URLDNS调试那些小事</a></h3>
         
         <p class="post-count animated fadeInDown">
             
             <span>
                 <b class="iconfont icon-text2"></b> <i>Words count</i>
-                19k
+                4.4k
             </span>
             
             
             <span>
                 <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                17 mins.
+                4 mins.
             </span>
             
             
         </p>
         
         
-        <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li></ul>
-        
         <div class="md-content animated fadeIn">
             
-            <h1 id="Go-fuzz的解析与思考"><a href="#Go-fuzz的解析与思考" class="headerlink" title="Go-fuzz的解析与思考"></a>Go-fuzz的解析与思考</h1><h2 id="go-fuzz"><a href="#go-fuzz" class="headerlink" title="go-fuzz"></a>go-fuzz</h2><blockquote>
-<p>Go-fuzz的原理很多都是基于AFL，这里只分析了一些它独特的地方，收获很多，也希望可以和大家交流，如有分析错误还望交流指正。</p>
-</blockquote>
-<p>​        go-fuzz是google开源的一款go语言fuzz框架，它和AFL很大的一个不同是在于，AFL通常通过对未修改的文件的输入进行操作，而go-fuzz需要你编写一个Fuzz函数，go-fuzz通过不断的调用该函数来进行fuzz，前者通常会为每一个输入创建一个新的进程，后者则是不断的调用Fuzz函数因此不需要经常启动或者...</p>
+            <h1 id="URLDNS调试那些小事"><a href="#URLDNS调试那些小事" class="headerlink" title="URLDNS调试那些小事"></a>URLDNS调试那些小事</h1><p>近期在看javaweb相关的知识，ysoserial作为反序列化利用链的神器，想稍微利用它来调试一个简单的urldns利用链，进而了解这个工具。</p>
+<h4 id="ysoserial链接："><a href="#ysoserial链接：" class="headerlink" title="ysoserial链接："></a>ysoserial链接：</h4><pre><code class="txt">下载地址: https://github.com/frohoff/ysoserial
+这里用jdk1.8来编译
+</code></pre>
+<h4 id="编译ysoserial"><a href="#编译ysoserial" class="headerlink" title="编译ysoserial"></a>编译ysoserial</h4><p>用JIdea打开导入，会自动导入依赖，导入以后可能还会出现pom.xml红色表示找不到对应依赖的情况，这时可以进入依赖文件夹，可能是用于多个版本jar下载到了其他版本，删...</p>
             
-            <span class="read-more"><a href="/post/Go-Fuzz%E8%A7%A3%E6%9E%90%E4%B8%8E%E6%80%9D%E8%80%83.html" title="Read article" class="posttitle">Read article</a>
+            <span class="read-more"><a href="/post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html" title="Read article" class="posttitle">Read article</a>
                 <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>
     </div>
@@ -211,6 +210,54 @@
 
     <div id="primary">
         
+<div class="post" id="post">
+    <div class="post-cover animated fadeIn" style="
+            background-image:
+            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/what-is-dns.3wivpbhx9do.png);">
+    </div>
+    <div class="else">
+        <p class="animated fadeInDown">
+            
+                <a href="/categories/渗透测试">
+                  <b>「 </b>渗透测试<b> 」</b>
+                </a>
+            
+            March 26, 2022
+        </p>
+        <h3 class="post-title animated fadeInDown"><a href="/post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html" title="URLDNS调试那些小事" class="posttitle">URLDNS调试那些小事</a></h3>
+        
+            <p class="post-count animated fadeInDown">
+                
+                    <span>
+                        <b class="iconfont icon-text2"></b> <i>Words count</i>
+                        4.4k
+                    </span>
+                
+                
+                    <span>
+                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                        4 mins.
+                    </span>
+                
+                
+            </p>
+            
+        
+        <div class="md-content animated fadeIn">
+            
+                <h1 id="URLDNS调试那些小事"><a href="#URLDNS调试那些小事" class="headerlink" title="URLDNS调试那些小事"></a>URLDNS调试那些小事</h1><p>近期在看javaweb相关的知识，ysoserial作为反序列化利用链的神器，想稍微利用它来调试一个简单的urldns利用链，进而了解这个工具。</p>
+<h4 id="ysoserial链接："><a href="#ysoserial链接：" class="headerlink" title="ysoserial链接："></a>ysoserial链接：</h4><pre><code class="txt">下载地址: https://github.com/frohoff/ysoserial
+这里用jdk1.8来编译
+</code></pre>
+<h4 id="编译ysoserial"><a href="#编译ysoserial" class="headerlink" title="编译ysoserial"></a>编译ysoserial</h4><p>用JIdea打开导入，会自动导入依赖，导入以后可能还会出现pom.xml红色表示找不到对应依赖的情况，这时可以进入依赖文件夹，可能是用于多个版本jar下载到了其他版本，删...</p>
+            
+            <span class="read-more"><a href="/post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
+        </div>
+    </div>
+</div>
+
+
 <div class="post" id="post">
     <div class="post-cover animated fadeIn" style="
             background-image:
