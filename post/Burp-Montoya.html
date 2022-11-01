@@ -5,13 +5,17 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>对Xray 5.6W条结果的简单分析 - RainSec</title>
+    <title>Burp-Montoya - RainSec</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="RainSec,"> 
-    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,对Xray 5.6W条结果的简单分析
-前言自动化扫描src已经做一段时间了，各类问题累计扫出来7.3w+，其中xray作为扫描漏洞的主力之一，上报了5.6w+问题 。目前应该是全网使用xray漏洞记,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,  Burp的新版本更新了新的API接口，刚好最近有写插件的想法，所以简单的了解了下。
+
+简介  单从文档界面来看，结构清晰了不少-&amp;gt;MontoyaApi
+
+  同时官方提供了一个demo
+使,"> 
     <meta name="author" content="RainSec"> 
     <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
     <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
@@ -77,7 +81,7 @@
     <div class="navigation animated fadeIn fast delay-1s">
         <img id="home-icon" class="icon-home" src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="" data-url="https://rainsec.cn">
         <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
-        <h3 class="subtitle">对Xray 5.6W条结果的简单分析</h3>
+        <h3 class="subtitle">Burp-Montoya</h3>
         <div class="social">
             <!--        <div class="like-icon">-->
             <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -102,7 +106,7 @@
             animation-duration: 1.2s;
             background-image: 
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221012/image-20221009230905837.2jiiuh6lk5s0.png') ">
+                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221101/burp-suite-180820162011-thumbnail.5ag1ra9f7s0.jpg') ">
         </div>
         <div class="else">
             <p class="animated fadeInDown">
@@ -110,22 +114,22 @@
                 <a href="/categories/渗透测试"><b>「
                     </b>渗透测试<b> 」</b></a>
                 
-                October 12, 2022
+                November 01, 2022
             </p>
-            <h3 class="post-title animated fadeInDown"><a href="/post/Xray%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90.html" title="对Xray 5.6W条结果的简单分析" class="">对Xray 5.6W条结果的简单分析</a>
+            <h3 class="post-title animated fadeInDown"><a href="/post/Burp-Montoya.html" title="Burp-Montoya" class="">Burp-Montoya</a>
             </h3>
             
             <p class="post-count animated fadeInDown">
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>Words count</i>
-                    6.1k
+                    8.5k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                    6 mins.
+                    8 mins.
                 </span>
                 
                 
@@ -137,6 +141,8 @@
                 
             </p>
             
+            
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Burp/" rel="tag">Burp</a></li></ul>
             
         </div>
     </div>
@@ -157,121 +163,215 @@
 <div class="article">
     <div class='main'>
         <div class="content markdown animated fadeIn">
-            <h1 id="对Xray-5-6W条结果的简单分析"><a href="#对Xray-5-6W条结果的简单分析" class="headerlink" title="对Xray 5.6W条结果的简单分析"></a>对Xray 5.6W条结果的简单分析</h1><p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221012/image-20221009230905837.2jiiuh6lk5s0.png"></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>自动化扫描src已经做一段时间了，各类问题累计扫出来7.3w+，其中xray作为扫描漏洞的主力之一，上报了5.6w+问题 。目前应该是全网使用xray漏洞记录最多的一个了吧。</p>
-<p>这里便根据这5.6w+扫描结果来对xray做一个简单的分析及复盘，先说下我目前使用方式:</p>
-<p><strong>扫描目标</strong></p>
-<ul>
-<li>各大国内src相关资产</li>
-</ul>
-<p><strong>扫描方式</strong></p>
-<ul>
-<li>crawlgergo爬取网站请求并发送到xray</li>
-<li>xray扫描爬取的网站请求将结果发送给webhook</li>
-<li>webhook收集并报告漏洞</li>
-</ul>
-<p>简单来说就是: crawlgergo—-&gt;xray—-&gt;webhook</p>
-<p><strong>开局套个盾</strong></p>
-<ul>
-<li>统计结果仅包含src的资产，一般有src厂商的网站安全性要比普通厂商的安全性要高出很多，不同src对应厂商的安全性也不相同，分析结果仅供娱乐，不代表某个具体公司，亦不代表整体情况。</li>
-<li>随着扫描结果越来越多，后续根据我的扫描习惯关闭了一些误报过高和没有太大利用价值的插件，所以对于对于一些插件的统计结果是偏低的。</li>
-<li>本次取的是xray直接的报告结果，其中包含了xray的误报。</li>
-</ul>
-<h2 id="正片"><a href="#正片" class="headerlink" title="正片"></a>正片</h2><p>本次统计漏洞总数为56666，这里将漏洞分为xray内置插件扫描和加载yaml插件扫描两类，其中</p>
-<ul>
-<li>内置插件漏洞数量：54507</li>
-<li>yaml插件漏洞数量：2159</li>
-</ul>
-<h3 id="xray自带插件分析"><a href="#xray自带插件分析" class="headerlink" title="xray自带插件分析"></a>xray自带插件分析</h3><p>xray自带插件可以分为10个大类</p>
-<ul>
-<li>dirscan</li>
-<li>baseline</li>
-<li>xss</li>
-<li>redirect</li>
-<li>brute-force</li>
-<li>sqldet</li>
-<li>jsonp</li>
-<li>path-traversal</li>
-<li>cmd-injection</li>
-<li>crlf-injection</li>
-</ul>
-<p>细分总计有60个小类（ps:实际不止60，这里取的是报告结果统计出来的分类），具体如下</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221012/image-20221009230921064.2kjckdgpmdk0.png"></p>
-<h4 id="对整体漏洞统计如下"><a href="#对整体漏洞统计如下" class="headerlink" title="对整体漏洞统计如下"></a>对整体漏洞统计如下</h4><p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221012/image-20221009230929980.13eoorebzubk.png"></p>
-<p>dirscan和baseline远高于其他插件，下面具体说说各类漏洞的情况及使用体验</p>
-<h4 id="baseline"><a href="#baseline" class="headerlink" title="baseline"></a>baseline</h4><p>baseline下面具体说说各类漏洞的情况及使用体验</p>
-<ul>
-<li>baseline/cors/allow-https-downgrade/cors/allow-https-downgrade/cors/allow-https-downgrade</li>
-<li>baseline/cors/allow-null-with-credential</li>
-<li>baseline/cors/any-origin-with-credential</li>
-<li>baseline/cors/reflected</li>
-<li>baseline/sensitive/server-error</li>
-</ul>
-<p>其中server-error最多，达到20711条。baseline对自动化挖src来说，没有太多价值，为了减少干扰，后来直接在配置文件关掉这个大类检测，所以这块的实际统计是偏少的。</p>
-<h4 id="dirscan"><a href="#dirscan" class="headerlink" title="dirscan"></a>dirscan</h4><p>感觉xray花了大量精力来做这个插件，直接分了45个小类，漏洞种类它占了三分之一</p>
-<p>由于分的太细，有些漏洞名字完全不知道干嘛的，这里根据具体的报告做了个简单的记录</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221012/image-20221009230937872.5qfhlala10o0.png"></p>
-<p>导致dirscan数量偏高的主要是以下4个插件，总计22971个。</p>
-<ul>
-<li>dirscan/debug/readme</li>
-<li>dirscan/sourcemap/default</li>
-<li>dirscan/sensitive/crossdomain</li>
-<li>dirscan/directory/default</li>
-</ul>
-<p>第一个第三个价值不大</p>
-<p>第二个是js.map泄漏，第四个是目录遍历，由于xray没做相关去重，一个网站有问题，那么连带着可能报上来几十甚至上百条报告。</p>
-<p>仔细梳理下来，dirscan细分了很多类，其实有些是相似的，可以合并到一起，分成两级其实更简洁明了。</p>
-<p>diarscan中实际可直接利用的并不多，可以把其中的一些高价值或命中高价值关键字的漏洞做一些醒目的提醒，减少干扰。比如目录遍历的文件可进一步读取。泄漏密码或者其他重要配置。</p>
-<p>部分插件可以做进一步扫描的，比如发现phpmyadmin和tomcat可以尝试爆破。</p>
-<p>git/svn插件误报有点多。</p>
-<h4 id="sqldet"><a href="#sqldet" class="headerlink" title="sqldet"></a>sqldet</h4><p>sql注入检测插件</p>
-<ul>
-<li>sqldet/blind-based/default</li>
-<li>sqldet/error-based/default</li>
-<li>sqldet/time-based/default</li>
-</ul>
-<p>报错注入，bool盲注，时间盲注都有检测。</p>
-<p>实际使用中扫出来过报错注入，在本地扫描的时候扫出来过被我漏掉的时间盲注。</p>
-<p>但是bool盲注，时间盲注在这套自动化测试流程中全是误报，而且误报特别多，后来直接关闭这俩检测，只保留了报错注入。</p>
-<h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p>基于语义化检测的检测逻辑，检测过程无明显流量特征，对于有防护的场景依然有很高的准确度。</p>
-<p>最开始的时候手工验证了很多报告，很多防御不严谨的都被识别出来了，基本上绕一下就能触发xss，算得上扫xss神器。</p>
-<p>可惜是国内的xss，还是反射型xss，有的还有条件限制。即时交了给的赏金还不够写报告的手工费。后来扫出来的越来越多，也懒得挨个看了，现在默认忽略xss漏洞。</p>
-<h4 id="redirect"><a href="#redirect" class="headerlink" title="redirect"></a>redirect</h4><p>检测payload设计的挺巧妙的，payload自带绕过能力，精确度也挺高。</p>
-<p>可惜不值钱，也被我当做默认忽略的漏洞之一了。</p>
-<h4 id="brute-force"><a href="#brute-force" class="headerlink" title="brute-force"></a>brute-force</h4><ul>
-<li>brute-force/basic-auth/default</li>
-<li>brute-force/form-brute/default</li>
-</ul>
-<p>这个模块，基本都是误报= =.</p>
-<p>basic-auth报告3个全是误报，form-brute报告378条具体正确多少个忘记了，但不超过5个，这个插件怎么说呢，关掉吧，万一命中一个说不准就是个高危漏洞，不关吧，命中率实在感人，自己写一个吧，不经过大量测试写出来的命中率估计还不如这个呢。。</p>
-<h4 id="jsonp"><a href="#jsonp" class="headerlink" title="jsonp"></a>jsonp</h4><p>扫出来的结果并不多，且利用价值都不高。纯依靠插件来检测这类漏洞中高价值的还是有点难度的。</p>
-<h4 id="cmd-injection、crlf-injection、path-traversal"><a href="#cmd-injection、crlf-injection、path-traversal" class="headerlink" title="cmd-injection、crlf-injection、path-traversal"></a>cmd-injection、crlf-injection、path-traversal</h4><p>这三个的报告很少，而且报上来的也是全是误报。</p>
-<h3 id="xray加载的yaml插件分析"><a href="#xray加载的yaml插件分析" class="headerlink" title="xray加载的yaml插件分析"></a>xray加载的yaml插件分析</h3><blockquote>
-<p>在写这篇文章前的印象是除了两三个特别容易误报的插件外，其他插件相对较好的。然而在写这篇文章的时候重新整理了一下这些结果，发现这里面的误报真的多，很多插件直接全是误报。。。这里直接不展开分析了。</p>
-</blockquote>
-<p>简单说一下结果：</p>
-<p>yaml插件总计352个，有报告漏洞的插件共36个。</p>
-<p>将插件根据发现漏洞数量排序，原本想挑几个效果比较好的插件分析下的，结果发现好多插件插件误报率百分百，一直找到第20个才凑齐10个，直接放弃。（ps:这里说的是误报不是漏报，造成原因是目前扫描的目标里面没有这些漏洞。）</p>
-<p>这里放个排除掉误报比较高的插件后的前十插件占比。</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221012/image-20221009230953068.1gp4el8ndfkw.png"></p>
-<p>yaml插件估计是官方在审核插件的时候只是审核插件是否会漏报，并没有进行大范围的测试。</p>
-<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>最后简单总结下在这段时间使用下来后对于xray的评价</p>
-<p>先说优势</p>
-<ul>
-<li>在基础普通漏洞验证上做的相对完善。部分类型的漏洞验证方式及思路非常巧妙。</li>
-<li>支持额外加载yaml插件来补充其对1day漏洞的扫描能力</li>
-<li>有官方运营的社区，可不断补充1day插件</li>
-</ul>
-<p>然后缺点</p>
-<ul>
-<li>编译型语言的导致的硬伤，不如脚本语言灵活。只能通过解析yaml文件来进行poc编写，但yaml在应对复杂场景的检测局限性很大。</li>
-<li>针对新的影响范围较广的漏洞等的补充只能等待官方更新，比如log4j到目前都没有支持。</li>
-<li>不支持被动扫描插件编写。</li>
-<li>用于大范围扫描时很多插件误报严重。</li>
-</ul>
-<p>在最初了解到基于流量的被动扫描时就感觉这是个很好的漏洞扫描思路，能做的事情应该远高于传统扫描器。</p>
-<p>xray作为最火的被动扫描，在长时间使用下来的体验是相比传统扫描器有一定特色，除具备传统扫描器功能外，也有一定的灵活性。</p>
-<p>但由于其不开源，开放出来的版本本质还是基于传统漏洞和僵硬的1day扫描，无法完成被动扫描插件的开发，没有将被动扫描真正的灵活性完全的体现出来。想要完全发挥被动扫描的能力仍然需要配合其他的被动扫描工具。</p>
+            <p>  Burp的新版本更新了新的<code>API</code>接口，刚好最近有写插件的想法，所以简单的了解了下。</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221101/images.4m31nsvvgdc0.png" alt="images"></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>  单从文档界面来看，结构清晰了不少-&gt;<a target="_blank" rel="noopener" href="https://portswigger.github.io/burp-extensions-montoya-api/javadoc/burp/api/montoya/MontoyaApi.html">MontoyaApi</a></p>
+<p><img src="https://wiki-1258274765.cos.ap-nanjing.myqcloud.com/wiki/img20221030132718.png"></p>
+<p>  同时官方提供了一个<a target="_blank" rel="noopener" href="https://github.com/PortSwigger/burp-extender-montoya-api">demo</a></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>  与老版本类似，创建一个插件项目需要继承类<code>BurpExtension</code>，它只包含了一个初始化函数</p>
+<pre><code class="java">public interface BurpExtension {
+    void initialize(MontoyaApi var1);
+}
+</code></pre>
+<p>  同样的，想要调用扫描等功能，也需要进行注册，比如我们注册一个扫描</p>
+<pre><code class="java">public void initialize(MontoyaApi montoyaApi) {
+    this.montoyaApi = montoyaApi;
+    montoyaApi.scanner().registerScanCheck(new FastjsonCheck());
+}
+
+public class FastjsonCheck implements ScanCheck {
+    @Override
+    public List&lt;AuditIssue&gt; activeAudit(HttpRequestResponse httpRequestResponse, AuditInsertionPoint auditInsertionPoint) {
+        return null;
+    }
+    @Override
+    public List&lt;AuditIssue&gt; passiveAudit(HttpRequestResponse httpRequestResponse) {
+        return null;
+    }
+    @Override
+    public ConsolidationAction consolidateIssues(AuditIssue auditIssue, AuditIssue auditIssue1) {
+        return null;
+    }
+}
+</code></pre>
+<p>  与之前类似，<code>activeAudit</code>主动，<code>passiveAudit</code>被动，<code>consolidateIssues</code>定义重复问题的展示规则。<br>具体扫描逻辑与旧版本就大同小异了，不过新版本调用某些方法变得更加方便了，比如调用<code>collaborator</code>:</p>
+<pre><code class="java">CollaboratorClient collaboratorClient = montoyaApi.collaborator().createClient();
+//生成域名链接
+String payload = collaboratorClient.generatePayload().toString();
+//访问域名操作
+......
+//检查记录
+List&lt;Interaction&gt; interactions = collaboratorClient.getAllInteractions();
+</code></pre>
+<p>  报告的展示与旧版本基本相同，感觉只是变了名称</p>
+<pre><code class="java">import burp.api.montoya.http.HttpService;
+import burp.api.montoya.http.message.MarkedHttpRequestResponse;
+import burp.api.montoya.scanner.audit.issues.AuditIssue;
+import burp.api.montoya.scanner.audit.issues.AuditIssueConfidence;
+import burp.api.montoya.scanner.audit.issues.AuditIssueDefinition;
+import burp.api.montoya.scanner.audit.issues.AuditIssueSeverity;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * @program: BurpMontoya
+ * @description:
+ * @author: Noel
+ * @create: 2022-09-21 01:35
+ **/
+public class ExampleAudit implements AuditIssue {
+    private String name;
+    private String detail;
+    private HttpService httpService;
+    private MarkedHttpRequestResponse[] requestResponses;
+    private AuditIssueConfidence confidence;
+    private AuditIssueSeverity severity;
+    private String baseurl;
+
+    public ExampleAudit(String name, String detail, HttpService httpService, MarkedHttpRequestResponse[] requestResponses, AuditIssueSeverity severity, AuditIssueConfidence confidence, String baseurl){
+        this.name = name;
+        this.detail = detail;
+        this.httpService = httpService;
+        this.requestResponses = requestResponses;
+        this.severity = severity;
+        this.confidence = confidence;
+        this.baseurl = baseurl;
+    }
+
+
+
+    @Override
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public String detail() {
+        return detail;
+    }
+
+    @Override
+    public String remediation() {
+        return null;
+    }
+
+    @Override
+    public HttpService httpService() {
+        return httpService;
+    }
+
+    @Override
+    public String baseUrl() {
+        return baseurl;
+    }
+
+    @Override
+    public AuditIssueSeverity severity() {
+        return severity;
+    }
+
+    @Override
+    public AuditIssueConfidence confidence() {
+        return confidence;
+    }
+
+    @Override
+    public List&lt;MarkedHttpRequestResponse&gt; requestResponses() {
+        return Arrays.asList(requestResponses);
+    }
+
+    @Override
+    public AuditIssueDefinition definition() {
+        return null;
+    }
+
+}
+</code></pre>
+<p>  这些结合起来便可以完成一个<code>Burp</code>插件的开发了</p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>  前段时间出了<code>Fastjson 1.2.80</code>的利用与检测方式，刚好我们拿来做一个<code>Fastjson</code>检测的插件,<code>payload</code>如下:</p>
+<pre><code class="json">[
+    {
+        "@type":"java.lang.Exception","@type":"com.alibaba.fastjson.JSONException",
+        "x":{
+            "@type":"java.net.InetSocketAddress"{"address":,"val":"80.DNS"} //  fastjson &lt; 1.2.83
+        }
+    },
+    {
+        "@type":"java.lang.Exception","@type":"com.alibaba.fastjson.JSONException",
+        "message":{
+            "@type":"java.net.InetSocketAddress"{"address":,"val":"83_.DNS"} // fastjson = 1.2.83
+        }
+    }
+]
+</code></pre>
+<p>  如果 <code>fastjson</code>版本低于<code>1.2.83</code>，<code>DNS</code>只会收到一个<code>80</code>开头的请求，方便我们进行版本判断。我们的检测思路就是遇到<code>json</code>格式的<code>body</code>或者<code>param</code>就全部替换为<code>payload</code>，具体操作如下：</p>
+<ol>
+<li>获取请求详情</li>
+</ol>
+<pre><code class="java">HttpRequest request = httpRequestResponse.httpRequest();
+
+获取参数
+List&lt;ParsedHttpParameter&gt; parameters = request.parameters();
+</code></pre>
+<ol start="2">
+<li>判断参数值是否为<code>json</code>格式</li>
+</ol>
+<pre><code class="java">//utilities.urlUtils包含了对URL处理的函数，这里使用了decode，对URL进行解码
+utilities.urlUtils().decode(p.value()).startsWith("{") ||utilities.urlUtils().decode(p.value()).startsWith("[") 
+</code></pre>
+<ol start="3">
+<li>生成<code>collaboratorClient</code>并发送请求</li>
+</ol>
+<pre><code class="java">//生成collaborator链接
+String payload = collaboratorClient.generatePayload().toString();
+
+// poc
+private String Fastjson_Payload = "[\n" +
+        "    {\n" +
+        "        \"@type\":\"java.lang.Exception\",\"@type\":\"com.alibaba.fastjson.JSONException\",\n" +
+        "\t\t\"x\":{\n" +
+        "\t\t\t\"@type\":\"java.net.InetSocketAddress\"{\"address\":,\"val\":\"fastjson80.%s\"} \n" +
+        "\t\t}\n" +
+        "    },\n" +
+        "    {\n" +
+        "        \"@type\":\"java.lang.Exception\",\"@type\":\"com.alibaba.fastjson.JSONException\",\n" +
+        "\t\t\"message\":{\n" +
+        "\t\t\t\"@type\":\"java.net.InetSocketAddress\"{\"address\":,\"val\":\"fastjson83.%s\"} \n" +
+        "\t\t}\n" +
+        "    }\n" +
+        "]";
+//更新参数为我们的poc
+HttpRequest rq = request.withUpdatedParameters(HttpParameter.parameter(p.name(),utilities.urlUtils().encode(String.format(Fastjson_Payload, payload, payload)), p.type()));
+
+//发送请求
+HttpRequestResponse httpRequestResponse1 = http.issueRequest(rq);
+</code></pre>
+<ol start="4">
+<li>判断<code>dns</code>中是否包含有<code>fastjson83</code></li>
+</ol>
+<pre><code class="java">// 获取Collaborator服务器中所有与payload有关的请求信息
+List&lt;Interaction&gt; interactions = collaboratorClient.getInteractions(InteractionFilter.interactionPayloadFilter(payload));
+for (Interaction i :interactions) {
+// i.dnsDetails()获取一个DnsDetails的Optional对象，DnsDetails有两个方法，一个是获取dns查询的byte数组 d.query()
+// 利用byteUtils().indexOf查询是否包含fastjson83
+    flag = i.dnsDetails().filter(d -&gt;
+            utilities.byteUtils().indexOf(d.query(), utilities.byteUtils().convertFromString("fastjson83")) &gt; 0
+    ).isPresent();
+
+}
+</code></pre>
+<ol start="5">
+<li>问题展示</li>
+</ol>
+<pre><code class="java">ExampleAudit auditIssue = new ExampleAudit("Example", "Example detail", request.httpService(),new MarkedHttpRequestResponse[]{httpRequestResponse.withNoMarkers(), httpRequestResponse1.withNoMarkers()}, AuditIssueSeverity.HIGH, AuditIssueConfidence.CERTAIN, request.url());
+auditIssues.add(auditIssue);
+</code></pre>
+<p>至此一个<code>burp</code>插件算是完成了。</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h3><p>  在检测<code>dns</code>记录的时候遇到了一个问题，DNS数据包中<code>.</code>并不是<code>ord('.')</code>的格式</p>
+<p><img src="https://wiki-1258274765.cos.ap-nanjing.myqcloud.com/wiki/img1667114171212.png"></p>
+<p>  为了准确识别，采用了<code>fastjson83</code>而非<code>fastjson83.payload</code></p>
+<h3 id="api问题"><a href="#api问题" class="headerlink" title="api问题"></a>api问题</h3><p>  目前新接口还在不断更新中，不是特别稳定。比如说文档中的<code>DnsDetails</code>会返回<code>ByteArray</code>类型<br><img src="https://wiki-1258274765.cos.ap-nanjing.myqcloud.com/wiki/img1667114430532.png"><br>  但是目前最新的<code>burp</code>接口中还是<code>byte[]</code><br><img src="https://wiki-1258274765.cos.ap-nanjing.myqcloud.com/wiki/img1667114541690.jpg"></p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
@@ -308,9 +408,9 @@
         <div class="sidebar">
             <div class="box animated fadeInRight">
                 <div class="subbox">
-                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220721/gg.3a3ld9g2kaq0.jpg" height=300 width=300></img>
-                    <p>Young</p>
-                    <span>翻滚吧小胖墩！</span>
+                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220211/noel.47xsfyg7vt40.webp" height=300 width=300></img>
+                    <p>Noel</p>
+                    <span>无情的挖洞机器</span>
                     <dl>
                         
                         
@@ -338,7 +438,7 @@
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>Contents</h4>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AF%B9Xray-5-6W%E6%9D%A1%E7%BB%93%E6%9E%9C%E7%9A%84%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90"><span class="toc-number">1.</span> <span class="toc-text">对Xray 5.6W条结果的简单分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E7%89%87"><span class="toc-number">1.2.</span> <span class="toc-text">正片</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#xray%E8%87%AA%E5%B8%A6%E6%8F%92%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.2.1.</span> <span class="toc-text">xray自带插件分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#xray%E5%8A%A0%E8%BD%BD%E7%9A%84yaml%E6%8F%92%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.2.2.</span> <span class="toc-text">xray加载的yaml插件分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">1.3.</span> <span class="toc-text">后记</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-number">3.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98"><span class="toc-number">4.</span> <span class="toc-text">问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS"><span class="toc-number">4.1.</span> <span class="toc-text">DNS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#api%E9%97%AE%E9%A2%98"><span class="toc-number">4.2.</span> <span class="toc-text">api问题</span></a></li></ol></li></ol>
                 </div>
             </div>
             

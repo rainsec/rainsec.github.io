@@ -5,12 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fastjson 1.2.80调试小记 - RainSec</title>
+    <title>Tag: Burp - RainSec</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="RainSec,"> 
-    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,fastjson 1.2.80 调试小记先膜一下浅蓝师傅，在1.2.80的绕过中主要是通过setter方法参数 、public field 、构造方法的参数 类加白 ，再用加白的类来构造gadget,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,"> 
     <meta name="author" content="RainSec"> 
     <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
     <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
@@ -69,78 +69,139 @@
     </div>
     <span id="config-title" style="display:none">RainSec</span>
     <div id="loader"></div>
-    <div id="single">
-    <div class="scrollbar gradient-bg-rev"></div>
-<div id="top" style="display: block;">
-    <div class="bar" style="width: 0;"></div>
-    <div class="navigation animated fadeIn fast delay-1s">
-        <img id="home-icon" class="icon-home" src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="" data-url="https://rainsec.cn">
-        <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
-        <h3 class="subtitle">Fastjson 1.2.80调试小记</h3>
-        <div class="social">
-            <!--        <div class="like-icon">-->
-            <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
-            <!--        </div>-->
-            <div>
-                <div class="share">
-                    
-                        <a href="javascript:;" class="iconfont icon-share1"></a>
-                        <div class="share-component-cc" data-disabled="facebook,douban,linkedin,diandian,tencent,google"></div>
-                    
-                </div>
-            </div>
+    <div class="nav">
+    <ul id="menu-menu" class="menu">
+        
+        <li class="animated fadeInDown menu-item menu-item-type-post_type menu-item-object-page">
+            <a href="/about/" title="TEAM" external="false">TEAM</a>
+        </li>
+        
+        <li class="animated fadeInDown menu-item menu-item-type-post_type menu-item-object-page">
+            <a href="/tags/" title="TAGS" external="false">TAGS</a>
+        </li>
+        
+        <li class="animated fadeInDown menu-item menu-item-type-post_type menu-item-object-page">
+            <a href="/categories/" title="CATEGORIES" external="false">CATEGORIES</a>
+        </li>
+        
+        <li class="animated fadeInDown menu-item menu-item-type-post_type menu-item-object-page">
+            <a href="/archives/" title="ARCHIVES" external="false">ARCHIVES</a>
+        </li>
+        
+    </ul>
+    <p class="copyright" id="copyright">
+        &copy; 2022 RainSec.
+        Powered by <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a>
+        Theme <a href="https://github.com/TriDiamond/hexo-theme-obsidian" title="Obsidian" target="_blank" rel="noopener">Obsidian</a>
+    </p>
+</div>
+
+<div id="container">
+    
+<div class="search-box">
+    <form class="site-search-form">
+        <span class="iconfont icon-search"></span>
+        <input type="text" id="local-search-input" class="st-search-input" />
+        <div class="iconfont icon-cross search-box-close"></div>
+    </form>
+    <div class="search-scrollable">
+        <div id="local-search-result" class="local-search-result-cls" data-initialise="Initialising search index..."
+            data-start="Please input search keywords." data-empty="No result found, please try other keywords.">
+            <span>Please input search keywords.</span>
         </div>
     </div>
 </div>
-
-    <div class="section">
-        <div class=article-header-wrapper>
-    <div class="article-header">
-        <div class="article-cover animated fadeIn" style="
-            animation-delay: 600ms;
-            animation-duration: 1.2s;
-            background-image: 
-                radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/image.5hsjeydq0cg0.png') ">
+<div id="header">
+    <div>
+        <div class="logo animated fadeInDown">
+            <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="">
+            <a class="image-logo" href="/"></a>
         </div>
-        <div class="else">
-            <p class="animated fadeInDown">
-                
-                <a href="/categories/渗透测试"><b>「
-                    </b>渗透测试<b> 」</b></a>
-                
-                September 27, 2022
-            </p>
-            <h3 class="post-title animated fadeInDown"><a href="/post/fastjson%201.2.80%E8%B0%83%E8%AF%95%E5%B0%8F%E8%AE%B0.html" title="Fastjson 1.2.80调试小记" class="">Fastjson 1.2.80调试小记</a>
-            </h3>
+        <ul id="menu-menu" class="menu text-menu">
             
-            <p class="post-count animated fadeInDown">
-                
-                <span>
-                    <b class="iconfont icon-text2"></b> <i>Words count</i>
-                    1.5k
-                </span>
-                
-                
-                <span>
-                    <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                    1 mins.
-                </span>
-                
-                
-                
-                <span id="busuanzi_container_page_pv">
-                    <b class="iconfont icon-read"></b> <i>Read count</i>
-                    <span id="busuanzi_value_page_pv">0</span>
-                </span>
-                
-            </p>
+            <li class="animated fadeInDown menu-item menu-item-type-post_type menu-item-object-page">
+                <a href="/about/" title="TEAM" external="false" class="menu-link">TEAM</a>
+            </li>
+            
+            <li class="animated fadeInDown menu-item menu-item-type-post_type menu-item-object-page">
+                <a href="/tags/" title="TAGS" external="false" class="menu-link">TAGS</a>
+            </li>
+            
+            <li class="animated fadeInDown menu-item menu-item-type-post_type menu-item-object-page">
+                <a href="/categories/" title="CATEGORIES" external="false" class="menu-link">CATEGORIES</a>
+            </li>
+            
+            <li class="animated fadeInDown menu-item menu-item-type-post_type menu-item-object-page">
+                <a href="/archives/" title="ARCHIVES" external="false" class="menu-link">ARCHIVES</a>
+            </li>
             
             
-            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag">渗透测试</a></li></ul>
+            <li class="animated fadeInDown search-bar iconfont icon-search"></li>
             
+        </ul>
+        <div class="iconfont icon-menu switchmenu gradient-text animated fadeInDown"></div>
+    </div>
+</div>
+<div id="screen">
+    <div id="mark">
+        <div class="cover animated fadeIn" style="
+            animation-delay: 900ms;
+            animation-duration: 2.8s;
+            background-image:
+                radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.56), #100e17),
+                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221101/burp-suite-180820162011-thumbnail.5ag1ra9f7s0.jpg);">
         </div>
     </div>
+    
+    <div id="post0" class="else">
+        <p class="animated fadeInDown">
+            
+            <a href="/categories/渗透测试"><b>「
+                </b>渗透测试<b> 」</b></a>
+            
+            November 01, 2022
+        </p>
+        <h3 class="post-title animated fadeInDown">
+            <a href="/post/Burp-Montoya.html" title="Burp-Montoya" class="posttitle">Burp-Montoya</a></h3>
+        
+        <p class="post-count animated fadeInDown">
+            
+            <span>
+                <b class="iconfont icon-text2"></b> <i>Words count</i>
+                8.5k
+            </span>
+            
+            
+            <span>
+                <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                8 mins.
+            </span>
+            
+            
+        </p>
+        
+        
+        <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Burp/" rel="tag">Burp</a></li></ul>
+        
+        <div class="md-content animated fadeIn">
+            
+            <p>  Burp的新版本更新了新的<code>API</code>接口，刚好最近有写插件的想法，所以简单的了解了下。</p>
+<p></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>  单从文档界面来看，结构清晰了不少-&gt;<a target="_blank" rel="noopener" href="https://portswigger.github.io/burp-extensions-montoya-api/javadoc/burp/api/montoya/MontoyaApi.html">MontoyaApi</a></p>
+<p></p>
+<p>  同时官方提供了一个<a target="_blank" rel="noopener" href="https://github.com/PortSwigger/burp-extender-montoya-api">demo</a></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>  与老版本类似，创建一个插件项目需要继承类<code>BurpExtension</code>，它只包含了一个初始化函数</p>
+<pre><code class="java">public interface BurpExtension {
+    void initialize(MontoyaApi var1);
+}
+</code></pre>
+<p>  同样的，想要调用扫描等功能，也需要进行注册，比如我们注册一...</p>
+            
+            <span class="read-more"><a href="/post/Burp-Montoya.html" title="Read article" class="posttitle">Read article</a>
+                <b class="iconfont icon-arrow-right- gradient-text"></b></span>
+        </div>
+    </div>
+    
 </div>
 
 <div class="screen-gradient-after">
@@ -148,104 +209,21 @@
         <div class="screen-gradient-content-inside">
             <div class="bold-underline-links screen-gradient-sponsor">
                 <p>
-                    <span class="animated fadeIn delay-1s"></span>
+                    <span class="typed-text"></span>
                 </p>
             </div>
         </div>
     </div>
 </div>
 
-<div class="article">
-    <div class='main'>
-        <div class="content markdown animated fadeIn">
-            <h1 id="fastjson-1-2-80-调试小记"><a href="#fastjson-1-2-80-调试小记" class="headerlink" title="fastjson 1.2.80 调试小记"></a>fastjson 1.2.80 调试小记</h1><p>先膜一下浅蓝师傅，在1.2.80的绕过中主要是通过setter方法参数 、public field 、构造方法的参数 类加白 ，再用加白的类来构造gadget。<br>笔者在复现时发现，不同的加白方法适用于不同的版本范围，遂有了这篇调试小记。</p>
-<h2 id="1-2-73-1-2-80"><a href="#1-2-73-1-2-80" class="headerlink" title="1.2.73-1.2.80"></a>1.2.73-1.2.80</h2><p>setter方法参数 &amp; public field 加白</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/1.46ttatd6ng20.jpg"></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson/compare/1.2.72...1.2.73">https://github.com/alibaba/fastjson/compare/1.2.72...1.2.73</a><br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/2.2u2huxydnh20.jpg"></p>
-<h2 id="1-2-76-1-2-80"><a href="#1-2-76-1-2-80" class="headerlink" title="1.2.76-1.2.80"></a>1.2.76-1.2.80</h2><p>构造方法的参数加白</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/3.5kl2k3mnfyg0.jpg"></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson/compare/1.2.75...1.2.76">https://github.com/alibaba/fastjson/compare/1.2.75...1.2.76</a><br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/4.o9vu7t6mkg0.jpg"></p>
-<p>poc来自于 <a target="_blank" rel="noopener" href="https://github.com/hosch3n/FastjsonVulns">https://github.com/hosch3n/FastjsonVulns</a><br>同时感谢这位师傅为笔者指出 75到76的代码变化</p>
-<p>最后再分享一个浅蓝师傅说的绕waf 方式 ，笔者刚用这种方式绕waf成功打入核心，并且此方法适用的版本较广，低版本的fastjson也可以用</p>
-<pre><code>{'@type':xjava.lang.Class"}
-</code></pre>
-
-            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
-            <audio id="audio" loop="1" preload="auto" controls="controls"
-                data-autoplay="false">
-                <source type="audio/mpeg" src="">
-            </audio>
-            
-            <ul id="audio-list" style="display:none">
-                
-                
-                <li title='0' data-url='/statics/chengdu.mp3'></li>
-                
-                    
-            </ul>
-            
-                        
-            
-            
-    <div id='gitalk-container' class="comment link"
-        data-ae='false'
-        data-ci=''
-        data-cs=''
-        data-r=''
-        data-o=''
-        data-a=''
-        data-d=''
-        data-p='https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token'
-    >Comments</div>
-
-
-            
-            
-        </div>
-        <div class="sidebar">
-            <div class="box animated fadeInRight">
-                <div class="subbox">
-                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220721/cop.3c6tiszrlxs0.jpg" height=300 width=300></img>
-                    <p>COP</p>
-                    <span>疯狂造轮子</span>
-                    <dl>
-                        
-                        
-                            
-                                <dd>
-                                    <link rel="stylesheet" type="text/css" href="">
-                                    <a href="function link() { [native code] }" target="_blank"><span
-                                    class=" iconfont "></span></a>
-                                </dd>
-                            
-                            
-                            
-                        
-                    </dl>
-                </div>
-                <ul>
-                    <li><a href="/">19 <p>Articles</p></a></li>
-                    <li><a href="/categories">7 <p>Categories</p></a></li>
-                    <li><a href="/tags">11 <p>Tags</p></a></li>
-                </ul>
-            </div>
-            
-            
-            
-            <div class="box sticky animated fadeInRight faster">
-                <div id="toc" class="subbox">
-                    <h4>Contents</h4>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#fastjson-1-2-80-%E8%B0%83%E8%AF%95%E5%B0%8F%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">fastjson 1.2.80 调试小记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-73-1-2-80"><span class="toc-number">1.1.</span> <span class="toc-text">1.2.73-1.2.80</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-76-1-2-80"><span class="toc-number">1.2.</span> <span class="toc-text">1.2.76-1.2.80</span></a></li></ol></li></ol>
-                </div>
-            </div>
-            
-            
-        </div>
+    <div id="primary">
+        
     </div>
+    
 </div>
+<div id="preview"></div>
 
-    </div>
-</div>
+
     <div id="back-to-top" class="animated fadeIn faster">
         <div class="flow"></div>
         <span class="percentage animated fadeIn faster">0%</span>
