@@ -231,13 +231,13 @@
                 
                     <span>
                         <b class="iconfont icon-text2"></b> <i>Words count</i>
-                        1.5k
+                        10k
                     </span>
                 
                 
                     <span>
                         <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                        1 mins.
+                        9 mins.
                     </span>
                 
                 
@@ -248,11 +248,8 @@
         
         <div class="md-content animated fadeIn">
             
-                <h1 id="fastjson-1-2-80-调试小记"><a href="#fastjson-1-2-80-调试小记" class="headerlink" title="fastjson 1.2.80 调试小记"></a>fastjson 1.2.80 调试小记</h1><p>先膜一下浅蓝师傅，在1.2.80的绕过中主要是通过setter方法参数 、public field 、构造方法的参数 类加白 ，再用加白的类来构造gadget。<br>笔者在复现时发现，不同的加白方法适用于不同的版本范围，遂有了这篇调试小记。</p>
-<h2 id="1-2-73-1-2-80"><a href="#1-2-73-1-2-80" class="headerlink" title="1.2.73-1.2.80"></a>1.2.73-1.2.80</h2><p>setter方法参数 &amp; public field 加白</p>
-<p></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson/compare/1.2.72...1.2.73">https://github.com/alibaba/fastjson/compare/1.2.72...1.2.73</a><br></p>
-<h2 id="1-2-76-1-2-80"><a href="#1-2-76-1-2-80" class="headerlink" title="1.2.76-1.2.80"></a>1.2.76...</h2>
+                <h1 id="fastjson-1-2-68-反序列化rce探索"><a href="#fastjson-1-2-68-反序列化rce探索" class="headerlink" title="fastjson 1.2.68 反序列化rce探索"></a>fastjson 1.2.68 反序列化rce探索</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>  fastjson 1.2.68 目前公开的利用链中比较好用的是voidfyoo师傅的Commons IO 写文件链子，但是在spring环境下，仅仅通过写文件rce较为困难，本文更多的是结合多位师傅的文章理出一条通过写文件稳定rce方法</p>
+<h2 id="JDK8任意文件写场景下的Fastjson-RCE"><a href="#JDK8任意文件写场景下的Fastjson-RCE" class="headerlink" title="JDK8任意文件写场景下的Fastjson RCE"></a>JDK8任意文件写场景下的Fastjson RCE</h2><p>  通过覆盖charsets.jar缺点太多，一是文件大，二是java版本不适配。另外笔者觉得还有一个致命因素，一般来说项目中只要使用了Charset.forName...</p>
             
             <span class="read-more"><a href="/post/fastjson%201.2.80%E8%B0%83%E8%AF%95%E5%B0%8F%E8%AE%B0.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>

