@@ -5380,6 +5380,64 @@ select * from mysql.m1;
       </tags>
   </entry>
   <entry>
+    <title>灵活的修改Burp请求</title>
+    <url>//post/%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82.html</url>
+    <content><![CDATA[灵活的修改Burp请求  在日常渗透测试中经常会遇到请求头需要替换、请求或响应内容需要解密等一系列麻烦的事。更换请求头可以通过Burp的Match and Replace功能来实现，加解密也有一些插件可以实现，但是它们普遍存在着以下缺陷：
+
+自定义数据不能进行保存
+
+加解密不能灵活的指定位置
+
+
+  带着这些需求，笔者在寻找工具时发现了一款有趣的插件Python Scripter: https://github.com/PortSwigger/python-scripter 
+简介  与其说这是一个插件，不如说其更像是一个框架。简单地说，它的功能是将当前请求上下文作为全局变量传入用户自定义的代码中，也就是说用户可以随意的修改请求信息。它本身的代码也是很简单的
+  
+  首先是将请求信息传递给用户自定义脚本的集合中，然后每个脚本分别对请求信息进行处理
+  
+  这里的处理其实就是用户编译代码通过后，把操作Burp的接口作为全局变量传递进去并执行
+  
+  这就实现了以插件“写”插件。
+  
+完善  上文的框架让我们有了灵活操纵请求的希望，而https://github.com/lanmaster53/pyscripter-er/blob/master/pyscripterer.py 则成功的将其变为了现实。其定义了一个接受messageInfo等请求信息的Class，并且提供了许多写好的方法以便于更新请求信息，例如删除一个请求头，可以这么写：
+  
+  这样任何请求都将不存在Sec-Ch-Ua-Mobile这个字段，remove_request_headers就是pyscripter-er中定义好的一个方法，主要作用就是遍历移除指定header_name开头的haeder字段并重新构造请求包
+  
+  如果要增加新的通用函数只需要在pyscripterer中进行修改即可，比如增加一个添加请求头的方法
+  
+实战  接下来用实战来检验下，在测试某个网站时碰到了如下加密请求
+  
+  通过分析JS发现其加密算法是base64加上一定的换位：
+  
+  那我们的思路就是每次请求时找到jsonparams这个参数，并对其进行加密，这样在发送请求时我们看到的参数就是未加密的了，方便我们在repeater进行测试。首先创建一个函数用于获取参数，根据参数名遍历即可
+  
+  删除找到的参数，之后重新创建一个新的参数，其值为加密后的值
+  
+  加密函数
+  
+  结合起来调用
+  
+  当我们发送请求
+jsonparams={"UserId":"1234"}
+
+  可以从logger中观测到其发生了变化，在intruder中的请求也会发生变化，再碰到需要爆破的场景时也是很实用的。
+  
+  除了对请求处理之外，我们也可以对响应做处理，而且操作结果会直接在当前页面里显现出来，不会像请求一样需要在日志里查看其修改结果，可以很好的解决响应内容加密的问题。还拿上面的请求为例，其响应内容是未加密的，这里给它做一次加密，简单的对相应内容做一次替换：
+  
+  使用base64进行加密
+  
+  最终的结果如下
+  
+总结  使用python-scripter可以灵活的写出适用于不同场景下的插件，同时可以将其保存为模板，方便之后遇到相似情况下的使用。本次虽然遇到的加密算法比较简单，但是以python执行jS的便捷，相信再复杂些的算法也能很快的实现。
+  本文中修改过后的pyscripterer已上传至github: https://github.com/No4l/python-scripter/blob/main/pyscripterer.py
+]]></content>
+      <categories>
+        <category>渗透测试</category>
+      </categories>
+      <tags>
+        <tag>BurpSuite</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>容器进程切换漏洞</title>
     <url>//post/%E5%AE%B9%E5%99%A8%E8%BF%9B%E7%A8%8B%E5%88%87%E6%8D%A2%E6%BC%8F%E6%B4%9E.html</url>
     <content><![CDATA[容器进程切换思考前置技术Magic Link​        /proc/目录下存在很多的链接文件，但是在Linux 也存在一种特殊的链接文件，这种文件的大小为0，我们知道普通的链接文件的大小等于链接目标的文件路径长度，但是Magic Link的大小为0，它们在打开方式上面也存在差别，普通链接文件会解析出链接文件的路径然后进行打开操作，但是Magic LInk的话不会这样，它会调用内核专门的处理函数，然后返回目标文件的文件描述符。
@@ -5804,64 +5862,6 @@ void nsexec(void)
       </categories>
       <tags>
         <tag>容器安全</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>灵活的修改Burp请求</title>
-    <url>//post/%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82.html</url>
-    <content><![CDATA[灵活的修改Burp请求  在日常渗透测试中经常会遇到请求头需要替换、请求或响应内容需要解密等一系列麻烦的事。更换请求头可以通过Burp的Match and Replace功能来实现，加解密也有一些插件可以实现，但是它们普遍存在着以下缺陷：
-
-自定义数据不能进行保存
-
-加解密不能灵活的指定位置
-
-
-  带着这些需求，笔者在寻找工具时发现了一款有趣的插件Python Scripter: https://github.com/PortSwigger/python-scripter 
-简介  与其说这是一个插件，不如说其更像是一个框架。简单地说，它的功能是将当前请求上下文作为全局变量传入用户自定义的代码中，也就是说用户可以随意的修改请求信息。它本身的代码也是很简单的
-  
-  首先是将请求信息传递给用户自定义脚本的集合中，然后每个脚本分别对请求信息进行处理
-  
-  这里的处理其实就是用户编译代码通过后，把操作Burp的接口作为全局变量传递进去并执行
-  
-  这就实现了以插件“写”插件。
-  
-完善  上文的框架让我们有了灵活操纵请求的希望，而https://github.com/lanmaster53/pyscripter-er/blob/master/pyscripterer.py 则成功的将其变为了现实。其定义了一个接受messageInfo等请求信息的Class，并且提供了许多写好的方法以便于更新请求信息，例如删除一个请求头，可以这么写：
-  
-  这样任何请求都将不存在Sec-Ch-Ua-Mobile这个字段，remove_request_headers就是pyscripter-er中定义好的一个方法，主要作用就是遍历移除指定header_name开头的haeder字段并重新构造请求包
-  
-  如果要增加新的通用函数只需要在pyscripterer中进行修改即可，比如增加一个添加请求头的方法
-  
-实战  接下来用实战来检验下，在测试某个网站时碰到了如下加密请求
-  
-  通过分析JS发现其加密算法是base64加上一定的换位：
-  
-  那我们的思路就是每次请求时找到jsonparams这个参数，并对其进行加密，这样在发送请求时我们看到的参数就是未加密的了，方便我们在repeater进行测试。首先创建一个函数用于获取参数，根据参数名遍历即可
-  
-  删除找到的参数，之后重新创建一个新的参数，其值为加密后的值
-  
-  加密函数
-  
-  结合起来调用
-  
-  当我们发送请求
-jsonparams={"UserId":"1234"}
-
-  可以从logger中观测到其发生了变化，在intruder中的请求也会发生变化，再碰到需要爆破的场景时也是很实用的。
-  
-  除了对请求处理之外，我们也可以对响应做处理，而且操作结果会直接在当前页面里显现出来，不会像请求一样需要在日志里查看其修改结果，可以很好的解决响应内容加密的问题。还拿上面的请求为例，其响应内容是未加密的，这里给它做一次加密，简单的对相应内容做一次替换：
-  
-  使用base64进行加密
-  
-  最终的结果如下
-  
-总结  使用python-scripter可以灵活的写出适用于不同场景下的插件，同时可以将其保存为模板，方便之后遇到相似情况下的使用。本次虽然遇到的加密算法比较简单，但是以python执行jS的便捷，相信再复杂些的算法也能很快的实现。
-  本文中修改过后的pyscripterer已上传至github: https://github.com/No4l/python-scripter/blob/main/pyscripterer.py
-]]></content>
-      <categories>
-        <category>渗透测试</category>
-      </categories>
-      <tags>
-        <tag>BurpSuite</tag>
       </tags>
   </entry>
 </search>
