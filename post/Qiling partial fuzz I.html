@@ -1,0 +1,1054 @@
+
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>qiling 框架IotFuzz之Boa - RainSec</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="RainSec,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,qiling 框架IotFuzz之Boa前言最近在搞Iot的时候接触到Qiling框架，用了一段时间后感觉确实模拟功能挺强大的，还支持Fuzz，于是开始学习对Iot webserver这样的程序进行,"> 
+    <meta name="author" content="RainSec"> 
+    <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
+    <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
+    
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1429596_nzgqgvnmkjb.css">
+
+    
+<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.7.2/animate.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+
+    
+<link rel="stylesheet" href="//cdn.bootcss.com/codemirror/5.48.4/codemirror.min.css">
+
+    
+<link rel="stylesheet" href="//cdn.bootcss.com/codemirror/5.48.4/theme/dracula.css">
+
+    
+<link rel="stylesheet" href="/css/obsidian.css">
+
+    
+<link rel="stylesheet" href="/css/ball-atom.min.css">
+
+    
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+
+    
+    <script>var musiclist = ""</script>
+    
+<script src="/js/loadaplayer.js"></script>
+
+    <!-- 引用依赖 -->
+    
+<link rel="stylesheet" href="/aplayer/dist/APlayer.min.css">
+
+    
+<script src="/aplayer/dist/APlayer.min.js"></script>
+<script src="/js/Meting.min.js"></script>
+
+    
+<meta name="generator" content="Hexo 6.0.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+
+<body class="loading">
+    <div class="loader">
+        <div class="la-ball-atom la-2x">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <span id="config-title" style="display:none">RainSec</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div class="scrollbar gradient-bg-rev"></div>
+<div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <div class="navigation animated fadeIn fast delay-1s">
+        <img id="home-icon" class="icon-home" src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="" data-url="https://rainsec.cn">
+        <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
+        <h3 class="subtitle">qiling 框架IotFuzz之Boa</h3>
+        <div class="social">
+            <!--        <div class="like-icon">-->
+            <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+            <!--        </div>-->
+            <div>
+                <div class="share">
+                    
+                        <a href="javascript:;" class="iconfont icon-share1"></a>
+                        <div class="share-component-cc" data-disabled="facebook,douban,linkedin,diandian,tencent,google"></div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="section">
+        <div class=article-header-wrapper>
+    <div class="article-header">
+        <div class="article-cover animated fadeIn" style="
+            animation-delay: 600ms;
+            animation-duration: 1.2s;
+            background-image: 
+                radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+                url('https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/images.4wcohedooqg0.png') ">
+        </div>
+        <div class="else">
+            <p class="animated fadeInDown">
+                
+                <a href="/categories/Fuzz"><b>「
+                    </b>FUZZ<b> 」</b></a>
+                
+                January 30, 2023
+            </p>
+            <h3 class="post-title animated fadeInDown"><a href="/post/Qiling%20partial%20fuzz%20I.html" title="qiling 框架IotFuzz之Boa" class="">qiling 框架IotFuzz之Boa</a>
+            </h3>
+            
+            <p class="post-count animated fadeInDown">
+                
+                <span>
+                    <b class="iconfont icon-text2"></b> <i>Words count</i>
+                    27k
+                </span>
+                
+                
+                <span>
+                    <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                    24 mins.
+                </span>
+                
+                
+                
+                <span id="busuanzi_container_page_pv">
+                    <b class="iconfont icon-read"></b> <i>Read count</i>
+                    <span id="busuanzi_value_page_pv">0</span>
+                </span>
+                
+            </p>
+            
+            
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Fuzz/" rel="tag">Fuzz</a></li></ul>
+            
+        </div>
+    </div>
+</div>
+
+<div class="screen-gradient-after">
+    <div class="screen-gradient-content">
+        <div class="screen-gradient-content-inside">
+            <div class="bold-underline-links screen-gradient-sponsor">
+                <p>
+                    <span class="animated fadeIn delay-1s"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="article">
+    <div class='main'>
+        <div class="content markdown animated fadeIn">
+            <h1 id="qiling-框架IotFuzz之Boa"><a href="#qiling-框架IotFuzz之Boa" class="headerlink" title="qiling 框架IotFuzz之Boa"></a>qiling 框架IotFuzz之Boa</h1><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在搞Iot的时候接触到Qiling框架，用了一段时间后感觉确实模拟功能挺强大的，还支持Fuzz，于是开始学习对Iot webserver这样的程序进行Fuzz。</p>
+<p>官方给出了类似的例子如Tenda AC15 的httpd的fuzz脚本，但是也就光秃秃一个脚本还是需要自己来一遍才能学到一些东西；因为面向的是Iot webserver的Fuzz因此需要对嵌入式设备中常用web开源框架有一些了解，这里是对于Boa框架的fuzz案例</p>
+<hr>
+<p><strong>环境准备</strong>：</p>
+<ul>
+<li><p>qiling-dev branch：这里并没有选择直接pip安装，方便修改源码</p>
+</li>
+<li><p>AFL++：在python中可以<code>import unicornafl</code>就行</p>
+<ul>
+<li><pre><code class="bash">git clone https://github.com/AFLplusplus/AFLplusplus.git
+make -C AFLplusplus
+cd AFLplusplus/unicorn_mode ; ./build_unicorn_support.sh
+</code></pre>
+</li>
+<li><p>一个坑是最好获取版本高于3.15的<code>cmake</code>要不然编译的时候有些cmake参数识别有问题，我遇到的就是:<code>cmake -S unicorn/ -B unicorn/build -D BUILD_SHARED_LIBS=no</code>问题</p>
+</li>
+</ul>
+</li>
+<li><p>需要对Qiling，AFL有些了解</p>
+</li>
+</ul>
+<p><strong>Fuzz思路</strong>：<br>Iot设备就连环境模拟都比较棘手就就更别说Fuzz了，但是Qiling提供的<code>进程快照(snapshot)</code>功能给了我们一个不错的思路，这也是Qiling官方Fuzz案例的一个思路：<strong>即对某函数部分Fuzz(Partial Fuzz)</strong></p>
+<h1 id="Tenda-AC15"><a href="#Tenda-AC15" class="headerlink" title="Tenda-AC15"></a>Tenda-AC15</h1><p>Qiling使用4个脚本来实现对该款路由器上httpd程序的Fuzz</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213114209793.1nvl9946t1hc.png" alt="image-20221213114209793"></p>
+<p>首先是<code>saver_tendaac15_httpd.py</code>用于保存fuzz的起始状态快照，主要代码如下：</p>
+<pre><code class="python">def save_context(ql, *args, **kw):
+    ql.save(cpu_context=False, snapshot="snapshot.bin")
+
+def check_pc(ql):
+    print("=" * 50)
+    print("Hit fuzz point, stop at PC = 0x%x" % ql.arch.regs.arch_pc)
+    print("=" * 50)
+    ql.emu_stop()
+
+
+def my_sandbox(path, rootfs):
+    ql = Qiling(path, rootfs, verbose=QL_VERBOSE.DEBUG)
+    ql.add_fs_mapper("/dev/urandom","/dev/urandom")
+    ql.hook_address(save_context, 0x10930)        #&lt;=======
+    ql.hook_address(patcher, ql.loader.elf_entry)
+    ql.hook_address(check_pc, 0x7a0cc)            #&lt;=======
+    ql.run()
+</code></pre>
+<p>ql.hook_address(save_context, 0x10930)：表示当程序跑到0x10930地址时调用save_context函数将保存此刻模拟状态</p>
+<p>但需要输入来触发程序按照预想的跑到0x10930位置，带上面脚本跑起来后使用<code>addressNat_overflow.sh</code>触发</p>
+<pre><code class="bash">#!/bin/sh
+
+curl -v -H "X-Requested-With: XMLHttpRequest" -b "password=1234" -e http://localhost:8080/samba.html -H "Content-Type:application/x-www-form-urlencoded" --data "entrys=sync" --data "page=CCCCAAAA" http://localhost:8080/goform/addressNat
+</code></pre>
+<p>那么我们就获得了模拟进程快照<code>snapshot.bin</code>之后fuzz就重复利用该文件启动就行，对应<code>fuzz_tendaac15_httpd.py</code></p>
+<pre><code class="python">def main(input_file, enable_trace=False):
+    ql = Qiling(["rootfs/bin/httpd"], "rootfs", verbose=QL_VERBOSE.DEBUG, console = True if enable_trace else False)
+
+    # save current emulated status
+    ql.restore(snapshot="snapshot.bin")
+
+    # return should be 0x7ff3ca64
+    fuzz_mem=ql.mem.search(b"CCCCAAAA")
+    target_address = fuzz_mem[0]
+
+    def place_input_callback(_ql: Qiling, input: bytes, _):
+        _ql.mem.write(target_address, input)
+
+    def start_afl(_ql: Qiling):
+        """
+        Callback from inside
+        """
+        ql_afl_fuzz(_ql, input_file=input_file, place_input_callback=place_input_callback, exits=[ql.os.exit_point])
+
+    ql.hook_address(callback=start_afl, address=0x10930+8)
+    
+    try:
+        ql.run(begin = 0x10930+4, end = 0x7a0cc+4)
+        os._exit(0)
+    except:
+        if enable_trace:
+            print("\nFuzzer Went Shit")
+        os._exit(0)        
+
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        raise ValueError("No input file provided.")
+
+    if len(sys.argv) &gt; 2 and sys.argv[1] == "-t":
+        main(sys.argv[2], enable_trace=True)
+    else:
+        main(sys.argv[1])
+</code></pre>
+<ul>
+<li><p>恢复快照：ql.restore(snapshot=”snapshot.bin”)</p>
+</li>
+<li><p>变异数据缓存定位：fuzz_mem=ql.mem.search(b”CCCCAAAA”)</p>
+</li>
+<li><p>以hook方式从起始地址附近的开始fuzz：ql.hook_address(callback=start_afl, address=0x10930+8)</p>
+</li>
+</ul>
+<p>最后开始Fuzz</p>
+<pre><code class="bash">#!/usr/bin/sh
+
+AFL_DEBUG_CHILD_OUTPUT=1 AFL_AUTORESUME=1 AFL_PATH="$(realpath ./AFLplusplus)" PATH="$AFL_PATH:$PATH" ./AFLplusplus/afl-fuzz -i afl_inputs -o afl_outputs -U -- python3 ./fuzz_tendaac15_httpd.py @@
+</code></pre>
+<p><strong>说实话这样连最关键的fuzz范围<code>0x10930</code>，<code>0x7a0cc</code>怎么来的都不知道当时逆向定位这两个地址也是一头雾水毫无特征，还是得自己实操</strong></p>
+<p>因此选定了Boa框架(之前了解过源码)从零开始对其进行Fuzz</p>
+<h1 id="Boa-Fuzz"><a href="#Boa-Fuzz" class="headerlink" title="Boa Fuzz"></a>Boa Fuzz</h1><p>选择一个网上有许多漏洞分析的设备：vivetok 摄像头，固件<a target="_blank" rel="noopener" href="https://objects.githubusercontent.com/github-production-repository-file-5c1aeb/84257798/3128058?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAIWNJYAX4CSVEH53A/20221208/us-east-1/s3/aws4_request&amp;X-Amz-Date=20221208T052257Z&amp;X-Amz-Expires=300&amp;X-Amz-Signature=9a257e351faa9f25e49c6ddc70e3fe94bc94eed63d940d5c70fe1f71570f4120&amp;X-Amz-SignedHeaders=host&amp;actor_id=57476305&amp;key_id=0&amp;repo_id=84257798&amp;response-content-disposition=attachment;filename=CC8160-VVTK-0100d.flash.zip&amp;response-content-type=application/x-zip-compressed">链接</a>；而且webservre为Boa框架</p>
+<p>Poc：</p>
+<pre><code class="bash">echo -en "POST /cgi-bin/admin/upgrade.cgi HTTP/1.0\nContent-Length:AAAAAAAAAAAAAAAAAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHIIIIXXXX\n\r\n\r\n"  | ncat -v 192.168.57.20 80
+</code></pre>
+<p><em><strong>Boa框架</strong></em>：</p>
+<p>主要处理逻辑在<code>process_requests</code>函数中：</p>
+<pre><code class="c">           /*获取就绪队列并处理*/
+    current = request_ready;
+
+    while (current) {
+        time(&amp;current_time);
+        if (current-&gt;buffer_end &amp;&amp; /* there is data in the buffer */
+            current-&gt;status != DEAD &amp;&amp; current-&gt;status != DONE) {
+            retval = req_flush(current);
+            /*
+             * retval can be -2=error, -1=blocked, or bytes left
+             */
+            if (retval == -2) { /* error */
+                current-&gt;status = DEAD;
+                retval = 0;
+            } else if (retval &gt;= 0) {
+                /* notice the &gt;= which is different from below?
+                   Here, we may just be flushing headers.
+                   We don't want to return 0 because we are not DONE
+                   or DEAD */
+
+                retval = 1;
+            }
+        } else {/*主要处理请求部分在这里*/
+            switch (current-&gt;status) {
+            case READ_HEADER:
+            case ONE_CR:
+            case ONE_LF:
+            case TWO_CR:
+                retval = read_header(current);    //解析request头部，该函数类似与FILE_IO
+                break;                            //函数request内部有8192+1字节的buffer，data的头尾指针等，最终调用
+            case BODY_READ:                       //bytes = read(req-&gt;fd, buffer + req-&gt;client_stream_pos, buf_bytes_left);读取
+                retval = read_body(current);
+                break;
+            case BODY_WRITE:
+                retval = write_body(current);
+                break;
+            case WRITE:
+                retval = process_get(current);
+                break;
+            case PIPE_READ:
+                retval = read_from_pipe(current);
+                break;
+            case PIPE_WRITE:
+                retval = write_from_pipe(current);
+                break;
+            case DONE:
+                /* a non-status that will terminate the request */
+                retval = req_flush(current);
+                /*
+                 * retval can be -2=error, -1=blocked, or bytes left
+                 */
+                if (retval == -2) { /* error */
+                    current-&gt;status = DEAD;
+                    retval = 0;
+                } else if (retval &gt; 0) {
+                    retval = 1;
+                }
+                break;
+            case DEAD:
+                retval = 0;
+                current-&gt;buffer_end = 0;
+                SQUASH_KA(current);
+                break;
+            default:
+                retval = 0;
+                fprintf(stderr, "Unknown status (%d), "
+                        "closing!\n", current-&gt;status);
+                current-&gt;status = DEAD;
+                break;
+            }
+
+        }
+</code></pre>
+<p>主要看中间的Switch case：</p>
+<ul>
+<li>read_header：解析request头部，该函数类似FILE_IO函数<ul>
+<li>request内部有8192+1字节的buffer，data的头尾指针等，最终调用bytes = read(req-&gt;fd, buffer + req-&gt;client_stream_pos, buf_bytes_left);读取client发送的请求</li>
+<li>会提取并解析头部信息</li>
+</ul>
+</li>
+<li>对于GET传参，主要使用read_header, read_from_pipe, write_from_pipe完成cgi的调用</li>
+<li>对于POST传参，主要调用read_header, read_body, write_body完成cgi调用</li>
+</ul>
+<p>就拿read_header函数来说，厂商应该会在里面增加一些url过虑以及响应处理，在这个摄像头中漏洞也确实出在这个函数：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213133117933.3iy0y3zs8pk0.png" alt="image-20221213133117933"></p>
+<p>没有对<code>Content-Length</code>成员做限制；<strong>根据源码中提示字符串<code>Unknown status (%d), closing</code>可以轻松定位到这几个函数</strong>:</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213133545416.2lz530gitdw0.png" alt="image-20221213133545416"></p>
+<p>那么接下来就尝试利用Qiling 启动这个程序并且Partial Fuzz函数”read_header”</p>
+<h2 id="模拟启动"><a href="#模拟启动" class="headerlink" title="模拟启动"></a>模拟启动</h2><p><strong>模拟启动的宗旨(我的)是遇到啥错误修最后一个报错点</strong></p>
+<p>启动模板：</p>
+<pre><code class="python">import os, sys
+sys.path.append('/home/iot/workspace/Emulator/qiling-dev')
+from qiling import Qiling
+from qiling.const import QL_INTERCEPT, QL_VERBOSE
+
+
+def boa_run(path: list, rootfs: str, profile: str = 'default'):
+    ql = Qiling(path, rootfs, profile=profile, verbose=QL_VERBOSE.OFF, multithread=False)
+    """setup files"""
+    ql.add_fs_mapper('/dev/null', '/dev/null')
+
+    """hooks"""
+
+    ql.run()
+    
+
+if __name__ == '__main__':
+    os.chdir('/home/iot/workspace/Emulator/qiling-dev/vivetok')
+    path = ['./rootfs/usr/sbin/httpd', "-c", "/etc/conf.d/boa", "-d"]
+    rootfs = './rootfs'
+    profile = './boa_arm.ql'
+    boa_run(path=path, rootfs=rootfs, profile=profile)
+</code></pre>
+<hr>
+<p><strong>尝试启动</strong></p>
+<p>首先遇到的是：gethostbyname:: Success</p>
+<p>在IDA中定位到：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213134138571.5lp8sulizs80.png" alt="image-20221213134138571"></p>
+<p>函数原型：</p>
+<pre><code class="C">struct hostent *gethostbyname(const char *hostname);
+struct hostent{
+    char *h_name;  //official name
+    char **h_aliases;  //alias list
+    int  h_addrtype;  //host address type
+    int  h_length;  //address lenght
+    char **h_addr_list;  //address list
+}
+</code></pre>
+<p>获取返回的结构体还挺复杂的，问题的原因是 在调用<code>gethostname</code>将获得<strong>ql_vm</strong>作为主机名所以当以此调用<code>gethostbyname</code>无法获得主机信息，所以hook这个函数，并提前开辟空间存放伪造信息：</p>
+<pre><code class="Python">"""
+struct hostent{
+    char *h_name;  //official name
+    char **h_aliases;  //alias list
+    int  h_addrtype;  //host address type
+    int  h_length;  //address lenght
+    char **h_addr_list;  //address list
+}
+"""
+def hook_memSpace(ql: Qiling):
+    ql.mem.map(0x1000, 0x1000, info='my_hook')
+    data = struct.pack('&lt;IIIII', 0x1100, 0x1100, AF_INET, 4, 0x1100)
+    ql.mem.write(0x1000, data)
+    ql.mem.write(0x1100, b'qiling')
+
+def lib_gethostbyname(ql: Qiling):
+    args = ql.os.resolve_fcall_params({'name':STRING})
+    print('[gethostbyname]: ' + args['name'])
+    ql.arch.regs.write('r0', 0x1000)
+</code></pre>
+<p>还有一个严重问题就是模拟过程中程序自动采用<code>ipv6</code>协议，这就很烦因为qiling的ipv6协议支持的不是很好</p>
+<h3 id="ipv6-socket"><a href="#ipv6-socket" class="headerlink" title="ipv6 socket"></a>ipv6 socket</h3><p><em><strong>AttributeError: ‘sockaddr_in’ object has no attribute ‘sin6_addr’</strong></em></p>
+<p>问题处在对ipv6的系统调用bind：</p>
+<pre><code class="Python">elif sa_family == AF_INET6 and ql.os.ipv6:
+    sockaddr_in6 = make_sockaddr_in(abits, endian)
+    sockaddr_obj = sockaddr_in6.from_buffer(data)
+
+    port = ntohs(ql, sockaddr_obj.sin_port)
+    host = inet6_ntoa(sockaddr_obj.sin6_addr.s6_addr)
+
+    if ql.os.bindtolocalhost:
+        host = '::1'
+
+    if not ql.os.root and port &lt;= 1024:
+        port = port + 8000
+
+def make_sockaddr_in(archbits: int, endian: QL_ENDIAN):
+    Struct = struct.get_aligned_struct(archbits, endian)
+
+    class in_addr(Struct):
+        _fields_ = (
+            ('s_addr', ctypes.c_uint32),
+        )
+
+    class sockaddr_in(Struct):
+        _fields_ = (
+            ('sin_family', ctypes.c_int16),
+            ('sin_port',   ctypes.c_uint16),
+            ('sin_addr',   in_addr),
+            ('sin_zero',   ctypes.c_byte * 8)
+        )
+
+    return sockaddr_in
+
+def make_sockaddr_in6(archbits: int, endian: QL_ENDIAN):
+    Struct = struct.get_aligned_struct(archbits, endian)
+
+    class in6_addr(Struct):
+        _fields_ = (
+            ('s6_addr', ctypes.c_uint8 * 16),
+        )
+
+    class sockaddr_in6(Struct):
+        _fields_ = (
+            ('sin6_family',   ctypes.c_int16),
+            ('sin6_port',     ctypes.c_uint16),
+            ('sin6_flowinfo', ctypes.c_uint32),
+            ('sin6_addr',     in6_addr),
+            ('sin6_scope_id', ctypes.c_uint32)
+        )
+
+    return sockaddr_in6
+</code></pre>
+<p>make_sockaddr_in, make_sockaddr_in6基于<code>ctypes</code>构造严格的sockaddr结构体，因为是ipv6所以得用<code>make_sockaddr_in6</code></p>
+<p>还有就是函数<code>(function) inet6_ntoa: (addr: bytes) -&gt; str</code>需要bytes对象而sockaddr_obj.sin6_addr.s6_addr是cbytes类型所以得<strong>bytes转</strong></p>
+<pre><code class="Python">sockaddr_in6 = make_sockaddr_in6(abits, endian)
+sockaddr_obj = sockaddr_in6.from_buffer(data)
+port = ntohs(ql, sockaddr_obj.sin6_port)
+host = inet6_ntoa(bytes(sockaddr_obj.sin6_addr.s6_addr))
+</code></pre>
+<p><em><strong>OSError: [Errno 98] Address already in use</strong></em></p>
+<p>还是在调用bind时候，因为qiling会对低于1024的端口bind进行修改：</p>
+<pre><code class="Python">if not ql.os.root and port &lt;= 1024:
+        port = port + 8000
+</code></pre>
+<p>而后面还对8080端口进行一次bind，所以这里得改，然后其实就能进入核心处理逻辑了 ：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213134113202.3u77el0qrm40.png" alt="image-20221213134113202"></p>
+<p>当然还得看看链接有没有问题：尝试访问又出现问题</p>
+<pre><code class="Bash">$ echo -en "GET /index.html HTTP/1.0\n\rContent-Length:20\n\r\n\r"  | nc -v ::1 9080
+Connection to ::1 9080 port [tcp/*] succeeded!
+
+File "/home/iot/workspace/Emulator/qiling-dev-stb/qiling/os/posix/syscall/socket.py", line 669, in ql_syscall_accept
+    host, port = address
+ValueError: too many values to unpack (expected 2)
+</code></pre>
+<p><em><strong>ValueError: too many values to unpack (expected 2)</strong></em></p>
+<p>经调试原来在python中accept ipv6的连接后会返回一个长度为4的元组的address：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213134207632.g2an31i3w54.png" alt="image-20221213134207632"></p>
+<p>同样的问题还发生在ql_syscall_getsockname：<code>sockname = sock.getsockname()</code></p>
+<p><em><strong>TypeError: expected c_ubyte_Array_16 instance, got int</strong></em></p>
+<pre><code class="Python">[x]     Syscall ERROR: ql_syscall_accept DEBUG: expected c_ubyte_Array_16 instance, got int
+Traceback (most recent call last):
+  File "/home/iot/workspace/Emulator/qiling-dev-stb/qiling/os/posix/posix.py", line 280, in load_syscall
+    retval = syscall_hook(self.ql, *params)
+  File "/home/iot/workspace/Emulator/qiling-dev-stb/qiling/os/posix/syscall/socket.py", line 674, in ql_syscall_accept
+    obj.sin6_addr.s6_addr = inet6_aton(str(host))
+TypeError: expected c_ubyte_Array_16 instance, got int
+</code></pre>
+<p>解决：bytes转cbyts类</p>
+<pre><code class="Python">obj.sin6_addr.s6_addr = (ctypes.c_ubyte * 16).from_buffer_copy(inet6_aton(str(host)).to_bytes(16, 'big'))
+</code></pre>
+<p>主要问题就这些(修了挺久的)，然后就可以对一些函数进行fuzz了</p>
+<h2 id="Fuzz-Partial"><a href="#Fuzz-Partial" class="headerlink" title="Fuzz Partial"></a>Fuzz Partial</h2><p>确定Fuzz范围，这个范围主要是给到ql_afl_fuzz函数，这里是打算Fuzz read_header函数(sub_17F80)，那么从数据入口下手：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213135606979.6757a5dv0ck0.png" alt="image-20221213135606979"></p>
+<p>读取POST或者GET方法的http包那么肯定要解析处理的，处理完成返回一个状态(源码中retval)来指示下一步处理，找到退出点：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213135843221.u4ef529g3hc.png" alt="image-20221213135843221"><br>因此要从<code>0x180F8</code>附近开始Fuzz，然后<code>0x18398</code>表示函数正常退出将执行下一轮fuzz</p>
+<p>脚本模板：</p>
+<pre><code class="python">import os, sys
+sys.path.append('/home/iot/workspace/Emulator/qiling-dev')
+from qiling.const import QL_INTERCEPT, QL_VERBOSE
+from qiling import Qiling
+
+from qiling.extensions.afl import ql_afl_fuzz
+
+
+def main(input_file: str, trace: bool = False):
+    ql = Qiling(['./rootfs/usr/sbin/httpd', "-c", "/etc/conf.d/boa", "-d"], rootfs='./rootfs', profile='./boa_arm.ql', verbose=QL_VERBOSE.OFF, console = True if trace else False)
+    ql.restore(snapshot='./context.bin')
+
+    def place_input_callback(_ql: Qiling, input: bytes, _):
+        # print(b"**************** " + input)
+        _ql.mem.write(target_addr, input)
+        
+    def start_afl(_ql: Qiling):
+        """
+        Callback from inside
+        """
+        ql_afl_fuzz(_ql, input_file=input_file, place_input_callback=place_input_callback, exits=[0x018398])
+
+    ql.hook_address(callback=start_afl, address=0x180F8)
+
+    try:
+        # ql.debugger = True
+        ql.run(begin=0x180F8)
+        os._exit(0)
+    except:
+        if trace:
+            print("\nFuzzer Went Shit")
+        os._exit(0)  
+
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        raise ValueError("No input file provided.")
+    
+    os.chdir('/home/iot/workspace/Emulator/qiling-dev/vivetok')
+    if len(sys.argv) &gt; 2 and sys.argv[1] == "-t":
+        main(sys.argv[2], trace=True)
+    else:
+        main(sys.argv[1])
+</code></pre>
+<ul>
+<li>ql.hook_address(callback=start_afl, address=0x180F8)：在执行到<code>0x180F8</code>这个位置时调用start_afl函数</li>
+<li>ql.run(begin=0x180F8)：从<code>0x180F8</code>开始执行</li>
+<li>ql_afl_fuzz：就是unicornafl提供的fuzz接口<code>uc_afl_fuzz_custom</code>的一个wrapper</li>
+<li>place_input_callback：ql_afl_fuzz会调用的回调函数，负责写入fuzz数据</li>
+</ul>
+<h2 id="Fuzz-buf"><a href="#Fuzz-buf" class="headerlink" title="Fuzz buf"></a>Fuzz buf</h2><p>根据网上的漏洞分析比对源码框架，利用:</p>
+<pre><code class="Bash">cho -en "POST /cgi-bin/admin/upgrade.cgi HTTP/1.0nContent-Length:AAAAAAAAAAAAAAAAAAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHIIIIXXXXnrnrn"  | nc -v ::1 9080
+</code></pre>
+<p>可以触发漏洞，具体位于框架中http头部解析函数：read_header，位于httpd中17F80位置</p>
+<p>那么该如何fuzz呢，根据网上unicorn-afl官方用例和qiling官方用例：buf-fuzz，即定位代码中读取数据位置，然后读取完后劫持搜索特定字符串定位fuzz的buff_addr，当然需要状态保存(当然这个方法肯定不是很严谨，因此后面还会介绍劫持read函数方法)</p>
+<h3 id="快照"><a href="#快照" class="headerlink" title="快照"></a>快照</h3><pre><code class="Python">import os, sys, struct
+from socket import AF_INET
+sys.path.append('/home/iot/workspace/Emulator/qiling-dev')
+from qiling import Qiling
+from qiling.const import QL_INTERCEPT, QL_VERBOSE
+from qiling.os.const import STRING
+from unicorn.unicorn import UcError
+"""
+struct hostent{
+    char *h_name;  //official name
+    char **h_aliases;  //alias list
+    int  h_addrtype;  //host address type
+    int  h_length;  //address lenght
+    char **h_addr_list;  //address list
+}
+"""
+def hook_memSpace(ql: Qiling):
+    ql.mem.map(0x1000, 0x1000, info='my_hook')
+    data = struct.pack('&lt;IIIII', 0x1100, 0x1100, AF_INET, 4, 0x1100)
+    ql.mem.write(0x1000, data)
+    ql.mem.write(0x1100, b'qiling')
+
+def lib_gethostbyname(ql: Qiling):
+    args = ql.os.resolve_fcall_params({'name':STRING})
+    print('[gethostbyname]: ' + args['name'])
+    ql.arch.regs.write('r0', 0x1000)
+    
+
+def saver(ql: Qiling):
+    print('[!] Hit Saver 0x%X'%(ql.arch.regs.arch_pc))
+    ql.save(cpu_context=False, snapshot='./context.bin')
+    print(ql.mem.search(b'fuck'))
+
+
+#[read(5,  0x4edca,  0x2000)] locate buf
+def read_syscall(ql: Qiling, fd: int, buf: int, size: int, *args) -&gt; None:
+    print(f'[read({fd}, {buf: #x}, {size: #x})]')
+
+def boa_run(path: list, rootfs: str, profile: str = 'default'):
+    ql = Qiling(path, rootfs, profile=profile, verbose=QL_VERBOSE.OFF, multithread=False)
+    """setup files"""
+    ql.add_fs_mapper('/dev/null', '/dev/null')
+
+    """set ram"""
+    hook_memSpace(ql)
+
+    """hooks"""
+    ql.os.set_api('gethostbyname', lib_gethostbyname, QL_INTERCEPT.CALL)
+    ql.os.set_syscall('read', read_syscall, QL_INTERCEPT.ENTER)
+
+    """setup saver"""
+    ql.hook_address(saver, 0x0180FC)        #read finish
+
+    ql.run()
+    
+
+
+if __name__ == '__main__':
+    os.chdir('/home/iot/workspace/Emulator/qiling-dev/vivetok')
+    path = ['./rootfs/usr/sbin/httpd', "-c", "/etc/conf.d/boa", "-d"]
+    rootfs = './rootfs'
+    profile = './boa_arm.ql'
+    boa_run(path=path, rootfs=rootfs, profile=profile)
+</code></pre>
+<p>然后使用poc触发就行</p>
+<h3 id="fuzz"><a href="#fuzz" class="headerlink" title="fuzz"></a>fuzz</h3><pre><code class="Python">import os, sys, struct
+import capstone as Cs
+sys.path.append('/home/iot/workspace/Emulator/qiling-dev')
+from qiling.const import QL_INTERCEPT, QL_VERBOSE
+from qiling import Qiling
+from qiling.extensions.afl import ql_afl_fuzz
+
+def simple_diassembler(ql: Qiling, address: int, size: int, md: Cs) -&gt; None:
+    buf = ql.mem.read(address, size)
+
+    for insn in md.disasm(buf, address):
+        ql.log.debug(f':: {insn.address:#x} : {insn.mnemonic:24s} {insn.op_str}')
+
+def main(input_file: str, trace: bool = False):
+    ql = Qiling(['./rootfs/usr/sbin/httpd', "-c", "/etc/conf.d/boa", "-d"], rootfs='./rootfs', profile='./boa_arm.ql', verbose=QL_VERBOSE.OFF, console = True if trace else False)
+    ql.restore(snapshot='./context.bin')
+
+    fuzz_mem = ql.mem.search(b'fuck')
+    
+    target_addr = fuzz_mem[0]
+
+    def place_input_callback(_ql: Qiling, input: bytes, _):
+        # print(b"**************** " + input)
+        _ql.mem.write(target_addr, input)
+        
+
+    def start_afl(_ql: Qiling):
+        """
+        Callback from inside
+        """
+        ql_afl_fuzz(_ql, input_file=input_file, place_input_callback=place_input_callback, exits=[0x018398])
+
+    ql.hook_address(callback=start_afl, address=0x0180FC+4)
+    # ql.hook_code(simple_diassembler, begin=0x0180FC, end=0x018600, user_data=ql.arch.disassembler)
+
+    try:
+        # ql.debugger = True
+        ql.run(begin=0x0180FC+4, end=0x018600)    #注意arm函数返回地址比较奇怪，不一定在函数末尾
+        os._exit(0)
+    except:
+        if trace:
+            print("\nFuzzer Went Shit")
+        os._exit(0)  
+
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        raise ValueError("No input file provided.")
+    
+    os.chdir('/home/iot/workspace/Emulator/qiling-dev/vivetok')
+    if len(sys.argv) &gt; 2 and sys.argv[1] == "-t":
+        main(sys.argv[2], trace=True)
+    else:
+        main(sys.argv[1])
+</code></pre>
+<p>这里很坑的一点是，在漏洞中因为<code>Content-Length</code>成员不以\n结尾时就会让v31等于0会让strncpy报错但是不一定是pc指针错误，而是某些指令地址操作数问题</p>
+<pre><code class="C">v30 = strstr(haystack, "Content-Length");
+v31 = strchr(v30, '\n');
+v32 = strchr(v30, ':');
+strncpy(dest, v32 + 1, v31 - (v32 + 1));
+</code></pre>
+<p>在源码中AFL模块调用以下函数完成fuzz执行：</p>
+<pre><code class="Python">def _dummy_fuzz_callback(_ql: "Qiling"):
+            if isinstance(_ql.arch, QlArchARM):
+                pc = _ql.arch.effective_pc
+            else:
+                pc = _ql.arch.regs.arch_pc
+            try:
+                _ql.uc.emu_start(pc, 0, 0, 0)
+            except UcError as e:
+                os.abort()                 #添加部分
+                return e.errno
+            
+</code></pre>
+<p>因此添加<code>os.abort</code>通知AFL程序崩溃</p>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213140214049.5ht4oquer8o0.png" alt="image-20221213140214049"></p>
+<h2 id="Fuzz-sys-read"><a href="#Fuzz-sys-read" class="headerlink" title="Fuzz sys_read"></a>Fuzz sys_read</h2><p>上面直接对buf写入Fuzz数据肯定不是一个很理想的办法(比如Fuzz数据超出读取长度)，当然人家给的例子就是这么Fuzz的也不失一种方法；之后</p>
+<p>就尝试利用Qiling的系统调用劫持功能让Fuzz效果更好。</p>
+<p>从read函数调用处开始执行，在这之前劫持read函数调用让程序直接读取文件输入：</p>
+<pre><code class="python">def read_syscall(ql: Qiling, fd: int, buf: int, size: int, *args) -&gt; int:
+    # print(fd, buf, size)
+    data = ql.os.stdin.read(size)
+    # print(data)
+    ql.mem.write(buf, data)
+    return len(data)
+
+def place_input_callback(_ql: Qiling, input: bytes, _):
+    # print(b"**************** " + input)
+    ql.os.stdin.write(input)
+
+    return True
+
+
+def start_afl(_ql: Qiling):
+    """
+    Callback from inside
+    """
+    ql_afl_fuzz(_ql, input_file=input_file, place_input_callback=place_input_callback, exits=[0x018398])
+</code></pre>
+<h3 id="效果-1"><a href="#效果-1" class="headerlink" title="效果"></a>效果</h3><p>同样写个脚本把服务并且设置debugger等待gdb连接：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213143927097.6wze3o97x280.png" alt="image-20221213143927097"></p>
+<p>然后将crash中的数据发送：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213144007558.8e078zxvleo.png" alt="image-20221213144007558"></p>
+<p>也确实触发到了漏洞：</p>
+<pre><code class="bash">0x900a5d74 in strncpy () from target:/lib/libc.so.0
+gef➤  backtrace 
+#0  0x900a5d74 in strncpy () from target:/lib/libc.so.0
+#1  0x0001853c in ?? ()
+Backtrace stopped: previous frame identical to this frame (corrupt stack?)
+gef➤  
+</code></pre>
+<h3 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h3><p>fuzz过程中不好调试连写的harness有没有效果都不知道，可以使用capstone同步解析执行汇编情况：</p>
+<pre><code class="Python">def simple_diassembler(ql: Qiling, address: int, size: int, md: Cs) -&gt; None:
+    buf = ql.mem.read(address, size)
+
+    for insn in md.disasm(buf, address):
+        ql.log.debug(f':: {insn.address:#x} : {insn.mnemonic:24s} {insn.op_str}')
+</code></pre>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.qiling.io/en/latest/demo/">Demo - Qiling Framework Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/jazrynwong/article/details/117228447">IOT Fuzz 两种思路</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/185336#h2-2">vivetok 摄像头远程栈溢出漏洞分析-安全客 - 安全资讯平台 (anquanke.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/5054">Vivotek远程栈溢出漏洞分析与复现 - 先知社区 (aliyun.com)</a></li>
+<li><a target="_blank" rel="noopener" href="http://galaxylab.com.cn/%e5%9f%ba%e4%ba%8eunicorn%e5%92%8clibfuzzer%e7%9a%84%e6%a8%a1%e6%8b%9f%e6%89%a7%e8%a1%8cfuzzing/">http://galaxylab.com.cn/%e5%9f%ba%e4%ba%8eunicorn%e5%92%8clibfuzzer%e7%9a%84%e6%a8%a1%e6%8b%9f%e6%89%a7%e8%a1%8cfuzzing/</a></li>
+<li><a target="_blank" rel="noopener" href="http://galaxylab.pingan.com.cn/%E5%9F%BA%E4%BA%8E-unicorn-%E7%9A%84%E5%8D%95%E4%B8%AA%E5%87%BD%E6%95%B0%E6%A8%A1%E6%8B%9F%E6%89%A7%E8%A1%8C%E5%92%8C-fuzzer-%E5%AE%9E%E7%8E%B0/">http://galaxylab.pingan.com.cn/%E5%9F%BA%E4%BA%8E-unicorn-%E7%9A%84%E5%8D%95%E4%B8%AA%E5%87%BD%E6%95%B0%E6%A8%A1%E6%8B%9F%E6%89%A7%E8%A1%8C%E5%92%8C-fuzzer-%E5%AE%9E%E7%8E%B0/</a></li>
+</ul>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls"
+                data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+            <ul id="audio-list" style="display:none">
+                
+                
+                <li title='0' data-url='/statics/chengdu.mp3'></li>
+                
+                    
+            </ul>
+            
+                        
+            
+            
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d=''
+        data-p='https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token'
+    >Comments</div>
+
+
+            
+            
+        </div>
+        <div class="sidebar">
+            <div class="box animated fadeInRight">
+                <div class="subbox">
+                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230112/yuanh.3xe42oas0b80.jpg" height=300 width=300></img>
+                    <p>Noel</p>
+                    <span>无所谓，袁神会出手</span>
+                    <dl>
+                        
+                        
+                            
+                                <dd>
+                                    <link rel="stylesheet" type="text/css" href="">
+                                    <a href="function link() { [native code] }" target="_blank"><span
+                                    class=" iconfont "></span></a>
+                                </dd>
+                            
+                            
+                            
+                        
+                    </dl>
+                </div>
+                <ul>
+                    <li><a href="/">20 <p>Articles</p></a></li>
+                    <li><a href="/categories">8 <p>Categories</p></a></li>
+                    <li><a href="/tags">11 <p>Tags</p></a></li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="box sticky animated fadeInRight faster">
+                <div id="toc" class="subbox">
+                    <h4>Contents</h4>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#qiling-%E6%A1%86%E6%9E%B6IotFuzz%E4%B9%8BBoa"><span class="toc-number">1.</span> <span class="toc-text">qiling 框架IotFuzz之Boa</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">2.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Tenda-AC15"><span class="toc-number">3.</span> <span class="toc-text">Tenda-AC15</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Boa-Fuzz"><span class="toc-number">4.</span> <span class="toc-text">Boa Fuzz</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E5%90%AF%E5%8A%A8"><span class="toc-number">4.1.</span> <span class="toc-text">模拟启动</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ipv6-socket"><span class="toc-number">4.1.1.</span> <span class="toc-text">ipv6 socket</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Fuzz-Partial"><span class="toc-number">4.2.</span> <span class="toc-text">Fuzz Partial</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Fuzz-buf"><span class="toc-number">4.3.</span> <span class="toc-text">Fuzz buf</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E7%85%A7"><span class="toc-number">4.3.1.</span> <span class="toc-text">快照</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fuzz"><span class="toc-number">4.3.2.</span> <span class="toc-text">fuzz</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%88%E6%9E%9C"><span class="toc-number">4.3.3.</span> <span class="toc-text">效果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Fuzz-sys-read"><span class="toc-number">4.4.</span> <span class="toc-text">Fuzz sys_read</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%88%E6%9E%9C-1"><span class="toc-number">4.4.1.</span> <span class="toc-text">效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%80%E5%B7%A7"><span class="toc-number">4.4.2.</span> <span class="toc-text">技巧</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+    <div id="back-to-top" class="animated fadeIn faster">
+        <div class="flow"></div>
+        <span class="percentage animated fadeIn faster">0%</span>
+        <span class="iconfont icon-top02 animated fadeIn faster"></span>
+    </div>
+</body>
+<footer>
+    <p class="copyright" id="copyright">
+        &copy; 2023
+        <span class="gradient-text">
+            RainSec
+        </span>.
+        Powered by <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a>
+        Theme
+        <span class="gradient-text">
+            <a href="https://github.com/TriDiamond/hexo-theme-obsidian" title="Obsidian" target="_blank" rel="noopener">Obsidian</a>
+        </span>
+        <small><a href="https://github.com/TriDiamond/hexo-theme-obsidian/blob/master/CHANGELOG.md" title="v1.4.9.3" target="_blank" rel="noopener">v1.4.9.3</a></small>
+        
+        
+    </p>
+</footer>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<script>
+  MathJax.Hub.Config({
+    "HTML-CSS": {
+      preferredFont: "TeX",
+      availableFonts: ["STIX", "TeX"],
+      linebreaks: {
+        automatic: true
+      },
+      EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+      inlineMath: [
+        ["$", "$"],
+        ["\\(", "\\)"]
+      ],
+      processEscapes: true,
+      ignoreClass: "tex2jax_ignore|dno",
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      noUndefined: {
+        attributes: {
+          mathcolor: "red",
+          mathbackground: "#FFEEEE",
+          mathsize: "90%"
+        }
+      },
+      Macros: {
+        href: "{}"
+      }
+    },
+    messageStyle: "none"
+  });
+</script>
+<script>
+  function initialMathJax() {
+    MathJax.Hub.Queue(function () {
+      var all = MathJax.Hub.getAllJax(),
+        i;
+      // console.log(all);
+      for (i = 0; i < all.length; i += 1) {
+        console.log(all[i].SourceElement().parentNode)
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  }
+
+  function reprocessMathJax() {
+    if (typeof MathJax !== 'undefined') {
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    }
+  }
+</script>
+
+
+ 
+<link rel="stylesheet" href="//cdn.bootcss.com/gitalk/1.5.0/gitalk.min.css">
+ 
+<script src="//cdn.bootcss.com/gitalk/1.5.0/gitalk.min.js"></script>
+  
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/obsidian.js"></script>
+<script src="/js/jquery.truncate.js"></script>
+<script src="/js/search.js"></script>
+ 
+<script src="//cdn.bootcss.com/typed.js/2.0.10/typed.min.js"></script>
+ 
+<script src="//cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script>
+ 
+<script src="//cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/codemirror/5.48.4/codemirror.min.js"></script>
+ 
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/javascript/javascript.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/css/css.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/xml/xml.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/htmlmixed/htmlmixed.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/clike/clike.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/php/php.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/shell/shell.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/python/python.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/java/java.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/go/go.min.js"></script>
+   
+<script src="/js/busuanzi.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    if ($('span[id^="busuanzi_"]').length) {
+      initialBusuanzi();
+    }
+  });
+</script>
+ 
+<link rel="stylesheet" href="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="//cdn.bootcss.com/photoswipe/4.1.3/default-skin/default-skin.min.css">
+
+
+<script src="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+
+<script>
+  function initialTyped() {
+    var typedTextEl = $('.typed-text');
+    if (typedTextEl && typedTextEl.length > 0) {
+      var typed = new Typed('.typed-text', {
+        strings: ['艺术家思维去思考问题，工匠创造精神去开发|', '致力于自动化渗透测试和漏洞挖掘'],
+        typeSpeed: 90,
+        loop: true,
+        loopCount: Infinity,
+        backSpeed: 20,
+      });
+    }
+  }
+
+  if ($('.article-header') && $('.article-header').length) {
+    $(document).ready(function () {
+      initialTyped();
+    });
+  }
+</script>
+
+
+
+
+<!-- 引用依赖 -->
+<script>document.write(aplayerconf)</script>
+
+
+
+
+</html>
