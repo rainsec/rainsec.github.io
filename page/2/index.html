@@ -149,53 +149,49 @@
             animation-duration: 2.8s;
             background-image:
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.56), #100e17),
-                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/Ubuntucover.webp);">
+                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/kernelcover.png);">
         </div>
     </div>
     
     <div id="post0" class="else">
         <p class="animated fadeInDown">
             
-            <a href="/categories/系统运维"><b>「
-                </b>系统运维<b> 」</b></a>
+            <a href="/categories/Linux Kernel"><b>「
+                </b>LINUX KERNEL<b> 」</b></a>
             
-            March 28, 2022
+            July 19, 2022
         </p>
         <h3 class="post-title animated fadeInDown">
-            <a href="/post/Ubuntu20.04%20%E5%8D%87%E7%BA%A7%E9%99%8D%E7%BA%A7%E5%86%85%E6%A0%B8%E5%88%B0%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC.html" title="Ubuntu 更新内核到指定版本" class="posttitle">Ubuntu 更新内核到指定版本</a></h3>
+            <a href="/post/Linux%20Kernel%20%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6%E7%BB%95%E8%BF%87.html" title="Linux Kernel 保护机制绕过" class="posttitle">Linux Kernel 保护机制绕过</a></h3>
         
         <p class="post-count animated fadeInDown">
             
             <span>
                 <b class="iconfont icon-text2"></b> <i>Words count</i>
-                4.3k
+                19k
             </span>
             
             
             <span>
                 <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                4 mins.
+                17 mins.
             </span>
             
             
         </p>
         
         
-        <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
+        <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Linux-Kernel/" rel="tag">Linux Kernel</a></li></ul>
         
         <div class="md-content animated fadeIn">
             
-            <p>记一次更新内核到5.8.0-33-generic</p>
-<span id="more"></span>
-<h2 id="更新到指定版本"><a href="#更新到指定版本" class="headerlink" title="更新到指定版本"></a>更新到指定版本</h2><h3 id="查看当前版本"><a href="#查看当前版本" class="headerlink" title="查看当前版本"></a>查看当前版本</h3><pre><code class="shell">$ uname -r
-4.15.0-101-generic
-
-$ lsb_release -a
-No LSB modules are available.
-Distributor ID: Ubuntu
-Description...</code></pre>
+            <h1 id="Linux-Kernel-保护机制绕过"><a href="#Linux-Kernel-保护机制绕过" class="headerlink" title="Linux Kernel 保护机制绕过"></a>Linux Kernel 保护机制绕过</h1><blockquote>
+<p>好久没搞kernel的洞了，最近分析的这方面的洞有点多，相关的Exp任务也比较多，因此学习总结一下方便查找和记忆。</p>
+</blockquote>
+<h2 id="SMEP-KPTI-bypass"><a href="#SMEP-KPTI-bypass" class="headerlink" title="SMEP + KPTI bypass"></a>SMEP + KPTI bypass</h2><p>​        SMEP是SupervisorModeExecutionPrevention的缩写，主要的作用其实就是抵御类似ret2user这样的攻击，简单来说就是阻止内核执行用户态传递的代码。</p>
+<p>​        检测计算机是否开启SMEP保护的方式很简单，<code>cat /proc/cpuinfo | grep smep</code>，如果有匹配到...</p>
             
-            <span class="read-more"><a href="/post/Ubuntu20.04%20%E5%8D%87%E7%BA%A7%E9%99%8D%E7%BA%A7%E5%86%85%E6%A0%B8%E5%88%B0%E6%8C%87%E5%AE%9A%E7%89%88%E6%9C%AC.html" title="Read article" class="posttitle">Read article</a>
+            <span class="read-more"><a href="/post/Linux%20Kernel%20%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6%E7%BB%95%E8%BF%87.html" title="Read article" class="posttitle">Read article</a>
                 <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>
     </div>
@@ -216,6 +212,56 @@ Description...</code></pre>
 
     <div id="primary">
         
+<div class="post" id="post">
+    <div class="post-cover animated fadeIn" style="
+            background-image:
+            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/kernelcover.png);">
+    </div>
+    <div class="else">
+        <p class="animated fadeInDown">
+            
+                <a href="/categories/Linux Kernel">
+                  <b>「 </b>LINUX KERNEL<b> 」</b>
+                </a>
+            
+            July 19, 2022
+        </p>
+        <h3 class="post-title animated fadeInDown"><a href="/post/Linux%20Kernel%20%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6%E7%BB%95%E8%BF%87.html" title="Linux Kernel 保护机制绕过" class="posttitle">Linux Kernel 保护机制绕过</a></h3>
+        
+            <p class="post-count animated fadeInDown">
+                
+                    <span>
+                        <b class="iconfont icon-text2"></b> <i>Words count</i>
+                        19k
+                    </span>
+                
+                
+                    <span>
+                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                        17 mins.
+                    </span>
+                
+                
+            </p>
+            
+                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/Linux-Kernel/" rel="tag">Linux Kernel</a></li></ul>
+            
+        
+        <div class="md-content animated fadeIn">
+            
+                <h1 id="Linux-Kernel-保护机制绕过"><a href="#Linux-Kernel-保护机制绕过" class="headerlink" title="Linux Kernel 保护机制绕过"></a>Linux Kernel 保护机制绕过</h1><blockquote>
+<p>好久没搞kernel的洞了，最近分析的这方面的洞有点多，相关的Exp任务也比较多，因此学习总结一下方便查找和记忆。</p>
+</blockquote>
+<h2 id="SMEP-KPTI-bypass"><a href="#SMEP-KPTI-bypass" class="headerlink" title="SMEP + KPTI bypass"></a>SMEP + KPTI bypass</h2><p>​        SMEP是SupervisorModeExecutionPrevention的缩写，主要的作用其实就是抵御类似ret2user这样的攻击，简单来说就是阻止内核执行用户态传递的代码。</p>
+<p>​        检测计算机是否开启SMEP保护的方式很简单，<code>cat /proc/cpuinfo | grep smep</code>，如果有匹配到...</p>
+            
+            <span class="read-more"><a href="/post/Linux%20Kernel%20%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6%E7%BB%95%E8%BF%87.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
+        </div>
+    </div>
+</div>
+
+
 <div class="post" id="post">
     <div class="post-cover animated fadeIn" style="
             background-image:
@@ -274,50 +320,6 @@ Description...</code></pre>
     <div class="post-cover animated fadeIn" style="
             background-image:
             radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221025/images.7i3pppfv9fc.jpg);">
-    </div>
-    <div class="else">
-        <p class="animated fadeInDown">
-            
-                <a href="/categories/渗透测试">
-                  <b>「 </b>渗透测试<b> 」</b>
-                </a>
-            
-            March 26, 2022
-        </p>
-        <h3 class="post-title animated fadeInDown"><a href="/post/Tomcat%E5%86%85%E5%AD%98%E9%A9%AC%E8%A7%A3%E6%9E%90.html" title="Tomcat内存马简析" class="posttitle">Tomcat内存马简析</a></h3>
-        
-            <p class="post-count animated fadeInDown">
-                
-                    <span>
-                        <b class="iconfont icon-text2"></b> <i>Words count</i>
-                        31k
-                    </span>
-                
-                
-                    <span>
-                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                        28 mins.
-                    </span>
-                
-                
-            </p>
-            
-        
-        <div class="md-content animated fadeIn">
-            
-                <h1 id="Tomcat内存马简析"><a href="#Tomcat内存马简析" class="headerlink" title="Tomcat内存马简析"></a>Tomcat内存马简析</h1><p>  webshell木马配合webshell管理工具可以方便对于服务器、内网进行进一步的维权、入侵，随着对文件内容查杀、以Ai对流量特征和行为模式的查杀等等手段，普通文件形式的webshell木马可靠性越来越差。也许好不容易绕过waf传上去两分钟不到就被杀掉了，所以攻击方在近些年也慢慢的研发出“无文件”的webshell木马，即内存马。<br>内存马的概念提出比较久的，但走进视野就近几年的事情，每隔一段时间总能看到不少师傅提出新的内存马实现方法，这里简单说下利用JavaWeb的三大...</p>
-            
-            <span class="read-more"><a href="/post/Tomcat%E5%86%85%E5%AD%98%E9%A9%AC%E8%A7%A3%E6%9E%90.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
-        </div>
-    </div>
-</div>
-
-
-<div class="post" id="post">
-    <div class="post-cover animated fadeIn" style="
-            background-image:
-            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
             url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/what-is-dns.3wivpbhx9do.png);">
     </div>
     <div class="else">
@@ -357,6 +359,50 @@ Description...</code></pre>
 <h4 id="编译ysoserial"><a href="#编译ysoserial" class="headerlink" title="编译ysoserial"></a>编译ysoserial</h4><p>用JIdea打开导入，会自动导入依赖，导入以后可能还会出现pom.xml红色表示找不到对应依赖的情况，这时可以进入依赖文件夹，可能是用于多个版本jar下载到了其他版本，删...</p>
             
             <span class="read-more"><a href="/post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
+        </div>
+    </div>
+</div>
+
+
+<div class="post" id="post">
+    <div class="post-cover animated fadeIn" style="
+            background-image:
+            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221025/images.7i3pppfv9fc.jpg);">
+    </div>
+    <div class="else">
+        <p class="animated fadeInDown">
+            
+                <a href="/categories/渗透测试">
+                  <b>「 </b>渗透测试<b> 」</b>
+                </a>
+            
+            March 26, 2022
+        </p>
+        <h3 class="post-title animated fadeInDown"><a href="/post/Tomcat%E5%86%85%E5%AD%98%E9%A9%AC%E8%A7%A3%E6%9E%90.html" title="Tomcat内存马简析" class="posttitle">Tomcat内存马简析</a></h3>
+        
+            <p class="post-count animated fadeInDown">
+                
+                    <span>
+                        <b class="iconfont icon-text2"></b> <i>Words count</i>
+                        31k
+                    </span>
+                
+                
+                    <span>
+                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                        28 mins.
+                    </span>
+                
+                
+            </p>
+            
+        
+        <div class="md-content animated fadeIn">
+            
+                <h1 id="Tomcat内存马简析"><a href="#Tomcat内存马简析" class="headerlink" title="Tomcat内存马简析"></a>Tomcat内存马简析</h1><p>  webshell木马配合webshell管理工具可以方便对于服务器、内网进行进一步的维权、入侵，随着对文件内容查杀、以Ai对流量特征和行为模式的查杀等等手段，普通文件形式的webshell木马可靠性越来越差。也许好不容易绕过waf传上去两分钟不到就被杀掉了，所以攻击方在近些年也慢慢的研发出“无文件”的webshell木马，即内存马。<br>内存马的概念提出比较久的，但走进视野就近几年的事情，每隔一段时间总能看到不少师傅提出新的内存马实现方法，这里简单说下利用JavaWeb的三大...</p>
+            
+            <span class="read-more"><a href="/post/Tomcat%E5%86%85%E5%AD%98%E9%A9%AC%E8%A7%A3%E6%9E%90.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>
     </div>
 </div>
@@ -667,61 +713,9 @@ def my_sandbox(path, rootfs):
 </div>
 
 
-<div class="post" id="post">
-    <div class="post-cover animated fadeIn" style="
-            background-image:
-            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
-            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/parsercover.png);">
     </div>
-    <div class="else">
-        <p class="animated fadeInDown">
-            
-                <a href="/categories/漏洞挖掘">
-                  <b>「 </b>漏洞挖掘<b> 」</b>
-                </a>
-            
-            January 28, 2022
-        </p>
-        <h3 class="post-title animated fadeInDown"><a href="/post/PHP-Parser.html" title="PHP-Parser的基本使用" class="posttitle">PHP-Parser的基本使用</a></h3>
-        
-            <p class="post-count animated fadeInDown">
-                
-                    <span>
-                        <b class="iconfont icon-text2"></b> <i>Words count</i>
-                        9.7k
-                    </span>
-                
-                
-                    <span>
-                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                        9 mins.
-                    </span>
-                
-                
-            </p>
-            
-                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/PHP/" rel="tag">PHP</a></li></ul>
-            
-        
-        <div class="md-content animated fadeIn">
-            
-                <h1 id="PHP-Parser"><a href="#PHP-Parser" class="headerlink" title="PHP-Parser"></a>PHP-Parser</h1><p>PHP-Parser组件的基础使用，该组件为静态分析和反混淆常用的第三方依赖。</p>
-<span id="more"></span>
-
-<h2 id="What-is-PHP-Parser"><a href="#What-is-PHP-Parser" class="headerlink" title="What is PHP-Parser"></a>What is PHP-Parser</h2><p><code>PHP-Parser</code>是<code>nikic</code>用PHP编写的PHP5.2到PHP7.4解析器，其目的是简化静态代码分析和操作</p>
-<h2 id="PHP-Parser的基础使用"><a href="#PHP-Parser的基础使用" class="headerlink" title="PHP-Parser的基础使用"></a>PHP-Parser的基础使用</h2><p>这里先贴一下官方文档</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/tree/master/doc">PHP-Parser/doc at master · nikic/PHP-Parser (github.com)</a></p>
-<p>最基本的是要理解其中<a target="_blank" rel="noopener" href="https://github.com/nikic/PHP-Parser/blob/master/doc/component/Walking_the_AST.markdown">Walking the AST</a>的部分</p>
-<h2 id="初始化解析器"><a href="#初始化解析器" class="headerlink" title="初始化解析器"></a>初始化解析器</h2><p>首先创建实例</p>
-...
-            
-            <span class="read-more"><a href="/post/PHP-Parser.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
-        </div>
-    </div>
-</div>
-
-
-    </div>
+    
+    <div id="pager"><a href="/page/3/" class="more" data-loading="加载中..." data-load-more="Load more">Load more</a></div>
     
 </div>
 <div id="preview"></div>
