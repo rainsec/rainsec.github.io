@@ -149,7 +149,7 @@
             animation-duration: 2.8s;
             background-image:
                 radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.56), #100e17),
-                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/burp.png);">
+                url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20221101/burp-suite-180820162011-thumbnail.5ag1ra9f7s0.jpg);">
         </div>
     </div>
     
@@ -159,22 +159,22 @@
             <a href="/categories/渗透测试"><b>「
                 </b>渗透测试<b> 」</b></a>
             
-            March 05, 2022
+            November 01, 2022
         </p>
         <h3 class="post-title animated fadeInDown">
-            <a href="/post/%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82.html" title="灵活的修改Burp请求" class="posttitle">灵活的修改Burp请求</a></h3>
+            <a href="/post/Burp-Montoya.html" title="Burp-Montoya" class="posttitle">Burp-Montoya</a></h3>
         
         <p class="post-count animated fadeInDown">
             
             <span>
                 <b class="iconfont icon-text2"></b> <i>Words count</i>
-                4.5k
+                8.5k
             </span>
             
             
             <span>
                 <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
-                4 mins.
+                8 mins.
             </span>
             
             
@@ -185,17 +185,19 @@
         
         <div class="md-content animated fadeIn">
             
-            <h1 id="灵活的修改Burp请求"><a href="#灵活的修改Burp请求" class="headerlink" title="灵活的修改Burp请求"></a>灵活的修改Burp请求</h1><p>  在日常渗透测试中经常会遇到请求头需要替换、请求或响应内容需要解密等一系列麻烦的事。更换请求头可以通过<code>Burp</code>的<code>Match and Replace</code>功能来实现，加解密也有一些插件可以实现，但是它们普遍存在着以下缺陷：</p>
-<ul>
-<li><p>自定义数据不能进行保存</p>
-</li>
-<li><p>加解密不能灵活的指定位置</p>
-</li>
-</ul>
-<p>  带着这些需求，笔者在寻找工具时发现了一款有趣的插件<code>Python Scripter: https://github.com/PortSwigger/python-scripter</code> </p>
-<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>  与其说这是一个插...</p>
+            <p>  Burp的新版本更新了新的<code>API</code>接口，刚好最近有写插件的想法，所以简单的了解了下。</p>
+<p></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>  单从文档界面来看，结构清晰了不少-&gt;<a target="_blank" rel="noopener" href="https://portswigger.github.io/burp-extensions-montoya-api/javadoc/burp/api/montoya/MontoyaApi.html">MontoyaApi</a></p>
+<p></p>
+<p>  同时官方提供了一个<a target="_blank" rel="noopener" href="https://github.com/PortSwigger/burp-extender-montoya-api">demo</a></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>  与老版本类似，创建一个插件项目需要继承类<code>BurpExtension</code>，它只包含了一个初始化函数</p>
+<pre><code class="java">public interface BurpExtension {
+    void initialize(MontoyaApi var1);
+}
+</code></pre>
+<p>  同样的，想要调用扫描等功能，也需要进行注册，比如我们注册一...</p>
             
-            <span class="read-more"><a href="/post/%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82.html" title="Read article" class="posttitle">Read article</a>
+            <span class="read-more"><a href="/post/Burp-Montoya.html" title="Read article" class="posttitle">Read article</a>
                 <b class="iconfont icon-arrow-right- gradient-text"></b></span>
         </div>
     </div>
@@ -216,6 +218,60 @@
 
     <div id="primary">
         
+<div class="post" id="post">
+    <div class="post-cover animated fadeIn" style="
+            background-image:
+            radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+            url(https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/burp.png);">
+    </div>
+    <div class="else">
+        <p class="animated fadeInDown">
+            
+                <a href="/categories/渗透测试">
+                  <b>「 </b>渗透测试<b> 」</b>
+                </a>
+            
+            March 05, 2022
+        </p>
+        <h3 class="post-title animated fadeInDown"><a href="/post/%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82.html" title="灵活的修改Burp请求" class="posttitle">灵活的修改Burp请求</a></h3>
+        
+            <p class="post-count animated fadeInDown">
+                
+                    <span>
+                        <b class="iconfont icon-text2"></b> <i>Words count</i>
+                        4.5k
+                    </span>
+                
+                
+                    <span>
+                        <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                        4 mins.
+                    </span>
+                
+                
+            </p>
+            
+                <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/BurpSuite/" rel="tag">BurpSuite</a></li></ul>
+            
+        
+        <div class="md-content animated fadeIn">
+            
+                <h1 id="灵活的修改Burp请求"><a href="#灵活的修改Burp请求" class="headerlink" title="灵活的修改Burp请求"></a>灵活的修改Burp请求</h1><p>  在日常渗透测试中经常会遇到请求头需要替换、请求或响应内容需要解密等一系列麻烦的事。更换请求头可以通过<code>Burp</code>的<code>Match and Replace</code>功能来实现，加解密也有一些插件可以实现，但是它们普遍存在着以下缺陷：</p>
+<ul>
+<li><p>自定义数据不能进行保存</p>
+</li>
+<li><p>加解密不能灵活的指定位置</p>
+</li>
+</ul>
+<p>  带着这些需求，笔者在寻找工具时发现了一款有趣的插件<code>Python Scripter: https://github.com/PortSwigger/python-scripter</code> </p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>  与其说这是一个插...</p>
+            
+            <span class="read-more"><a href="/post/%E7%81%B5%E6%B4%BB%E7%9A%84%E4%BF%AE%E6%94%B9Burp%E8%AF%B7%E6%B1%82.html" title="Read article" class="posttitle">Read article</a> <b class="iconfont icon-arrow-right- gradient-text"></b></span>
+        </div>
+    </div>
+</div>
+
+
     </div>
     
 </div>
