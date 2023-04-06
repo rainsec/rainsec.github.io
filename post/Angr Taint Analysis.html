@@ -1,0 +1,1245 @@
+
+<!DOCTYPE html>
+<html lang="en" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Angr Taint Analysis - RainSec</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="RainSec,"> 
+    <meta name="description" content="致力于云原生安全和自动化渗透测试的研究与分享,Angr Taint Analysis
+本人一直致力于二进制分析和自动化漏洞挖掘领域，这次抛砖引玉，希望可以大家多多指导
+
+污点分析的基本分类：
+
+动态污点分析
+静态污点分析
+
+上述分析方式都有自己,"> 
+    <meta name="author" content="RainSec"> 
+    <link rel="alternative" href="atom.xml" title="RainSec" type="application/atom+xml"> 
+    <link rel="icon" href="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg"> 
+    
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1429596_nzgqgvnmkjb.css">
+
+    
+<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.7.2/animate.min.css">
+
+    
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+
+    
+<link rel="stylesheet" href="//cdn.bootcss.com/codemirror/5.48.4/codemirror.min.css">
+
+    
+<link rel="stylesheet" href="//cdn.bootcss.com/codemirror/5.48.4/theme/dracula.css">
+
+    
+<link rel="stylesheet" href="/css/obsidian.css">
+
+    
+<link rel="stylesheet" href="/css/ball-atom.min.css">
+
+    
+    
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css">
+
+    
+    <script>var musiclist = ""</script>
+    
+<script src="/js/loadaplayer.js"></script>
+
+    <!-- 引用依赖 -->
+    
+<link rel="stylesheet" href="/aplayer/dist/APlayer.min.css">
+
+    
+<script src="/aplayer/dist/APlayer.min.js"></script>
+<script src="/js/Meting.min.js"></script>
+
+    
+<meta name="generator" content="Hexo 6.0.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+
+<body class="loading">
+    <div class="loader">
+        <div class="la-ball-atom la-2x">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <span id="config-title" style="display:none">RainSec</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div class="scrollbar gradient-bg-rev"></div>
+<div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <div class="navigation animated fadeIn fast delay-1s">
+        <img id="home-icon" class="icon-home" src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220714/logo.jpg" alt="" data-url="https://rainsec.cn">
+        <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
+        <h3 class="subtitle">Angr Taint Analysis</h3>
+        <div class="social">
+            <!--        <div class="like-icon">-->
+            <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+            <!--        </div>-->
+            <div>
+                <div class="share">
+                    
+                        <a href="javascript:;" class="iconfont icon-share1"></a>
+                        <div class="share-component-cc" data-disabled="facebook,douban,linkedin,diandian,tencent,google"></div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="section">
+        <div class=article-header-wrapper>
+    <div class="article-header">
+        <div class="article-cover animated fadeIn" style="
+            animation-delay: 600ms;
+            animation-duration: 1.2s;
+            background-image: 
+                radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.65), #100e17),
+                url('https://cdn.staticaly.com/gh/L2ksy0d/picx-images-hosting@master/20230406/image.7j4ghfi4dy00.png') ">
+        </div>
+        <div class="else">
+            <p class="animated fadeInDown">
+                
+                <a href="/categories/漏洞挖掘"><b>「
+                    </b>漏洞挖掘<b> 」</b></a>
+                
+                March 14, 2023
+            </p>
+            <h3 class="post-title animated fadeInDown"><a href="/post/Angr%20Taint%20Analysis.html" title="Angr Taint Analysis" class="">Angr Taint Analysis</a>
+            </h3>
+            
+            <p class="post-count animated fadeInDown">
+                
+                <span>
+                    <b class="iconfont icon-text2"></b> <i>Words count</i>
+                    41k
+                </span>
+                
+                
+                <span>
+                    <b class="iconfont icon-timer__s"></b> <i>Reading time</i>
+                    37 mins.
+                </span>
+                
+                
+                
+                <span id="busuanzi_container_page_pv">
+                    <b class="iconfont icon-read"></b> <i>Read count</i>
+                    <span id="busuanzi_value_page_pv">0</span>
+                </span>
+                
+            </p>
+            
+            
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/" rel="tag">漏洞挖掘</a></li></ul>
+            
+        </div>
+    </div>
+</div>
+
+<div class="screen-gradient-after">
+    <div class="screen-gradient-content">
+        <div class="screen-gradient-content-inside">
+            <div class="bold-underline-links screen-gradient-sponsor">
+                <p>
+                    <span class="animated fadeIn delay-1s"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="article">
+    <div class='main'>
+        <div class="content markdown animated fadeIn">
+            <h1 id="Angr-Taint-Analysis"><a href="#Angr-Taint-Analysis" class="headerlink" title="Angr Taint Analysis"></a>Angr Taint Analysis</h1><blockquote>
+<p>本人一直致力于二进制分析和自动化漏洞挖掘领域，这次抛砖引玉，希望可以大家多多指导</p>
+</blockquote>
+<p>污点分析的基本分类：</p>
+<ol>
+<li>动态污点分析</li>
+<li>静态污点分析</li>
+</ol>
+<p>上述分析方式都有自己的优缺点，对于动态污点分析来说，缺点如下：</p>
+<ol>
+<li>分析结果依赖输入。</li>
+<li>一些隐式调用难以跟踪。</li>
+</ol>
+<p>静态污点分析的缺点如下：</p>
+<ol>
+<li>路径爆炸问题。</li>
+<li>一些程序特性只有在动态执行的过程中才会展示出来。</li>
+</ol>
+<p>angr本身的知识内容多而且杂乱，下面对一些核心的基础知识进行一下讲解。</p>
+<h2 id="angr"><a href="#angr" class="headerlink" title="angr"></a>angr</h2><p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/image-20230129175501809.18qov5sev3xc.png"></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://web.wpi.edu/Pubs/E-project/Available/E-project-101816-114710/unrestricted/echeng_mqp_angr.pdf">https://web.wpi.edu/Pubs/E-project/Available/E-project-101816-114710/unrestricted/echeng_mqp_angr.pdf</a></p>
+</blockquote>
+<p>​        angr一般优势在于可以为逆向工程查找函数，生成函数调用图，同时其还具备一个符号执行引擎。上述研究项目为angr研究设置了三个目标：</p>
+<ol>
+<li>探索angr的符号执行能力并记录其复杂性。</li>
+<li>探索Angr作为二进制分析工具的能力。</li>
+<li>为angr创建一个平台，使得逆向工程师更容易接触他们。</li>
+</ol>
+<p>从这三个目标来看，这是一个非常适合新手学习angr的项目，展示的都是很基本的功能。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://archive.fosdem.org/2017/schedule/event/valgrind_angr/attachments/slides/1797/export/events/attachments/valgrind_angr/slides/1797/slides.pdf">https://archive.fosdem.org/2017/schedule/event/valgrind_angr/attachments/slides/1797/export/events/attachments/valgrind_angr/slides/1797/slides.pdf</a></p>
+</blockquote>
+<p>这个（应该）是Angr团队的一个演讲，讲的更好一点，可以理解一下Angr的底层实现。</p>
+<h3 id="vex"><a href="#vex" class="headerlink" title="vex"></a>vex</h3><p>​        angr用VEX作为中间表示用来进行二进制分析，pyVEX就是一个对于VEX的python封包。其实中间语言存在于很多场合，最主要的功能是为了解决二进制分析中面临多种架构的问题，使得一次分析可以运行在多个架构之上。最主要的中间表示如下：</p>
+<ul>
+<li>Register name，VEX models 存放寄存器在一个单独的内存空间里面，用offset来定位不同的寄存器。</li>
+<li>Mem access.</li>
+<li>Mem segmentation.</li>
+<li>Instruction side-effects. 很多指令具备Side-effects。比如push pop同时还会影响stack pointer, thumb mode on arm很多指令都影响flags。IR可以相应的表示这些影响。</li>
+</ul>
+<p>VEX主要存在以下结构，这个非常重要：</p>
+<ul>
+<li><strong>Expressions.</strong> IR Expressions represent a calculated or constant value. This includes memory loads, register reads, and results of arithmetic operations.</li>
+<li><strong>Operations.</strong> IR Operations describe a <em>modification</em> of IR Expressions. This includes integer arithmetic, floating-point arithmetic, bit operations, and so forth. An IR Operation applied to IR Expressions yields an IR Expression as a result.</li>
+<li><strong>Temporary variables.</strong> VEX uses temporary variables as internal registers: IR Expressions are stored in temporary variables between use. The content of a temporary variable can be retrieved using an IR Expression. These temporaries are numbered, starting at <code>t0</code>. These temporaries are strongly typed (i.e., “64-bit integer” or “32-bit float”).</li>
+<li><strong>Statements.</strong> IR Statements model changes in the state of the target machine, such as the effect of memory stores and register writes. IR Statements use IR Expressions for values they may need. For example, a memory store <em>IR Statement</em> uses an <em>IR Expression</em> for the target address of the write, and another <em>IR Expression</em> for the content.</li>
+<li><strong>Blocks.</strong> An IR Block is a collection of IR Statements, representing an extended basic block (termed “IR Super Block” or “IRSB”) in the target architecture. A block can have several exits. For conditional exits from the middle of a basic block, a special <em>Exit</em> IR Statement is used. An IR Expression is used to represent the target of the unconditional exit at the end of the block.</li>
+</ul>
+<p>上面可以了解angr的一些基本概念。详细例子可以参考下面：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/angr/pyvex">https://github.com/angr/pyvex</a></p>
+<p>这些语言描述是很难的，建议还是根据官方例子调试一下，就知道每个IR对应的意思了。</p>
+</blockquote>
+<p>​        下图在angr团队的演讲里面展示的，正是对应的上述的VEX结构。因此可以看出pyvex可以很好的把机器码转换为中间语言来方便进行二进制分析。对于所有的vex struct都对应的有python class和enums，这些都以字符串的形式表示，总的来说就是整个的中间表示能力都可以用python完成。</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/image-20230129102429515.fpox4v69egg.png"></p>
+<p>在Angr里面还存在SimuVEX，这是为了符号执行，它本身是作为VEX IR（IRSBs）的符号执行引擎：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/image-20230129143824974.79qf2n61i14.png"></p>
+<p>符号执行的一个核心在于执行环境的实现，因此SimuVEX必须实现：</p>
+<ol>
+<li>内存和寄存器建模。</li>
+<li>syscalls</li>
+<li>Files and other data sources from outside the program</li>
+<li>Providing symbolic summaries (SimProcedures) of common library functions</li>
+</ol>
+<p>这里面比较难以理解的就是symbolic summaries了，先看下angr官方的例子：</p>
+<pre><code class="python">&gt;&gt;&gt; from angr import Project, SimProcedure
+&gt;&gt;&gt; project = Project('examples/fauxware/fauxware')
+
+&gt;&gt;&gt; class BugFree(SimProcedure):
+...    def run(self, argc, argv):
+...        print('Program running with argc=%s and argv=%s' % (argc, argv))
+...        return 0
+
+# this assumes we have symbols for the binary
+&gt;&gt;&gt; project.hook_symbol('main', BugFree())
+
+# Run a quick execution!
+&gt;&gt;&gt; simgr = project.factory.simulation_manager()
+&gt;&gt;&gt; simgr.run()  # step until no more active states
+Program running with argc=&lt;SAO &lt;BV64 0x0&gt;&gt; and argv=&lt;SAO &lt;BV64 0x7fffffffffeffa0&gt;&gt;
+&lt;SimulationManager with 1 deadended&gt;
+</code></pre>
+<p>可以看出SimProcedures的一个核心作用就是hook，这里main函数不再执行，而是执行我们定义的SimProcedures，这意味着可以定义程序的运行。因此上述的4应该就是提供对于库函数的替代，这样的一个好处也在于提升了符号执行的性能。如果想对SimuVEX有一个更好的了解可以参考下面的文章，来从源代码进行理解：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://sites.google.com/site/bletchleypark2/malware-analysis/angr/simuvex">https://sites.google.com/site/bletchleypark2/malware-analysis/angr/simuvex</a></p>
+<p>如果打算做符号执行的话，还是深入读一下，这一块是对执行过程state的很核心的代码。</p>
+</blockquote>
+<h3 id="claripy"><a href="#claripy" class="headerlink" title="claripy"></a>claripy</h3><blockquote>
+<p>这个玩意挺难，挺复杂的。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.angr.io/advanced-topics/claripy#solvers">https://docs.angr.io/advanced-topics/claripy#solvers</a></p>
+</blockquote>
+<p>​        claripy是Angr的一个约束求解引擎，主要的设计思想如下：</p>
+<ul>
+<li>Claripy ASTs 提供一个统一的方式和符号化的或者具体化的表达式交互。</li>
+</ul>
+<p>在claripy里面实现了bitvectors，这使得我们可以在变量上构建表达式符号树，对它们的值添加约束然后求解它们具体的值，这个操作依赖z3。Claripy ASTs抽象了claripy支持的不同数学结构之间的差异，实现了很多处理操作，同时还实现了求解器。求解器可以说是Claripy最主要的功能，Solvers暴露api和ASTs以不同的方式进行交互并且返回可用的值，同时其具备不同的求解器类型以满足不同的要求。通过Claripy Backends可以构建自定义求解器，但是这将非常硬核。</p>
+<h3 id="symbolic-execution-example"><a href="#symbolic-execution-example" class="headerlink" title="symbolic execution example"></a>symbolic execution example</h3><p>​        符号执行的一个特色就是状态复制，这也是路径爆炸问题的一个根本来源，状态复制指的是在符号执行的过程中如果state A遇到一个if else分支结构，那么就会复制出来两个状态对应不同的分支。</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/image-20230129155912108.44opsvkouco0.png"></p>
+<p>不同的state会添加不同的约束，然后最后求解的时候就是对这些约束进行求解。</p>
+<h3 id="CLE"><a href="#CLE" class="headerlink" title="CLE"></a>CLE</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/231591https://www.anquanke.com/post/id/231591">https://www.anquanke.com/post/id/231591https://www.anquanke.com/post/id/231591</a></p>
+<p>（上面的好像关了。。。）</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/angr/cle">https://github.com/angr/cle</a></p>
+</blockquote>
+<p>​        CLE主要表现为一个binary loader，但是其非常复杂，通过其可以将可执行文件和libraries文件载入到可用的地址空间，其复杂性来源于为不同平台，不同架构设计了统一的加载接口。这个里面最重要的其实就是VEX IR，VEX IR利用中间语言的方式抽象了机器代码的表示形式，同时消除不同体系结构之间的差异：</p>
+<ol>
+<li>寄存器名称。</li>
+<li>内存访问</li>
+<li>内存分段</li>
+<li>具有副作用的指令，比如push pop</li>
+</ol>
+<h3 id="analyses"><a href="#analyses" class="headerlink" title="analyses"></a>analyses</h3><p>​        这是angr的核心分析模块，它将所有的抽象结合在一起形成一个统一的控制接口Project，这将实现非常便利的访问符号执行，CFG恢复，data-flow分析等等。但是这需要大量的基础知识来帮助完成理解。</p>
+<p>​        在对于Angr的CFG进行理解的时候也不能完全按照ida的模式去理解:</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.angr.io/introductory-errata/faq#why-is-angrs-cfg-different-from-idas">https://docs.angr.io/introductory-errata/faq#why-is-angrs-cfg-different-from-idas</a></p>
+</blockquote>
+<p>id不会再function call的地方拆分block，但是angr会，所以angr每次的step可能会因为function call进入下一个基本块。IDA侧重于提供更好的分析体验，而angr则侧重于自动化分析，在自动化分析过程中一般不需要超图，因为自动化分析一般想要的是更细致的内容。如果一个类似jump的跳转返回到基本块中间，ida一般会拆分，但是angr不会，因为很多静态分析一般不需要，但是可以通过生成cfg的过程中传递<code>normalize=True</code> 参数来开启拆分功能。</p>
+<h3 id="Simulation-Managers"><a href="#Simulation-Managers" class="headerlink" title="Simulation Managers"></a>Simulation Managers</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/angr/angr-doc/blob/master/docs/pathgroups.md#simulation-managers">https://github.com/angr/angr-doc/blob/master/docs/pathgroups.md#simulation-managers</a></p>
+</blockquote>
+<p>​        angr分析模块里面最重要的control interface就是SimulationManager了，它可以同时控制状态组的符号执行，执行不同的搜索策略来探索程序的state空间。在符号执行的过程中，States会被组织成stashes，这使得分析人员可以step forward, filter, merge, and move around as you wish，甚至同时以不同的方式指向两种不同的stash集合并对其进行合并，默认操作的的stash是active。之前已经了解到angr可能存在很多states在stash里面，这些state可以通过move切换，move存在三个参数from_stash, to_stash, and filter_func用来对states进行filter和移动。</p>
+<pre><code class="python">&gt;&gt;&gt; simgr.move(from_stash='deadended', to_stash='authenticated', filter_func=lambda s: b'Welcome' in s.posix.dumps(1))
+&gt;&gt;&gt; simgr
+&lt;SimulationManager with 2 authenticated, 1 deadended&gt;
+</code></pre>
+<p>通过上述操作我们创建一个新的stash。同时必须记得，state其实就是一个list，可以通过索引访问或者迭代等其它方法访问，比如利用<code>one_</code> 或者 <code>mp_</code>前缀，但是mp前缀返回给你的是一个 <a target="_blank" rel="noopener" href="https://github.com/zardus/mulpyplexer">mulpyplexed</a> version of the stash.对于stash也存在一些特殊类型，如下：</p>
+<ol>
+<li>active和deadended。这两个比较容易理解，一个是当前使用的stash一个是里面包含的已经没办法继续执行的state。</li>
+<li>pruned,  state可以通过Options进行调整，每一个state存在一个state.options，它们控制着angr 执行引擎的行为，当options中添加LAZY_SOLVES的时候，states在运行的时候不会检查满意度（satisfiability 指的是solver在求解前的测试，看看约束或者其他信息能否满足求解需要，如果返回true，接下来进行求解），除非非常必要的情况下才会进行检查，当该state unsat的时候， 遍历所有的state层级去识别历史上什么时候最初变得unsat，所有的继承于最初unsat点的state都将被放入pruned 集合。</li>
+<li>save_unconstrained option如果被指定，所有被确定为无法约束的状态都会被放入这里。</li>
+<li>Unsat，如果save_unsat option被指定，那么所有的unsatisfiable state都被放在这个集合，大多数的原因可能是具备相互矛盾的约束。</li>
+<li>errored，如果state在执行过程中遇到raise error，该state被打包进入ErrorRecord object，这其中还包括raised error，然后放入errord集合.<ol>
+<li>You can get at the state as it was at the beginning of the execution tick that caused the error with <code>record.state</code>, you can see the error that was raised with <code>record.error</code>, and you can launch a debug shell at the site of the error with <code>record.debug()</code>. This is an invaluable debugging tool!</li>
+</ol>
+</li>
+</ol>
+<h3 id="Exploration-Techniques"><a href="#Exploration-Techniques" class="headerlink" title="Exploration Techniques"></a>Exploration Techniques</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/angr/angr-doc/blob/master/docs/pathgroups.md#exploration-techniques">https://github.com/angr/angr-doc/blob/master/docs/pathgroups.md#exploration-techniques</a></p>
+</blockquote>
+<p>​        探索技术也是angr 进行分析的核心功能，angr内建了很多探索技术，同时也允许分析人员自建探索技术。这主要用来帮助研究者自定义simulation manager的行为。在进行分析的过程中可能会遇到这种情况，对于某个state的某些部分，研究人员不想使用默认的 “step everything at once”策略，这种策略主要是利用了广度优先搜索的思想，但是有时候可能深度优先搜索更具效果，因此angr提供simgr.use_technique(tech)来让研究人员自定义探索行为。tech是一个ExplorationTechnique subclass，内建的探索技术在angr.exploration_techniques中，不过在自动化漏洞挖掘的经验中，很多情况下需要自建探索策略。这里给出一个脚本，是下面例子的一个官方解释，如果第一次接触angr，还不需要理解，只是为了提供一个demo让人更直观的体验这样的功能。</p>
+<pre><code class="python">#!/usr/bin/env python
+
+import angr
+import logging
+
+# This is the important logic that makes this problemt tractable
+class CheckUniqueness(angr.ExplorationTechnique):
+    def __init__(self):
+        self.unique_states = set()
+
+    def filter(self, simgr, state, filter_func=None):
+        vals = []
+        for reg in ('eax', 'ebx', 'ecx', 'edx', 'esi', 'edi', 'ebp', 'esp', 'eip'):
+            val = state.registers.load(reg)
+            if val.symbolic:
+                vals.append('symbolic')
+            else:
+                vals.append(state.solver.eval(val))
+
+        vals = tuple(vals)
+        if vals in self.unique_states:
+            return 'not_unique'
+
+        self.unique_states.add(vals)
+        return simgr.filter(state, filter_func=filter_func)
+
+
+class SearchForNull(angr.ExplorationTechnique):
+    def setup(self, simgr):
+        if 'found' not in simgr.stashes:
+            simgr.stashes['found'] = []
+
+    def filter(self, simgr, state, filter_func=None):
+        if state.addr == 0:
+            return 'found'
+        return simgr.filter(state, filter_func=filter_func)
+
+    def complete(self, simgr):
+        return len(simgr.found)
+
+def setup_project():
+    project = angr.Project('/root/development/angr-doc/examples/grub/crypto.mod', auto_load_libs=False)
+
+    # use libc functions as stand-ins for grub functions
+    memset = angr.SIM_PROCEDURES['libc']['memset']
+    getchar = angr.SIM_PROCEDURES['libc']['getchar']
+    do_nothing = angr.SIM_PROCEDURES['stubs']['ReturnUnconstrained']
+
+    project.hook_symbol('grub_memset', memset())
+    project.hook_symbol('grub_getkey', getchar())
+
+    # I don't know why, but grub_xputs is apparently not the function but a pointer to it?
+    xputs_pointer_addr = project.loader.find_symbol('grub_xputs').rebased_addr
+    xputs_func_addr = project.loader.extern_object.allocate()
+    # project.hook(xputs_func_addr, do_nothing())
+    project.loader.memory.pack_word(xputs_pointer_addr, xputs_func_addr)
+
+    return project
+
+def find_bug(project, function, args):
+    # set up the most generic state that could enter this function
+    func_addr = project.loader.find_symbol(function).rebased_addr
+    start_state = project.factory.call_state(func_addr, *args)
+    # start_state = project.factory.entry_state()
+
+    # create a new simulation manager to explore the state space of this function
+    simgr = project.factory.simulation_manager(start_state)
+    simgr.use_technique(SearchForNull())
+    simgr.use_technique(CheckUniqueness())
+    simgr.run()
+
+    print('we found a crashing input!')
+    print('crashing state:', simgr.found[0])
+    print('input:', repr(simgr.found[0].posix.dumps(0)))
+    return simgr.found[0].posix.dumps(0)
+
+def test():
+    assert find_bug(setup_project(), 'grub_password_get', (angr.PointerWrapper(b'\0'*64, buffer=True), 64)) == b'\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\r'
+
+if __name__ == '__main__':
+    logging.getLogger('angr.sim_manager').setLevel('DEBUG')
+    p = setup_project()
+    find_bug(p, 'grub_password_get', (angr.PointerWrapper('\0'*64, buffer=True), 64))
+</code></pre>
+<h3 id="Programming-SimProcedures"><a href="#Programming-SimProcedures" class="headerlink" title="Programming SimProcedures"></a>Programming SimProcedures</h3><p>​        SimProcedures主要是用来定义程序行为，如下：</p>
+<pre><code class="python">&gt;&gt;&gt; from angr import Project, SimProcedure
+&gt;&gt;&gt; project = Project('examples/fauxware/fauxware')
+
+&gt;&gt;&gt; class BugFree(SimProcedure):
+...    def run(self, argc, argv):
+...        print('Program running with argc=%s and argv=%s' % (argc, argv))
+...        return 0
+
+# this assumes we have symbols for the binary
+&gt;&gt;&gt; project.hook_symbol('main', BugFree())
+
+# Run a quick execution!
+&gt;&gt;&gt; simgr = project.factory.simulation_manager()
+&gt;&gt;&gt; simgr.run()  # step until no more active states
+Program running with argc=&lt;SAO &lt;BV64 0x0&gt;&gt; and argv=&lt;SAO &lt;BV64 0x7fffffffffeffa0&gt;&gt;
+&lt;SimulationManager with 1 deadended&gt;
+</code></pre>
+<p>该例子展示了对于main函数的hook，导致main函数不再执行，而是执行BugFree，这项功能的一个重要作用就是替换库函数：</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/image-20230130094438794.45v20way4sk0.png"></p>
+<h3 id="Execution-Engines"><a href="#Execution-Engines" class="headerlink" title="Execution Engines"></a>Execution Engines</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.angr.io/core-concepts/simulation">https://docs.angr.io/core-concepts/simulation</a></p>
+</blockquote>
+<p>​        对于二进制分析工作来说，必须要了解的就是执行引擎了，当二进制分析人员指定angr进行step执行等工作的时候，虽然是静态分析，但是也必须存在一些东西真的执行相关动作，执行引擎其实包含很多不同的引擎，一般来说会按照默认情况执行：</p>
+<ul>
+<li>The failure engine kicks in when the previous step took us to some uncontinuable state</li>
+<li>The syscall engine kicks in when the previous step ended in a syscall</li>
+<li>The hook engine kicks in when the current address is hooked</li>
+<li>The unicorn engine kicks in when the <code>UNICORN</code> state option is enabled and there is no symbolic data in the state</li>
+<li>The VEX engine kicks in as the final fallback.</li>
+</ul>
+<p>不过就日常使用，最关键的还是对SimSuccessors，breakpoints这些概念的理解，上面的这些引擎也是在<code>project.factory.successors(state, **kwargs)</code>的驱动下进行的，对于引擎的step, run等执行操作，也非常依赖successors，如下：</p>
+<pre><code class="python">    def step_state(self, state, successor_func=None, error_list=None, **run_args):
+        """
+        Don't use this function manually - it is meant to interface with exploration techniques.
+        """
+        error_list = error_list if error_list is not None else self._errored
+        try:
+            successors = self.successors(state, successor_func=successor_func, **run_args)
+            stashes = {None: successors.flat_successors,
+                       'unsat': successors.unsat_successors,
+                       'unconstrained': successors.unconstrained_successors}
+
+        except (SimUnsatError, claripy.UnsatError) as e:
+            if LAZY_SOLVES not in state.options:
+                error_list.append(ErrorRecord(state, e, sys.exc_info()[2]))
+                stashes = {}
+            else:
+                stashes = {'pruned': [state]}
+
+            if self._hierarchy:
+                self._hierarchy.unreachable_state(state)
+                self._hierarchy.simplify()
+
+        except claripy.ClaripySolverInterruptError as e:
+            resource_event(state, e)
+            stashes = {'interrupted': [state]}
+
+        except tuple(self._resilience) as e:
+            error_list.append(ErrorRecord(state, e, sys.exc_info()[2]))
+            stashes = {}
+
+        return stashes
+</code></pre>
+<p>上述的这些step操作返回的都是SimSuccessors object，它的核心作用在于给successor states打标签，其实就是对下一步的操作进行标记，然后分类存储。为了理解不同类型的successor states，你必须对符号约束有深刻的理解，官网讲的也挺详细的，我就不赘述了，初学者见到guard这个概念可能会懵，但是简单来说这其实就是用来标记Angr block之间的跳转关系的。</p>
+<h3 id="Symbolic-memory-addressing"><a href="#Symbolic-memory-addressing" class="headerlink" title="Symbolic memory addressing"></a>Symbolic memory addressing</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/angr/angr-doc/blob/master/docs/concretization_strategies.md">https://github.com/angr/angr-doc/blob/master/docs/concretization_strategies.md</a></p>
+</blockquote>
+<p>​        为了了解符号执行，必须知道Symbolic memory addressing，angr支持Symbolic memory addressing，这意味着内存的offset可以被符号化，同时当进行一个写操作的时候会将符号地址具体化，当然符号化的过程也是可以通过策略配置的。在策略方面也是存在写策略和读策略state.memory.read_strategies，state.memory.write_strategies，这些策略会按顺序调用，直到某个策略可以将符号地址具体化，比较关键的一点在于：</p>
+<p>​         By setting your own concretization strategies (or through the use of SimInspect <code>address_concretization</code> breakpoints, described above), you can change the way angr resolves symbolic addresses.</p>
+<p>不过看文档，在进行读操作的时候也存在具体化策略。</p>
+<h3 id="Solver-Engine"><a href="#Solver-Engine" class="headerlink" title="Solver Engine"></a>Solver Engine</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.angr.io/core-concepts/solver">https://docs.angr.io/core-concepts/solver</a></p>
+</blockquote>
+<p>​        Angr的强大不仅在于它作为一个模拟器，更在于它强大的符号执行能力，这一能力的基础就来源于Solver Engine，angr的symbolic variables表示为一个符号，just a name，但是在用符号变量执行算术操作的时候会生成一个操作数，类似编译原理里面的AST，AST可以被转换为SMT solver的约束，经典的SMT solver就是z3。所以为了更好的使用angr，必须深刻了解Solver Engine。</p>
+<pre><code class="shell"># Create a bitvector symbol named "x" of length 64 bits
+&gt;&gt;&gt; x = state.solver.BVS("x", 64)
+&gt;&gt;&gt; x
+&lt;BV64 x_9_64&gt;
+&gt;&gt;&gt; y = state.solver.BVS("y", 64)
+&gt;&gt;&gt; y
+&lt;BV64 y_10_64&gt;
+</code></pre>
+<p>x, y 就是一个符号变量，使用它们进行操作你不会直接得到一个结果，而是得到一个AST。</p>
+<pre><code class="shell">&gt;&gt;&gt; x + one
+&lt;BV64 x_9_64 + 0x1&gt;
+
+&gt;&gt;&gt; (x + one) / 2
+&lt;BV64 (x_9_64 + 0x1) / 0x2&gt;
+
+&gt;&gt;&gt; x - y
+&lt;BV64 x_9_64 - y_10_64&gt;
+</code></pre>
+<p>let’s learn how to process ASTs.每一个AST都有一个.op和一个.args，op代表一个操作的string name，args则代表一个操作的input参数，Unless the op is <code>BVV</code> or <code>BVS</code> (or a few others…), the args are all other ASTs, the tree eventually terminating with BVVs or BVSs. （差不多意思就是数都以变量结尾）</p>
+<pre><code class="shell">&gt;&gt;&gt; tree = (x + 1) / (y + 2)
+&gt;&gt;&gt; tree
+&lt;BV64 (x_9_64 + 0x1) / (y_10_64 + 0x2)&gt;
+&gt;&gt;&gt; tree.op
+'__floordiv__'
+&gt;&gt;&gt; tree.args
+(&lt;BV64 x_9_64 + 0x1&gt;, &lt;BV64 y_10_64 + 0x2&gt;)
+&gt;&gt;&gt; tree.args[0].op
+'__add__'
+&gt;&gt;&gt; tree.args[0].args
+(&lt;BV64 x_9_64&gt;, &lt;BV64 0x1&gt;)
+&gt;&gt;&gt; tree.args[0].args[1].op
+'BVV'
+&gt;&gt;&gt; tree.args[0].args[1].args
+(1, 64)
+</code></pre>
+<p>除了符号变量之外还有一个重要的概念就是符号约束。任何两个AST之间执行比较操作将产生一个新的AST，不是一个bitvector，而是一个符号化的布尔值（symbolic boolean）.</p>
+<pre><code class="shell">&gt;&gt;&gt; x == 1
+&lt;Bool x_9_64 == 0x1&gt;
+&gt;&gt;&gt; x == one
+&lt;Bool x_9_64 == 0x1&gt;
+&gt;&gt;&gt; x &gt; 2
+&lt;Bool x_9_64 &gt; 0x2&gt;
+&gt;&gt;&gt; x + y == one_hundred + 5
+&lt;Bool (x_9_64 + y_10_64) == 0x69&gt;
+&gt;&gt;&gt; one_hundred &gt; 5
+&lt;Bool True&gt;
+&gt;&gt;&gt; one_hundred &gt; -5
+&lt;Bool False&gt;
+</code></pre>
+<p>必须记住的一点是比较操作默认是无符号的，因为-5代表的是&lt;BV64 0xfffffffffffffffb&gt;，因为-5实际上小于one_hunderd，但是因为是无符号操作，所以得到的结果才是False。为了使用有符号操作，必须<code>one_hundred.SGT(-5)</code> (that’s “signed greater-than”)，angr在比较中的一些操作有自己的独特定义，可以看文档。</p>
+<p>​        同时必须记住不能将两个变量之间的比较作为if或者while语句的条件，因为结果可能不会是一个精确的值，应该使用solver.is_true  and  solver.is_false，which test for concrete truthyness/falsiness without performing a constraint solve.</p>
+<pre><code class="shell">&gt;&gt;&gt; yes = one == 1
+&gt;&gt;&gt; no = one == 2
+&gt;&gt;&gt; maybe = x == y
+&gt;&gt;&gt; state.solver.is_true(yes)
+True
+&gt;&gt;&gt; state.solver.is_false(yes)
+False
+&gt;&gt;&gt; state.solver.is_true(no)
+False
+&gt;&gt;&gt; state.solver.is_false(no)
+True
+&gt;&gt;&gt; state.solver.is_true(maybe)
+False
+&gt;&gt;&gt; state.solver.is_false(maybe)
+False
+</code></pre>
+<p>接下来一个比较重要的概念就是约束求解Constraint Solving，你可以将所有符号布尔值作为关于符号变量的有效值的断言，并将其作为约束加入到state，然后可以对符号表达式进行求解来获取一个合适的具体值。</p>
+<pre><code class="python">&gt;&gt;&gt; state.solver.add(x &gt; y)
+&gt;&gt;&gt; state.solver.add(y &gt; 2)
+&gt;&gt;&gt; state.solver.add(10 &gt; x)
+&gt;&gt;&gt; state.solver.eval(x)
+4
+</code></pre>
+<p>值得注意的事如果state.solver.eval(y)，则结果也会是4，因为如果两次查询之间没有添加任何约束，两次查询的结果会相同。（文档这么说，但是我觉得不一定）</p>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/image-20230131115114039.2z1wbcycrwy0.png"></p>
+<p>同时Angr还支持浮点数和很多Solving methods，需要的时候可以参考上面的文档链接。</p>
+<h3 id="Vex-IR-infro"><a href="#Vex-IR-infro" class="headerlink" title="Vex IR infro"></a>Vex IR infro</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/angr/angr-doc/blob/master/docs/paths.md">https://github.com/angr/angr-doc/blob/master/docs/paths.md</a></p>
+</blockquote>
+<p><img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/image-20230204162114487.1qf5tzubisgw.png"></p>
+<h3 id="Working-with-Data-and-Conventions"><a href="#Working-with-Data-and-Conventions" class="headerlink" title="Working with Data and Conventions"></a>Working with Data and Conventions</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.angr.io/advanced-topics/structured_data">https://docs.angr.io/advanced-topics/structured_data</a></p>
+</blockquote>
+<p>​        angr有自己的类型系统，这些SimType可以在angr.types里面发现，不同的类型在不同的架构里面具备不同的size，可以通过ty.with_arch(arch)来查看某个类型对应的指定架构的信息，同时angr有一个wrapper叫做pycparser，是一个C解析器，它提供很多强大的功能。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.angr.io/advanced-topics/structured_data#working-with-calling-conventions">https://docs.angr.io/advanced-topics/structured_data#working-with-calling-conventions</a></p>
+</blockquote>
+<p>​        angr有自己的调用约定叫做SimCC，可以通过p.factory.cc(..)来创建实例，一般来说，angr会根据客户机的系统和架构自己确定调用约定，如果无法确定，可以在angr.calling_conventions里面找到一个进行手工指定。详细细节可以参考链接，这里主要说一下callable，因为它经常用于漏洞挖掘工作。如果想定义一个callable，必须有函数地址和调用约定以及参数和返回值，像之前说的调用约定可以angr自动判断，那么参数和返回值必须人工设定：</p>
+<pre><code class="python">charstar = angr.sim_type_.parse_type("char *")
+prototype = angr.sim_type.SimTypeFunction((charstar,), angr.sim_type.SimTypeInt(False))
+</code></pre>
+<p>上面的prototype就是一个参数和返回值的类型，然后通过下面：</p>
+<pre><code class="python">cc = p.factory.cc(func_ty=prototype)
+</code></pre>
+<p>的方式进行调用约定的创建，然后通过如下：</p>
+<pre><code class="python">check_func = p.factory.callable(find_func.addr, concrete_only=False, cc=cc)
+</code></pre>
+<p>的方式创建callable，这里的concrete_only是False，因为这样才能开启符号化的参数，不过目前默认就是关闭的，可以看api doc注释：</p>
+<blockquote>
+<ul>
+<li>concrete_only– Throw an exception if the execution splits into multiple states</li>
+</ul>
+</blockquote>
+<p>下面是使用具体值和符号变量的两种方式：</p>
+<pre><code class="python">my_args = ["abcd", "96", "87", "55", "qqqq"]
+
+print("[+] Running angr callable with concrete arguments")
+for arg in my_args:
+    ret_val = check_func(arg)
+    stdout = check_func.result_state.posix.dumps(1)
+
+    print("Input  : {}".format(arg))
+    print("Stdout : {}".format(stdout))
+</code></pre>
+<p>符号变量：</p>
+<pre><code class="python">#Does not return
+my_sym_arg = claripy.BVS('my_arg', 10*8) #10 byte long str
+ret_val = check_func(my_sym_arg)
+stdout = check_func.result_state.posix.dumps(1)
+print("Stdout : {}".format(stdout))
+</code></pre>
+<p>事实上，callable对具体值的分析和跟踪更有效果，如果使用符号化变量的话，直到所有的路径全部执行完毕才会返回结果，这很可能招致路径爆炸问题进而耗费完所有的内存。为了解决这个问题可以使用call state，这样的话，angr会初始化一个状态来调用单个函数，对于callable来说，它会创建一个状态然后运行直到所有路径遍历，但是call sate可以使用simulation manager提供的探索func和step运行功能来缓解callable的问题。</p>
+<pre><code class="python">my_sym_arg = claripy.BVS('my_arg', 10*8) #10 byte long str
+#Same calling convention from earlier
+state = p.factory.call_state(find_func.addr, my_sym_arg, cc=cc)
+simgr = p.factory.simgr(state)
+simgr.explore(find=crack_me_good_addr)
+found_state = simgr.found[0]
+my_input = found_state.se.eval(my_sym_arg, cast_to=bytes).decode("utf-8", "ignore")
+print("One solution : {}".format(my_input))
+</code></pre>
+<p>不过对于一个simulation manager来说，在探索的时候可以加入step_func来实现内存漏洞的挖掘。</p>
+<pre><code class="python">simgr.explore(find=crack_me_good_addr, step_func=check_mem_corruption)
+</code></pre>
+<h2 id="分析例子"><a href="#分析例子" class="headerlink" title="分析例子"></a>分析例子</h2><blockquote>
+<p>例子都在angr官方的examples里面，我就不多说内容了，只写结论，想要了解还是自己动手操作一波。</p>
+</blockquote>
+<h3 id="strcpy-find"><a href="#strcpy-find" class="headerlink" title="strcpy_find"></a>strcpy_find</h3><blockquote>
+<p>该例子主要是为了帮助学习寻找内存错误问题。</p>
+</blockquote>
+<p>​        该代码例子中出现：</p>
+<pre><code class="python">cfg = project.analyses.CFG(fail_fast=True)
+</code></pre>
+<p>这将使得angr无视错误继续向下处理，一定程度上加快angr的分析速度。同时该例子其实利用了程序的特点，从argv进行参数的输入，然后利用对于strcpy参数的分析来判断strcpy的参数是否可控，进而判断是否具备发生漏洞的潜在可能。</p>
+<p>​        这种思想的潜在推广就是对所有的内存处理函数进行推广，然后判断漏洞是否产生。</p>
+<h3 id="CADET"><a href="#CADET" class="headerlink" title="CADET"></a>CADET</h3><p>​        这个是一个对于栈溢出的检测，这里得到了关于unconstrained state最直接的解释：</p>
+<pre><code class="C">    #overwriting the return pointer with user-controllable data will generate
+    #an "unconstrained" state: the symbolic executor does not know how to proceed
+    #since the instruction pointer can assume any value
+
+    #by default angr discards unconstrained paths, so we need to specify the  
+    #save_unconstrained option
+</code></pre>
+<p>但是angr默认情况下会丢弃unconstained path，因此在启动的时候需要进行设置：</p>
+<pre><code class="python">sm = project.factory.simulation_manager(save_unconstrained=True)
+</code></pre>
+<p>但是这个例子存在一个问题就是，x86版本的例子直接通过step()是没办法直接获取到unconstrained状态的。其他的就没啥很特别的了。</p>
+<h3 id="grub"><a href="#grub" class="headerlink" title="grub"></a>grub</h3><p>​        这个用到了特殊的库，先看一个文档提示：</p>
+<blockquote>
+<p>if <code>auto_load_libs</code> is <code>False</code>, then external functions are unresolved, and Project will resolve them to a generic “stub” SimProcedure called <code>ReturnUnconstrained</code>. It does what its name says: it returns a unique unconstrained symbolic value each time it is called.</p>
+</blockquote>
+<p>在准备阶段，作者做的很好：</p>
+<pre><code class="python">    project = angr.Project('crypto.mod', auto_load_libs=False)
+
+    # use libc functions as stand-ins for grub functions
+    memset = angr.SIM_PROCEDURES['libc']['memset']
+    getchar = angr.SIM_PROCEDURES['libc']['getchar']
+    do_nothing = angr.SIM_PROCEDURES['stubs']['ReturnUnconstrained']
+
+    project.hook_symbol('grub_memset', memset())
+    project.hook_symbol('grub_getkey', getchar())
+
+    # I don't know why, but grub_xputs is apparently not the function but a pointer to it?
+    xputs_pointer_addr = project.loader.find_symbol('grub_xputs').rebased_addr
+    xputs_func_addr = project.loader.extern_object.allocate()
+    project.hook(xputs_func_addr, do_nothing())
+    project.loader.memory.pack_word(xputs_pointer_addr, xputs_func_addr)
+</code></pre>
+<p>​        这里作者直接对目标函数进行了hook使得他们在模拟执行的时候可以正常运行，然后自写了angr的探索策略，通过直接对目标函数进行模拟的方法来进行漏洞挖掘。最后调用的是find_bug来解决问题，这里特殊的是利用了call_state来初始化状态。同时采用了use_technique的方法自写探索策略，他写的探索策略有一些优点，比如过滤了大量的重复状态，这极大的节省了符号执行过程中的性能消耗。</p>
+<p>崩溃结果：input: b’\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\r’</p>
+<p>原因：</p>
+<blockquote>
+<p>根据你提供的输入，我们可以看到你输入了12个退格符(<code>\x08</code>)和一个回车符(<code>\r</code>)。在<code>grub_password_get</code>函数中，当输入的字符是退格符时，会将输入的指针回退一个字节（即向左移动一个字符）。因此，这个输入实际上是将初始缓冲区中的前11个字符删除掉，并在最后输入了一个回车符，表示输入结束。</p>
+<p>在angr执行时，它尝试通过符号执行模拟这个函数的执行，它会在第一个循环迭代中执行<code>grub_getkey()</code>并获得输入的第一个字符。由于输入的第一个字符是退格符，它会将当前输入指针向左移动一个字符，并继续等待下一个输入字符。在第二次迭代中，angr又执行了<code>grub_getkey()</code>，但是由于输入指针已经被移动了一个字符，这个时候输入指针已经指向了地址0处。因此，在angr执行到地址0处时，会引发<code>SimUnsatError</code>异常，表示出现了不可满足的情况。这通常是由于符号执行过程中出现了不一致或无法解决的约束条件，导致无法继续进行符号执行。</p>
+</blockquote>
+<h3 id="Insomnihack-Simple-AEG"><a href="#Insomnihack-Simple-AEG" class="headerlink" title="Insomnihack Simple AEG"></a>Insomnihack Simple AEG</h3><p>​        这里面的demo是一个很简单的缓冲区溢出的漏洞（堆溢出），作者采用的方法是直接不断的对simgr 进行step()，直到目标出现不可约束状态，在找到不可约束状态之后对其是否可以符号化进行判断：</p>
+<pre><code class="python">def fully_symbolic(state, variable):
+    '''
+    check if a symbolic variable is completely symbolic
+    '''
+
+    for i in range(state.arch.bits):
+        if not state.solver.symbolic(variable[i]):
+            return False
+
+    return True
+</code></pre>
+<p>这样可以证明，目标状态的跳转地址是否可控，以此来判断目标是一个可控的漏洞，接下来就是判断能不能在这个状态里面找到用户可控的缓冲区：</p>
+<pre><code class="python">def find_symbolic_buffer(state, length):
+    '''
+    dumb implementation of find_symbolic_buffer, looks for a buffer in memory under the user's
+    control
+    '''
+
+    # get all the symbolic bytes from stdin
+    stdin = state.posix.stdin
+
+    sym_addrs = [ ]
+    for _, symbol in state.solver.get_variables('file', stdin.ident):
+        sym_addrs.extend(state.memory.addrs_for_name(next(iter(symbol.variables))))
+
+    for addr in sym_addrs:
+        if check_continuity(addr, sym_addrs, length):
+            yield addr
+</code></pre>
+<p>然后利用check_continuity来判断内存是否足够容纳shellcode:</p>
+<pre><code class="python">def check_continuity(address, addresses, length):
+    '''
+    dumb way of checking if the region at 'address' contains 'length' amount of controlled
+    memory.
+    '''
+
+    for i in range(length):
+        if not address + i in addresses:
+            return False
+
+    return True
+</code></pre>
+<p>不过，这里的话，我感觉直接用shellcode的最大长度判断不就可以了吗？不理解为啥要从最小长度开始遍历。不过这个不是重点，接下来找到地址之后对状态添加额外约束：</p>
+<pre><code class="python">        l.info("found symbolic buffer at %#x", buf_addr)
+        memory = ep.memory.load(buf_addr, len(shellcode))
+        sc_bvv = ep.solver.BVV(shellcode)
+
+        # check satisfiability of placing shellcode into the address
+        if ep.satisfiable(extra_constraints=(memory == sc_bvv,ep.regs.pc == buf_addr)):
+            l.info("found buffer for shellcode, completing exploit")
+            ep.add_constraints(memory == sc_bvv)
+            l.info("pointing pc towards shellcode buffer")
+            ep.add_constraints(ep.regs.pc == buf_addr)
+</code></pre>
+<p>如果状态可以满足这些约束，那么就将这些约束添加到状态里面进行求解，直接拿到了exp。但是也有一些缺陷，单单从是否跑出unconstrained state并且判断每一个bit是否可以符号化来判断是否存在可控的内存问题非常消耗性能。同时，还有一个非常致命的缺陷，那就是如果在符号执行的过程中很可能存在没有触发漏洞的情况。经典的例子就是，目标的缓冲区和目标写入的大小相近。这表明其实利用符号执行来直接进行漏洞挖掘其实非常困难。</p>
+<h4 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h4><pre><code class="python">def check_mem_corruption(simgr):
+    if len(simgr.unconstrained):
+        for path in simgr.unconstrained:
+            if path.satisfiable(extra_constraints=[path.regs.pc == b"CCCC"]):
+                path.add_constraints(path.regs.pc == b"CCCC")
+                if path.satisfiable():
+                    simgr.stashes['mem_corrupt'].append(path)
+                simgr.stashes['unconstrained'].remove(path)
+                simgr.drop(stash='active')
+    return simgr
+</code></pre>
+<p>相比于之前的逐比特符号化判断+地址是否可控的形式，这样显然更加直接，但是缺点在于没有直接把shellcode考虑进去，不过加入shellcode的判断也确实太有针对性，不适合广泛利用，下面是一个demo：</p>
+<pre><code class="python">import angr, argparse, IPython
+
+def check_mem_corruption(simgr):
+    if len(simgr.unconstrained):
+        for path in simgr.unconstrained:
+            if path.satisfiable(extra_constraints=[path.regs.pc == b"CCCC"]):
+                path.add_constraints(path.regs.pc == b"CCCC")
+                if path.satisfiable():
+                    simgr.stashes['mem_corrupt'].append(path)
+                simgr.stashes['unconstrained'].remove(path)
+                simgr.drop(stash='active')
+    return simgr
+
+def main():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("Binary")
+    parser.add_argument("Start_Addr", type=int)
+
+    args = parser.parse_args()
+
+    p = angr.Project(args.Binary)
+    state = p.factory.blank_state(addr=args.Start_Addr)
+    
+    simgr = p.factory.simgr(state, save_unconstrained=True)
+    simgr.stashes['mem_corrupt']  = []
+    
+    simgr.explore(step_func=check_mem_corruption)
+
+    IPython.embed()
+    
+if __name__ == "__main__":
+    main()
+</code></pre>
+<h3 id="Automatic-rop-chain-generation"><a href="#Automatic-rop-chain-generation" class="headerlink" title="Automatic rop chain generation"></a>Automatic rop chain generation</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/ChrisTheCoolHut/Auto_rop_chain_generation">https://github.com/ChrisTheCoolHut/Auto_rop_chain_generation</a></p>
+</blockquote>
+<p>​        之前大多讲的是buffer over flow的内存问题的发现，但是rop chain的生成也十分的重要，不过比起问题的发现，这一块的内容可能还更为复杂一点，对于rop chain的构建，基本的步骤如下：</p>
+<ol>
+<li>gadget finding</li>
+<li>gadget chaining</li>
+<li>Constraint applying</li>
+<li>state emulation</li>
+</ol>
+<p>如下：</p>
+<pre><code class="python">def get_rop_chain(state):
+
+    """
+    We're using a copy of the original state since we are applying
+    constraints one at a time and stepping through the state.
+    """
+    state_copy = state.copy()
+
+    binary_name = state.project.filename
+
+    pwntools_elf = ELF(binary_name)
+
+    """
+    Here we're getting the ropchain bytes and rop chain object
+    that has the individual gadget addresses and values
+    """
+    rop_object, rop_chain = generate_standard_rop_chain(binary_name)
+
+    """
+    Here we're running through the program state and setting
+    each gadget.
+    """
+    user_input, new_state = do_64bit_rop_with_stepping(
+        pwntools_elf, rop_object, rop_chain, state_copy
+    )
+
+    """
+    With our constraints set, our binary's STDIN
+    should now contain our entire overflow + ropchain!
+    """
+    input_bytes = new_state.posix.dumps(0)
+
+    return input_bytes
+</code></pre>
+<p>经常打CTF的同学估计找到，对于rop chain的寻找和构建都可以利用<a target="_blank" rel="noopener" href="https://docs.pwntools.com/en/stable/rop/rop.html">pwntools</a>的强大功能：</p>
+<pre><code class="python">def generate_standard_rop_chain(binary_path):
+    context.binary = binary_path
+    elf = ELF(binary_path)
+    rop = ROP(elf)
+
+    # These are strings we want to call
+    strings = [b"/bin/sh\x00", b"/bin/bash\x00"]
+    functions = ["system", "execve"]
+
+    """
+    The two main components we need in our rop chain
+    is either a system() or exec() call and a refernce
+    to the string we want to call (/bin/sh)
+    """
+    ret_func = None
+    ret_string = None
+
+    """
+    angr can find these functions using the loader reference
+    p.loader, however we'll need to use pwntools for the rop
+    chain generation anyways, so we'll just stick with pwntools
+    """
+    for function in functions:
+        if function in elf.plt:
+            ret_func = elf.plt[function]
+            break
+        elif function in elf.symbols:
+            ret_func = elf.symbols[function]
+            break
+
+    # Find the string we want to pass it
+    for string in strings:
+        str_occurences = list(elf.search(string))
+        if str_occurences:
+            ret_string = str_occurences[0]
+            break
+
+    if not ret_func:
+        raise RuntimeError("Cannot find symbol to return to")
+    if not ret_string:
+        raise RuntimeError("Cannot find string to pass to system or exec call")
+
+    # movabs fix
+    """
+    During amd64 ropchaining, there is sometimes a stack alignment
+    issue that folks call the `movabs` issue inside of a system()
+    call.Adding a single rop-ret gadget here fixes that.
+    """
+    rop.raw(rop.ret.address)
+
+    """
+    The pwntools interface is nice enough to enable us to construct
+    our chain with a rop.call function here.
+    """
+    rop.call(ret_func, [ret_string])
+
+    log.info("rop chain gadgets and values:\n{}".format(rop.dump()))
+
+    """
+    We need both the generated chain and gadget addresses for when
+    we contrain theprogram state to execute and constrain this chain,
+    so we pass back both the rop tools refernce along with the chain.
+    """
+    return rop, rop.build()
+</code></pre>
+<p>通过上述的方法可以实现对于rop chain的创建，但是还需要对其进行约束处理和模拟验证。</p>
+<p>​        当我们的rop chain使用一个目标中存在的func的时候会有一个问题，因为angr在模拟执行的时候使用的是SimProcedures来提升速度和精确度而不是直接使用 real func，当模拟的过程中遇到procedures那么rop调用链就会被打破，因为没有跳转到real func上面，所以当我们步入procedures的时候直接设置pc指针到对应的real func。</p>
+<pre><code class="python">if new_state.satisfiable(extra_constraints=([new_state.regs.pc == gadget])):
+    """
+    For the actual ROP gadgets, we're stepping through them
+    until we hit an unconstrained value - We did a `ret` back
+    onto the symbolic stack.
+    This process is slower than just setting the whole stack
+    to the chain, but in testing it seems to work more reliably
+    """
+    log.info("Setting PC to {}".format(hex(gadget)))
+    new_state.add_constraints(new_state.regs.pc == gadget)
+
+    """
+    Since we're emulating the program's execution with angr we
+    will run into an issue when executing any symbols. Where a
+    SimProcedure will get executed instead of the real function,
+    which then gives us the wrong constraints/execution for our
+    rop_chain
+    """
+    if gadget in elf_symbol_addrs:
+        log.info(
+            "gadget is hooked symbol, contraining to real address, but calling SimProc"
+        )
+        symbol = [x for x in elf.symbols.items() if gadget == x[1]][0]
+        p = new_state.project
+        new_state.regs.pc = p.loader.find_symbol(symbol[0]).rebased_addr
+
+    """
+    There is no point in letting our last gadget run, we have all
+    the constraints on our input to trigger the leak
+    """
+    if i == len(rop_chain) - 1:
+        break
+
+    """
+    Since we're stepping through a ROP chain, VEX IR wants to
+    try and lift the whole block and emulate a whole block step
+    this will break what we're trying to do, so we need to
+    tell it to try and emulate single-step execution as closely
+    as we can with the opt_level=0    
+    """
+    rop_simgr = new_state.project.factory.simgr(new_state)
+    rop_simgr.explore(opt_level=0)
+    new_state = rop_simgr.unconstrained[0]
+</code></pre>
+<p>但是在rop chain里面存在很多对于堆栈和寄存器的数据设置，因此这个时候需要根据rop chain的内容设置期待的约束：</p>
+<pre><code class="python">"""
+Case 2: We're setting a register to an expected popped value
+
+Usually for 64bit rop chains, we're passing values into
+the argument registers like RDI.
+"""
+next_reg = curr_rop.regs.pop()
+log.debug("Setting register : {}".format(next_reg))
+
+gadget_msg = gadget
+if isinstance(gadget, int):
+    gadget_msg = hex(gadget)
+
+state_reg = getattr(new_state.regs, next_reg)
+if state_reg.symbolic and new_state.satisfiable(
+    extra_constraints=([state_reg == gadget])
+):
+
+    log.info("Setting {} to {}".format(next_reg, gadget_msg))
+
+    new_state.add_constraints(state_reg == gadget)
+else:
+    log.error("unsatisfied on {} -&gt; {}".format(next_reg, gadget_msg))
+    break
+
+if len(curr_rop.regs) == 0:
+    curr_rop = None
+</code></pre>
+<h3 id="angr符号执行用于漏洞挖掘的推论"><a href="#angr符号执行用于漏洞挖掘的推论" class="headerlink" title="angr符号执行用于漏洞挖掘的推论"></a>angr符号执行用于漏洞挖掘的推论</h3><blockquote>
+<p>我也是菜逼，如果大佬们有啥好办法，欢迎一起讨论一起进步。</p>
+</blockquote>
+<ol>
+<li>如果只是单单利用step()以期望产生无法约束的状态来进行漏洞挖掘效果非常不稳定，问题的来源可能是在符号执行的过程中，产生的约束导致state异常存在不稳定的情况，同样的约束内有的求解方案可能就不会导致异常，这就可能导致漏洞错过，但是具体原因我还不清楚，后面会继续探索。</li>
+<li>还有一种方法是利用自定义的探索策略，不过好像并不能很好的解决上述问题。</li>
+<li>在实战漏洞挖掘中，笔者在IOT领域进行了实验，angr在整个符号传递过程中，极其容易受到硬件相关函数影响导致符号传播中断，目前也没有很好的方案来解决这个问题，笔者尝试利用推测下一阶段跳转的方法绕过硬件相关函数，但是这还是会导致大范围的不稳定状态出现以及数据流中断问题，如果利用SimProcess来进行angr hook的话，这会导致巨大的工作量，而且还要极大工作量的更新和维护，基本上与自动化的初衷背离。</li>
+</ol>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls"
+                data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+            <ul id="audio-list" style="display:none">
+                
+                
+                <li title='0' data-url='/statics/chengdu.mp3'></li>
+                
+                    
+            </ul>
+            
+                        
+            
+            
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d=''
+        data-p='https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token'
+    >Comments</div>
+
+
+            
+            
+        </div>
+        <div class="sidebar">
+            <div class="box animated fadeInRight">
+                <div class="subbox">
+                    <img src="https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20220720/clocklogo.jpg" height=300 width=300></img>
+                    <p>Clock</p>
+                    <span>Love pwn and exploit,Passionate about vulnerability mining and security research.</span>
+                    <dl>
+                        
+                        
+                            
+                                <dd>
+                                    <link rel="stylesheet" type="text/css" href="">
+                                    <a href="function link() { [native code] }" target="_blank"><span
+                                    class=" iconfont "></span></a>
+                                </dd>
+                            
+                            
+                            
+                        
+                    </dl>
+                </div>
+                <ul>
+                    <li><a href="/">24 <p>Articles</p></a></li>
+                    <li><a href="/categories">11 <p>Categories</p></a></li>
+                    <li><a href="/tags">13 <p>Tags</p></a></li>
+                </ul>
+            </div>
+            
+            
+            
+            <div class="box sticky animated fadeInRight faster">
+                <div id="toc" class="subbox">
+                    <h4>Contents</h4>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Angr-Taint-Analysis"><span class="toc-number">1.</span> <span class="toc-text">Angr Taint Analysis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#angr"><span class="toc-number">1.1.</span> <span class="toc-text">angr</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vex"><span class="toc-number">1.1.1.</span> <span class="toc-text">vex</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#claripy"><span class="toc-number">1.1.2.</span> <span class="toc-text">claripy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#symbolic-execution-example"><span class="toc-number">1.1.3.</span> <span class="toc-text">symbolic execution example</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CLE"><span class="toc-number">1.1.4.</span> <span class="toc-text">CLE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#analyses"><span class="toc-number">1.1.5.</span> <span class="toc-text">analyses</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Simulation-Managers"><span class="toc-number">1.1.6.</span> <span class="toc-text">Simulation Managers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Exploration-Techniques"><span class="toc-number">1.1.7.</span> <span class="toc-text">Exploration Techniques</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Programming-SimProcedures"><span class="toc-number">1.1.8.</span> <span class="toc-text">Programming SimProcedures</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Execution-Engines"><span class="toc-number">1.1.9.</span> <span class="toc-text">Execution Engines</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Symbolic-memory-addressing"><span class="toc-number">1.1.10.</span> <span class="toc-text">Symbolic memory addressing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solver-Engine"><span class="toc-number">1.1.11.</span> <span class="toc-text">Solver Engine</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vex-IR-infro"><span class="toc-number">1.1.12.</span> <span class="toc-text">Vex IR infro</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Working-with-Data-and-Conventions"><span class="toc-number">1.1.13.</span> <span class="toc-text">Working with Data and Conventions</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E4%BE%8B%E5%AD%90"><span class="toc-number">1.2.</span> <span class="toc-text">分析例子</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#strcpy-find"><span class="toc-number">1.2.1.</span> <span class="toc-text">strcpy_find</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CADET"><span class="toc-number">1.2.2.</span> <span class="toc-text">CADET</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#grub"><span class="toc-number">1.2.3.</span> <span class="toc-text">grub</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Insomnihack-Simple-AEG"><span class="toc-number">1.2.4.</span> <span class="toc-text">Insomnihack Simple AEG</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Automatic-rop-chain-generation"><span class="toc-number">1.2.5.</span> <span class="toc-text">Automatic rop chain generation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#angr%E7%AC%A6%E5%8F%B7%E6%89%A7%E8%A1%8C%E7%94%A8%E4%BA%8E%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E7%9A%84%E6%8E%A8%E8%AE%BA"><span class="toc-number">1.2.6.</span> <span class="toc-text">angr符号执行用于漏洞挖掘的推论</span></a></li></ol></li></ol></li></ol>
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+    <div id="back-to-top" class="animated fadeIn faster">
+        <div class="flow"></div>
+        <span class="percentage animated fadeIn faster">0%</span>
+        <span class="iconfont icon-top02 animated fadeIn faster"></span>
+    </div>
+</body>
+<footer>
+    <p class="copyright" id="copyright">
+        &copy; 2023
+        <span class="gradient-text">
+            RainSec
+        </span>.
+        Powered by <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a>
+        Theme
+        <span class="gradient-text">
+            <a href="https://github.com/TriDiamond/hexo-theme-obsidian" title="Obsidian" target="_blank" rel="noopener">Obsidian</a>
+        </span>
+        <small><a href="https://github.com/TriDiamond/hexo-theme-obsidian/blob/master/CHANGELOG.md" title="v1.4.9.3" target="_blank" rel="noopener">v1.4.9.3</a></small>
+        
+        
+    </p>
+</footer>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<script>
+  MathJax.Hub.Config({
+    "HTML-CSS": {
+      preferredFont: "TeX",
+      availableFonts: ["STIX", "TeX"],
+      linebreaks: {
+        automatic: true
+      },
+      EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+      inlineMath: [
+        ["$", "$"],
+        ["\\(", "\\)"]
+      ],
+      processEscapes: true,
+      ignoreClass: "tex2jax_ignore|dno",
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      noUndefined: {
+        attributes: {
+          mathcolor: "red",
+          mathbackground: "#FFEEEE",
+          mathsize: "90%"
+        }
+      },
+      Macros: {
+        href: "{}"
+      }
+    },
+    messageStyle: "none"
+  });
+</script>
+<script>
+  function initialMathJax() {
+    MathJax.Hub.Queue(function () {
+      var all = MathJax.Hub.getAllJax(),
+        i;
+      // console.log(all);
+      for (i = 0; i < all.length; i += 1) {
+        console.log(all[i].SourceElement().parentNode)
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  }
+
+  function reprocessMathJax() {
+    if (typeof MathJax !== 'undefined') {
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    }
+  }
+</script>
+
+
+ 
+<link rel="stylesheet" href="//cdn.bootcss.com/gitalk/1.5.0/gitalk.min.css">
+ 
+<script src="//cdn.bootcss.com/gitalk/1.5.0/gitalk.min.js"></script>
+  
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/obsidian.js"></script>
+<script src="/js/jquery.truncate.js"></script>
+<script src="/js/search.js"></script>
+ 
+<script src="//cdn.bootcss.com/typed.js/2.0.10/typed.min.js"></script>
+ 
+<script src="//cdn.bootcss.com/blueimp-md5/2.12.0/js/md5.min.js"></script>
+ 
+<script src="//cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/codemirror/5.48.4/codemirror.min.js"></script>
+ 
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/javascript/javascript.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/css/css.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/xml/xml.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/htmlmixed/htmlmixed.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/clike/clike.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/php/php.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/shell/shell.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/python/python.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/java/java.min.js"></script>
+  
+<script src="//cdn.bootcss.com/codemirror/5.48.4/mode/go/go.min.js"></script>
+   
+<script src="/js/busuanzi.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    if ($('span[id^="busuanzi_"]').length) {
+      initialBusuanzi();
+    }
+  });
+</script>
+ 
+<link rel="stylesheet" href="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="//cdn.bootcss.com/photoswipe/4.1.3/default-skin/default-skin.min.css">
+
+
+<script src="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe.min.js"></script>
+<script src="//cdn.bootcss.com/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+
+<script>
+  function initialTyped() {
+    var typedTextEl = $('.typed-text');
+    if (typedTextEl && typedTextEl.length > 0) {
+      var typed = new Typed('.typed-text', {
+        strings: ['艺术家思维去思考问题，工匠创造精神去开发|', '致力于自动化渗透测试和漏洞挖掘'],
+        typeSpeed: 90,
+        loop: true,
+        loopCount: Infinity,
+        backSpeed: 20,
+      });
+    }
+  }
+
+  if ($('.article-header') && $('.article-header').length) {
+    $(document).ready(function () {
+      initialTyped();
+    });
+  }
+</script>
+
+
+
+
+<!-- 引用依赖 -->
+<script>document.write(aplayerconf)</script>
+
+
+
+
+</html>
