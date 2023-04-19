@@ -424,6 +424,7 @@ Exploit与login的action调用类似，固件更新的action名为SetFirmware，
 */
 
 可以在参数列表中找到该action的参数label为&lt;NewFirmware&gt;FirmData&lt;/NewFirmware&gt;；其中发送的firmData是base64加密过的，这里在构造firmware数据时注意不要造成memcpy的len太大否则在memcpy就可能出现段错误，但无法利用(这中copy函数的长度问题在iot中经常遇到)。构造包溢出后结果如下：
+
 得到偏移如下：
 
 因为开启了NX保护所以rop构造system(cmd)，在arm架构下控制r0~r3的gadgets很少，但是在程序中调用system函数的附近找到如下指令：
