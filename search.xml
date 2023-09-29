@@ -4772,7 +4772,7 @@ Iot设备就连环境模拟都比较棘手就就更别说Fuzz了，但是Qiling�
 
 Qiling使用4个脚本来实现对该款路由器上httpd程序的Fuzz
 
-![image-20221213114209793](https://cdn.staticaly.com/gh/L2ksy0d/image-host@master/20230130/image-20221213114209793.1nvl9946t1hc.png)
+![image-20221213114209793](https://jsd.cdn.zzko.cn/gh/L2ksy0d/image-host@master/20230130/image-20221213114209793.1nvl9946t1hc.png)
 
 首先是`saver_tendaac15_httpd.py`用于保存fuzz的起始状态快照，主要代码如下：
 
